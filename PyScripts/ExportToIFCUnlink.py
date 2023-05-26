@@ -191,7 +191,7 @@ def export_to_IFC(doc, view, directory, filename):
             options.ExportBaseQuantities = True
             options.WallAndColumnSplitting = True
             options.FileVersion = IFCVersion.IFC2x3CV2
-            options.AddOption("TessellationLevelOfDetail", "1")
+            options.AddOption("TessellationLevelOfDetail", "3")
             doc.Export(directory, filename, options)
         except Exception as exc:
             message = "\nEXCEPTION: {0}".format(exc.message)
