@@ -199,18 +199,6 @@ def export_to_IFC(doc, view, directory, filename):
             options.ExportBaseQuantities = True
             options.WallAndColumnSplitting = True
             options.FileVersion = IFCVersion.IFC2x3CV2
-            # options.AddOption("ExportInternalRevitPropertySets", "true")
-            # options.AddOption("ExportIFCCommonPropertySets", "true")
-            # options.AddOption("ExportAnnotations ", "true")
-            # options.AddOption("SpaceBoundaries ", "0")
-            # options.AddOption("ExportRoomsInView", "false")
-            # options.AddOption("Use2DRoomBoundaryForVolume ", "false")
-            # options.AddOption("UseFamilyAndTypeNameForReference ", "true")
-            # options.AddOption("ExportSolidModelRep", "true")
-            # options.AddOption("ExportSpecificSchedules", "false")
-            # options.AddOption("ExportLinkedFiles", "true")
-            # options.AddOption("IncludeSiteElevation", "true")
-            # options.AddOption("UseActiveViewGeometry", "true")
             options.AddOption("TessellationLevelOfDetail", "1")
             doc.Export(directory, filename, options)
         except Exception as exc:
