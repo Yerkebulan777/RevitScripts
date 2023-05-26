@@ -131,7 +131,7 @@ def create_3dView(doc):
     return view3D
 
 
-def set_worksets_visibility(view):
+def set_worksets_visibility(doc, view):
     defaultVisibility = WorksetDefaultVisibilitySettings.GetWorksetDefaultVisibilitySettings(doc)
     with Transaction(doc, "Workset Visible modify") as trans:
         trans.Start()
@@ -191,20 +191,20 @@ def export_to_IFC(doc, view, directory, filename):
             options.ExportBaseQuantities = True
             options.WallAndColumnSplitting = True
             options.FileVersion = IFCVersion.IFC2x3CV2
-            options.AddOption("ExportInternalRevitPropertySets", "true")
-            options.AddOption("ExportIFCCommonPropertySets", "true")
-            options.AddOption("ExportAnnotations ", "true")
-            options.AddOption("SpaceBoundaries ", "0")
-            options.AddOption("ExportRoomsInView", "false")
-            options.AddOption("Use2DRoomBoundaryForVolume ", "false")
-            options.AddOption("UseFamilyAndTypeNameForReference ", "true")
-            options.AddOption("ExportPartsAsBuildingElements", "false")
-            options.AddOption("ExportBoundingBox", "false")
-            options.AddOption("ExportSolidModelRep", "true")
-            options.AddOption("ExportSpecificSchedules", "false")
-            options.AddOption("ExportLinkedFiles", "false")
-            options.AddOption("IncludeSiteElevation", "true")
-            options.AddOption("UseActiveViewGeometry", "true")
+            # options.AddOption("ExportInternalRevitPropertySets", "true")
+            # options.AddOption("ExportIFCCommonPropertySets", "true")
+            # options.AddOption("ExportAnnotations ", "true")
+            # options.AddOption("SpaceBoundaries ", "0")
+            # options.AddOption("ExportRoomsInView", "false")
+            # options.AddOption("Use2DRoomBoundaryForVolume ", "false")
+            # options.AddOption("UseFamilyAndTypeNameForReference ", "true")
+            # options.AddOption("ExportPartsAsBuildingElements", "false")
+            # options.AddOption("ExportBoundingBox", "false")
+            # options.AddOption("ExportSolidModelRep", "true")
+            # options.AddOption("ExportSpecificSchedules", "false")
+            # options.AddOption("ExportLinkedFiles", "false")
+            # options.AddOption("IncludeSiteElevation", "true")
+            # options.AddOption("UseActiveViewGeometry", "true")
             options.AddOption("TessellationLevelOfDetail", "1")
             doc.Export(directory, filename, options)
         except Exception as exc:
@@ -232,7 +232,7 @@ export_file_path = os.path.abspath(export_file_path)
 UnloadAllLinks(revit_file_path)
 ###############################################################################
 view3D = create_3dView(doc)
-view3D = set_worksets_visibility(view3D)
+view3D = set_worksets_visibility(doc, view3D)
 view3D = set_model_category_visibility(doc, view3D)
 ###############################################################################
 export_to_IFC(doc, view3D, export_directory, file_name)

@@ -139,7 +139,7 @@ def create_3dView(doc):
     return view3D
 
 
-def set_worksets_visibility(view):
+def set_worksets_visibility(doc, view):
     defaultVisibility = WorksetDefaultVisibilitySettings.GetWorksetDefaultVisibilitySettings(doc)
     with Transaction(doc, "Workset Visible modify") as trans:
         trans.Start()
@@ -238,7 +238,7 @@ export_file_path = os.path.abspath(export_file_path)
 adjust_export_links(doc, file_name)
 ###############################################################################
 view3D = create_3dView(doc)
-view3D = set_worksets_visibility(view3D)
+view3D = set_worksets_visibility(doc, view3D)
 view3D = set_model_category_visibility(doc, view3D)
 ###############################################################################
 export_to_IFC(doc, view3D, export_directory, file_name)
