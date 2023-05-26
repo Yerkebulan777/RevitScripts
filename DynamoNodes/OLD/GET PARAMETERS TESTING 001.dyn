@@ -1,0 +1,1874 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "GET PARAMETERS TESTING 001",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "ecffac5860544b21a9243942c41ecb60",
+      "Name": "LINK",
+      "Type": "boolean",
+      "Value": "false",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "Id": "8a15a398fa6e473e93e1469a37f1e16e",
+      "Name": "LINK NAME",
+      "Type": "string",
+      "Value": "BI TOWER_AR_B1_WIP_R18",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "d428467010dc4eb89b32fefb87c5c33c",
+      "Name": "LINK",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "Id": "5d87ebfd0b134538b22e6ca72a7cfeaa",
+      "Name": "LINK NAME",
+      "Type": "string",
+      "Value": "2603-CPR-ZZ-ZZ-M3-AR-0010",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "6d85de8e1176475ca6b4ae03f925c977",
+      "Name": "String",
+      "Type": "string",
+      "Value": "VIP",
+      "Description": "Создание строки."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Default imports\nimport System\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n# Import ToDSType(bool) extension method\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\nclr.ImportExtensions(Revit.GeometryConversion)\n\n#Import Collections\nfrom System.Collections.Generic import *\n\n#The inputs to this node will be stored as a list in the IN variable.\ndataEnteringNode = IN\n\nToggleLink = IN[0]\n\nLinkinstname = IN[1]\n\nCategory = IN[2]\n\nlevelInput = IN[3]\n\napp =  DocumentManager.Instance.CurrentUIApplication.Application\ndoc = DocumentManager.Instance.CurrentDBDocument\nlinkInstances = Autodesk.Revit.DB.FilteredElementCollector(doc).OfClass(Autodesk.Revit.DB.RevitLinkInstance)\nBuiltIn = System.Enum.ToObject(BuiltInCategory, Category.Id)\n\n\nif ToggleLink == False:\n\n\tfilter = ElementCategoryFilter(BuiltIn)\n\tListelem = Autodesk.Revit.DB.FilteredElementCollector(doc).WherePasses(filter).WhereElementIsNotElementType().ToElements()\n\tlevelFilter = ElementLevelFilter(UnwrapElement(levelInput).Id)\n\tlogicalFilter = LogicalAndFilter(levelFilter, filter)\n\tOUT = FilteredElementCollector(doc).OfCategory(BuiltIn).WherePasses(logicalFilter).ToElements()\n\t\nif ToggleLink == True:\n\n\ti = ()\n\tfor i in linkInstances:\n\t\tif Linkinstname.ToLower() in i.Name.ToLower():\n\t\t\tlinkDoc = i.GetLinkDocument()\n\t\t\t\n\tfilter = ElementCategoryFilter(BuiltIn)\t\t\t\n\tListelem = FilteredElementCollector(linkDoc).WherePasses(filter).ToElements()\n\t#levelFilter = ElementLevelFilter(UnwrapElement(levelInput).Id)\n\t#logicalFilter = LogicalAndFilter(levelFilter, filter)\n\tOUT = FilteredElementCollector(linkDoc).OfCategory(BuiltIn).WherePasses(filter).ToElements()\n\t\n\t# Level filter does not work?\n\t\n\n\n\n\n",
+      "VariableInputPorts": true,
+      "Id": "ea03901e55814f5cacee00307f0d289a",
+      "Inputs": [
+        {
+          "Id": "546124b8a8b04c73a0c0fe8a7a304916",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "86dfc43ceeb34f4b99f74ab64dac5fe9",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "aa01ac79f8c44620b5aeab84848cd52b",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "dd4022ff8eff4c03aac98dae4ecb72d4",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9e3d949d252b429b964244c5c395fe32",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 512,
+      "NodeType": "ExtensionNode",
+      "Id": "eb76b6cb0b4f4bcc826986a4886176ff",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "020065d3c37d4065b7cb510d66236d7f",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "ecffac5860544b21a9243942c41ecb60",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b8cd579f7a194e0b86cb532c8f54fe41",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "BI TOWER_AR_B1_WIP_R18",
+      "Id": "8a15a398fa6e473e93e1469a37f1e16e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2c5903c92832483b97e11d783ac4a2d3",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Levels, DSRevitNodesUI",
+      "SelectedIndex": -1,
+      "NodeType": "ExtensionNode",
+      "Id": "47a16a4c4190421eb8000c79da7c9e9a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b7ffba4401a94c8ca21c8825b7a68522",
+          "Name": "Levels",
+          "Description": "Выбрано Levels",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выберите уровень в активном документе"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# -*- coding: UTF-8 -*-\r\nimport clr\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nimport Autodesk\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\nUIunit = Document.GetUnits(doc).GetFormatOptions(UnitType.UT_Length).DisplayUnits\r\n\r\nviewcollector = FilteredElementCollector(doc).OfClass(View3D).ToElements()\r\n\r\ndef tolist(x):\r\n\tif hasattr(x,'__iter__'): return x\r\n\telse : return [x]\r\n\r\ndef flatten(x):\r\n    result = []\r\n    for el in x:\r\n        if hasattr(el, \"__iter__\") and not isinstance(el, basestring):\r\n            result.extend(flatten(el))\r\n        else:\r\n            result.append(el)\r\n    return result\r\n\r\ndef WallFromRoom(room):\r\n\tLevelFilter = ElementLevelFilter(room.Level.Id)\r\n\tBBox = room.get_BoundingBox(None)\r\n\tIntersectsFilter = BoundingBoxIntersectsFilter( Outline( BBox.Min, BBox.Max ))\r\n\tlogicalFilter = LogicalAndFilter(LevelFilter, IntersectsFilter)\r\n\treturn FilteredElementCollector(doc).WhereElementIsNotElementType().WhereElementIsViewIndependent().WherePasses(logicalFilter).OfClass(Wall).ToElements()\r\n\r\ndef GetLevelAbove(level):\r\n\tallLevels = FilteredElementCollector(doc).OfClass(Level).ToElements()\r\n\televations = [i.Elevation for i in allLevels]\r\n\tsortedLevels = [x for (y,x) in sorted(zip(elevations,allLevels))]\r\n\tsortedLevelNames = [i.Name for i in sortedLevels]\r\n\tindex = sortedLevelNames.index(level.Name)\r\n\tif index + 1 >= len(sortedLevels):\r\n\t\treturn None\r\n\telse:\r\n\t\treturn sortedLevels[index+1]\r\n\r\ndef GetExteriorWallDirection(item):\r\n\tif type(item) == Autodesk.Revit.DB.Wall:\r\n\t\tlocationCurve = item.Location\r\n\t\tif locationCurve != None:\r\n\t\t\tcurve = locationCurve.Curve\r\n\t\t\tdirection = XYZ.BasisX\r\n\t\t\tif type(curve) == Autodesk.Revit.DB.Line:\r\n\t\t\t\tdirection = curve.ComputeDerivatives(0, True).BasisX.Normalize()\r\n\t\t\telse:\r\n\t\t\t\tdirection = (curve.GetEndPoint(1) - curve.GetEndPoint(0)).Normalize()\r\n\t\t\texteriorDirection = XYZ.BasisZ.CrossProduct(direction)\r\n\t\t\tif item.Flipped:\r\n\t\t\t\texteriorDirection = -exteriorDirection\r\n\t\t\treturn exteriorDirection\r\n\r\ndef GetWallLoctionPoints(item):\r\n\tcurve = wall.Location.Curve\r\n\thalfthickness = 0.5 * wall.WallType.Width\r\n\textvector = GetExteriorWallDirection(wall)\r\n\tstartPoint = curve.GetEndPoint( 0 )\r\n\tendPoint = curve.GetEndPoint( 1 )\r\n\tvdirect = (endPoint - startPoint).Normalize()\r\n\tpstr = startPoint - vdirect + halfthickness * extvector\r\n\tpend = endPoint + vdirect + halfthickness * extvector\r\n\tpmidl = (pstr + pend)/2\r\n\tpoints = [pstr, pmidl, pend]\r\n\treturn points\r\n\r\ndef View3D():\r\n\tviewlist = filter(lambda x: x, viewcollector)\r\n\tresult = []\r\n\tfor view in viewlist:\r\n\t\tif view.ViewType == ViewType.ThreeD:\r\n\t\t\tif not(view.IsTemplate):\r\n\t\t\t\tif view.Name in \"{3D}\":\r\n\t\t\t\t\tresult = view\r\n\treturn result\r\n\r\ndef GetHeightPoint(RayStartPoints):\r\n    builtInCats = [BuiltInCategory.OST_Ceilings, BuiltInCategory.OST_Floors, BuiltInCategory.OST_Roofs, BuiltInCategory.OST_GenericModel]\r\n    filter = ElementMulticategoryFilter(List[BuiltInCategory](builtInCats))\r\n    ri = ReferenceIntersector(filter, FindReferenceTarget.All, View3D())\r\n    ri.FindReferencesInRevitLinks = False\r\n    direction = XYZ(0,0,1)\r\n    Hpoint = []\r\n    TopElements = []\r\n    for p in RayStartPoints:\r\n        ref = ri.FindNearest(p, direction)\r\n        if ref != None:\r\n\t\t\trefp = ref.GetReference().GlobalPoint\r\n\t\t\trefp = refp - p\r\n\t\t\tpts = refp\r\n\t\t\tHpoint.append(pts.Z)\r\n\t\t\tTopElements.append(doc.GetElement(ref.GetReference().ElementId))\r\n\tif TopElements:\r\n\t\treturn min(tolist(Hpoint))\r\n\r\n########################## INPUT ##################################\r\nrooms = None\r\nrooms = flatten(tolist(UnwrapElement(IN[0])))\r\nTransactionManager.Instance.ForceCloseTransaction()\r\n###################################################################\r\n\r\nfinishingwalls = []\r\nfor indx, rm in enumerate(rooms):\r\n\twall = WallFromRoom(rm)\r\n\tfinishingwalls.append(wall)\r\n\r\nflattenwall = flatten(finishingwalls)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nraypoints = []\r\nresult = []\r\ntest = []\r\nfor wall in flattenwall:\r\n    points = GetWallLoctionPoints(wall)\r\n    toppoint = GetHeightPoint(points)\r\n    raypoints.append(toppoint)\r\n    wallheight = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM).AsDouble()\r\n    if toppoint != wallheight and toppoint:\r\n        WallHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE)\r\n        baselvlId = wall.get_Parameter(BuiltInParameter.WALL_BASE_CONSTRAINT).AsElementId()\r\n        blevel = doc.GetElement(baselvlId)\r\n        alevel = GetLevelAbove(blevel)\r\n        if alevel and toppoint < alevel.Elevation:\r\n            levelheight = alevel.Elevation - blevel.Elevation\r\n            resultval = -(levelheight - toppoint)\r\n            WallHeightPrm.Set(alevel.Id)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Верхний уровень выше\")\r\n            result.append(resultval * 304.8)\r\n        elif alevel and toppoint > alevel.Elevation:\r\n            levelheight = alevel.Elevation - blevel.Elevation\r\n            resultval = toppoint - levelheight\r\n            WallHeightPrm.Set(alevel.Id)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Верхний уровень ниже\")\r\n            result.append(resultval * 304.8)\r\n        else:\r\n            resultval = toppoint\r\n            inv = ElementId.InvalidElementId\r\n            WallHeightPrm.Set(inv)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Неприсоединенный уровень\")\r\n            result.append(resultval * 304.8)\r\n\r\nTransactionManager.Instance.TransactionTaskDone( )\r\n\r\n\"\"\"\r\nif IN[0]:\r\n\tlevelFilter = ElementLevelFilter((rooms[0].Level).Id)\r\n\tDoorsInLevel = FilteredElementCollector(rooms[0].Document).WhereElementIsNotElementType().OfCategory(BuiltInCategory.OST_Doors).WherePasses(levelFilter).ToElements()\r\n\"\"\"\t\r\n\r\nOUT =  test, result",
+      "VariableInputPorts": true,
+      "Id": "a4a030d0ed5d4dc4a6d755c1eda20ee4",
+      "Inputs": [
+        {
+          "Id": "81d4926799e247e5ba368c0b497a8376",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7dbb3f51af26405189cc38513674205b",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "archilab.Revit.Elements.FamilyInstances.ByLine@Revit.Elements.FamilyType,Autodesk.DesignScript.Geometry.Line,Revit.Elements.Level",
+      "Id": "2f5611915fef418b9080de00bbf3f0a7",
+      "Inputs": [
+        {
+          "Id": "b11f90b795f142a49cd7903740bf079c",
+          "Name": "familyType",
+          "Description": "Family Type to be applied to new Family Instance.\n\nFamilyType",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2a4ec836e992462f8986c0da3f1f4bc6",
+          "Name": "line",
+          "Description": "Line to place Family Instance at.\n\nLine",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ece08901813141e3a8b166050e1a0dd1",
+          "Name": "level",
+          "Description": "Level to associate Family Instance with.\n\nLevel",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f66855284bd14921b47d7c2463a855eb",
+          "Name": "Element",
+          "Description": "New Family Instance.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "New Family Instance by Curve\n\nFamilyInstances.ByLine (familyType: FamilyType, line: Line, level: Level): Element"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Line.ByStartPointEndPoint@Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point",
+      "Id": "16fde175be42499e8ae8e5ccbf698a30",
+      "Inputs": [
+        {
+          "Id": "f8c03f463cb045c4acaf64b1c2898c94",
+          "Name": "startPoint",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "03245939311247acbd16ee59a6e6e02d",
+          "Name": "endPoint",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0770d9929c3043c0b12a5b5ef75ffb7b",
+          "Name": "Line",
+          "Description": "Line",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Построение прямой линии между двумя точками ввода.\n\nLine.ByStartPointEndPoint (startPoint: Point, endPoint: Point): Line"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Curve.EndPoint",
+      "Id": "7201d12dfd75461aa118fa67d1aec9a3",
+      "Inputs": [
+        {
+          "Id": "063f507b0e054d238cba06f0813a9b5a",
+          "Name": "curve",
+          "Description": "Autodesk.DesignScript.Geometry.Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "748a6483682f4e1f807ecb73c3b2eef2",
+          "Name": "Point",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение конечной точки вдоль кривой\n\nCurve.EndPoint: Point"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Curve.StartPoint",
+      "Id": "d076885b979b405ab4c81c1c9b77c82a",
+      "Inputs": [
+        {
+          "Id": "e9c3886335cc40bfaf9d3413698bf275",
+          "Name": "curve",
+          "Description": "Autodesk.DesignScript.Geometry.Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fd398423361644e2a6b7dad5c6d8e46d",
+          "Name": "Point",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение начальной точки вдоль кривой\n\nCurve.StartPoint: Point"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "a1370551-a1d1-4a47-a1a3-8afdfd8f78aa",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "cd3852bc7b884db188d40e2b97c88497",
+      "Inputs": [
+        {
+          "Id": "135af048c1404c0fbb7c9c811480c443",
+          "Name": "VARunknownItem",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e9edcef179a54511a147ed8083e8215a",
+          "Name": "VARseq",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Turns an element (or a nested list) into a flat list"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.UniqueItems@var[]..[]",
+      "Id": "4644f8153e7441ac9275a842be00a2bf",
+      "Inputs": [
+        {
+          "Id": "6c00a5d98899459eb5db2b602997af7f",
+          "Name": "list",
+          "Description": "Список, который требуется отфильтровать, исключив повторы.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9f4b9d4570234279b66bd267b8dc1de2",
+          "Name": "list",
+          "Description": "Отфильтрованный список.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Создание нового списка, содержащего все уникальные элементы из заданного списка.\n\nList.UniqueItems (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\n\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\ndef GetElemType(e):\n\tdoc = DocumentManager.Instance.CurrentDBDocument\n\ttry:\n\t\telemType = doc.GetElement(e.GetTypeId())\n\t\treturn elemType\n\texcept:\n\t\tpass\n\n\nwalls = UnwrapElement(IN[0])\ninserts = []\n\nfor w in walls:\n\tinserts.append(w.FindInserts(True, False, False, False))\n\nelementlistA = []\n\nfor item in inserts:\n\telementlistB = []\n\tfor i in item:\n\t\tinsert = doc.GetElement(i)\n\t\telementlistB.append(insert.ToDSType(True))\n\telementlistA.append(elementlistB)\n\n\n\nlevelFilter = ElementLevelFilter(UnwrapElement(walls[0].Level).Id)\nOUT = FilteredElementCollector(doc).WhereElementIsNotElementType().OfCategory(BuiltInCategory.OST_Doors).WherePasses(levelFilter).ToElements()\n\nOUT = elementlistA",
+      "VariableInputPorts": true,
+      "Id": "04eacc13a2934eda8c46c01a937aaa9d",
+      "Inputs": [
+        {
+          "Id": "a84ae240107845848cec36e30557a061",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b598adbb61fb4bf29699b5a0932fd03a",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "45a07cf0-da9c-497b-8835-7b8fbedd5671",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "4bf10a6b6ac948fa8e6fbed4187a6440",
+      "Inputs": [
+        {
+          "Id": "1d19d9a0edbf420fafcbfee260f55437",
+          "Name": "VARcurve",
+          "Description": "Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e3338fe519a146f2bad6cf5fcbcddbfa",
+          "Name": "VARview",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1d2fb6e078d0482cb37e7ff6306e2212",
+          "Name": "VARdetailLine",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Creates a detail line based on a given curve"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "d428467010dc4eb89b32fefb87c5c33c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b9b007ca63d042debae7d7d7b023a9d2",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "2603-CPR-ZZ-ZZ-M3-AR-0010",
+      "Id": "5d87ebfd0b134538b22e6ca72a7cfeaa",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b3f7459dae7b472288cf4fc37822a15f",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Levels, DSRevitNodesUI",
+      "SelectedIndex": -1,
+      "NodeType": "ExtensionNode",
+      "Id": "a493ae8908f441428d18d9268e37e126",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a0e6984f3af34a67981edf1c044c6095",
+          "Name": "Levels",
+          "Description": "Выбрано Levels",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выберите уровень в активном документе"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Default imports\nimport System\nimport clr\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n# Import ToDSType(bool) extension method\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\nclr.ImportExtensions(Revit.GeometryConversion)\n#Import Collections\nfrom System.Collections.Generic import List\n#The inputs to this node will be stored as a list in the IN variable.\ndataEnteringNode = IN\n\nToggleLink = IN[0]\n\nLinkinstname = IN[1]\n\nlevelInput = IN[2]\n\napp =  DocumentManager.Instance.CurrentUIApplication.Application\nlinkInstances = Autodesk.Revit.DB.FilteredElementCollector(DocumentManager.Instance.CurrentDBDocument).OfClass(Autodesk.Revit.DB.RevitLinkInstance)\n\nif ToggleLink == False:\n\n\tselectDOC = DocumentManager.Instance.CurrentDBDocument\n\tlevelFilter = ElementLevelFilter(UnwrapElement(levelInput).Id)\n\t\t\nif ToggleLink == True:\n\tfor i in linkInstances:\n\t\tif Linkinstname.ToLower() in i.Name.ToLower():\n\t\t\tselectDOC = i.GetLinkDocument()\n\t\n\truleValDb = UnwrapElement(levelInput).get_Parameter(BuiltInParameter.LEVEL_ELEV).AsDouble()\n\tpvp = ParameterValueProvider(ElementId(BuiltInParameter.LEVEL_ELEV))\n\tfnrv = FilterNumericEquals()\n\tlevelparamfilter = ElementParameterFilter(FilterDoubleRule(pvp, fnrv, ruleValDb, 10.-3))\n\tlevels = FilteredElementCollector(selectDOC).OfClass(Level)\n\tLevelcollect = FilteredElementCollector(selectDOC).OfClass(Level).WherePasses(levelparamfilter).FirstElement()\n\tlevelFilter = ElementLevelFilter(Levelcollect.Id)\n\n################################################# FIND VALID ROOMS ############################################\n\ncollector = FilteredElementCollector(selectDOC)\n\nareaFilter = AreaFilter()\nareaExcludes = collector.WherePasses(areaFilter).ToElements()\nareaExcludes = list(areaExcludes)\nelement_set = ElementSet()\nexcludes = List[ElementId]()\nif len(areaExcludes) == 0:\n\tlogicalFilter = levelFilter\nelse:\n\tfor i in areaExcludes:\n\t\telement_set.Insert(i)\n\t\telemIter = element_set.ForwardIterator()\n\t\telemIter.Reset()\n\t\twhile elemIter.MoveNext():\n\t\t\tcurElem = elemIter.Current\n\t\t\texcludes.Add(curElem.Id)\n\tfilter = ExclusionFilter(excludes)\n\tlogicalFilter = LogicalAndFilter(levelFilter, filter)\n\nRoomsByLevel = FilteredElementCollector(selectDOC).OfClass(Autodesk.Revit.DB.SpatialElement).WherePasses(logicalFilter).ToElements()\nValidRooms = [valrmn for valrmn in RoomsByLevel if valrmn.Volume != 0]\n\ntry:\n\tallroom = FilteredElementCollector(selectDOC).OfClass(Autodesk.Revit.DB.SpatialElement).ToElements()\n\tTransactionManager.Instance.EnsureInTransaction(selectDOC)\n\tDeleteUnplaceRooms = [selectDOC.Delete(rmn.Id) for rmn in allroom if rmn.Location == None]\n\tTransactionManager.Instance.TransactionTaskDone()\nexcept:\n\tpass\n\t\nif ValidRooms:\n\trnumbers = [rmn.Number for rmn in ValidRooms]\n\tOUT = [room for rnmb, room in sorted(zip(rnumbers, ValidRooms))]\n\t",
+      "VariableInputPorts": true,
+      "Id": "9e098bcccff54584a48d431ff29d8f56",
+      "Inputs": [
+        {
+          "Id": "faa00f8e3b68464d9f28b11ec3f3fc60",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7b507754c05b4583aa92f4af8118906e",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7ca61833130f42b8a91aff02a08dc78b",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0cbe3b70474d47a88354b20440d67bdf",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\ndef Flatten2D(ls):\n\tflat = []\t\n\tfor x in ls:\n\t\tif type(x) is list:\n\t\t\tfor y in x:\n\t\t\t\tflat.append(y)\n\t\telse:\n\t\t\tflat.append(x)\t\n\treturn flat\n\n# Main function\ngeom = IN[0]\ntools = IN[1]\n\npieces = []\npieces.append(geom)\n\nfor tool in tools:\n\tassert type(tool) is not list\n\tnewPieces = []\n\tfor piece in pieces:\n\t\tassert type(piece) is not list\n\t\tnewPieces.append(Flatten2D(Geometry.Split(piece,tool)))\n\tpieces = Flatten2D(newPieces)\n\nOUT = pieces",
+      "VariableInputPorts": true,
+      "Id": "61cbc78cd5db44118495c4c3778580f4",
+      "Inputs": [
+        {
+          "Id": "ddb9295fb36f49c39908d1f9680f2a18",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4a45c957714c47189b9735906baaf405",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e31a65d5800e4e4e943072ce10ca1585",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "0307d51414f44fce8172e91526e120c1",
+      "Inputs": [
+        {
+          "Id": "a5875ab561984a75ab8c82159a37d0ae",
+          "Name": "list",
+          "Description": "Список для выравнивания.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7d4d9f60975e40acb90eb10c4d3bd328",
+          "Name": "amt",
+          "Description": "Слои вложения для удаления.\n\nint\nЗначение по умолчанию : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "22ff64b088ef40bf8349190e3563ae2e",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Выравнивание вложенного списка списков по определенному количественному значению.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "2b08b874-ab51-4689-930b-f3e673995359",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "085e5fea60a94036be120c18c0519289",
+      "Inputs": [
+        {
+          "Id": "2537d3c9eeca491eaaf361fa889941ed",
+          "Name": "wall",
+          "Description": "Wall[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7bdde94390784392bae5b186efb0939f",
+          "Name": "wall",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "97ea7d4037a64b2dafb6a26bd29db8d6",
+          "Name": "success",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flips the  orientation of a given wall - DO ***NOT*** USE IN AUTOMATIC MODE"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "7f3d5e2afe5945cc858c6d0562941b00",
+      "Inputs": [
+        {
+          "Id": "11a7ee5a385546f3965b420e25b3013d",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "53abd7e2cdd84770885964b72639fdf1",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": -1,
+      "NodeType": "ExtensionNode",
+      "Id": "95b28f96f5834fdb98719bdaaf394b41",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "25cb4e9af30c43ae9228e17e55a75cc2",
+          "Name": "Family Type",
+          "Description": "Выбрано Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все типы семейств, доступных в документе."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nimport Autodesk\n\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.GeometryConversion)\n\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nfrom Autodesk.DesignScript.Geometry import *\n\nimport math\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\ndef tolist(input):\n\tif isinstance(input,list) == False:\n\t\treturn [input]\n\telse:\n\t\treturn input\t\n\ndef flatten(x):\n    result = []\n    for el in x:\n        if hasattr(el, \"__iter__\") and not isinstance(el, basestring):\n            result.extend(flatten(el))\n        else:\n            result.append(el)\n    return result\n    \ndef GetParameter(element, parametername):\n\tsechname = parametername\n\tprmnames = []\n\tfor prm in element.Parameters:\n\t\tprmname = prm.Definition.Name\n\t\tif prm.Definition.Name.Equals(sechname):\n\t\t\treturn prmname\n\t\telif prm.Definition.Name.Contains(sechname):\n\t\t\treturn prmname\n\t\telse:\n\t\t\tprmnames.append(prmname)\n\t\t\tcontinue\n\tfor prmname in sorted(flatten(prmnames)):\n\t\tlowername = prmname.ToLower()\n\t\tsplitname = sechname.ToLower().split()\n\t\tif filter(lambda x: x in lowername, splitname):\n\t\t\treturn prmname\n\n\ndataEnteringNode = IN\n\nelements = flatten(tolist(UnwrapElement(IN[0])))\nparametername = IN[1]\n\n\n\nOUT = [GetParameter(element, parametername) for element in elements]",
+      "VariableInputPorts": true,
+      "Id": "1cfe4f2af2934d3e8719a12927f23be7",
+      "Inputs": [
+        {
+          "Id": "eb9e5a26b2ba497b9da039939b6bb820",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d0bab90ad55a496b859341dd1670f9a6",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4666664df284470499c763c6c4e74b1b",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ed9cbd160a3e4f19a54b69ec20abe62e",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Назначение\";",
+      "Id": "1221b9f1014f46b9a827eb25f9839894",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "519424b0a8bb425a8c4151365cd74496",
+          "Name": "",
+          "Description": "Значение выражения в строке 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Обеспечивает возможность непосредственного авторства кода DesignScript"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "VIP",
+      "Id": "6d85de8e1176475ca6b4ae03f925c977",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "96100776c20e441aa9d6c3bf08e9ce1e",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "8cdef8e6-1c8e-4797-b5ae-d8f467afc8f2",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "2ece32cabc71490e8213469080ead720",
+      "Inputs": [
+        {
+          "Id": "29d3c8fbabfe4ede8ac357bcde92cdb8",
+          "Name": "Category_",
+          "Description": " Category or Categories\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8add3ec2bef2495fb896b6972f32b7d6",
+          "Name": "BuiltInCategoryObject",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "856e95e279b145098065a701d3775faa",
+          "Name": "Ids",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": ""
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 360,
+      "NodeType": "ExtensionNode",
+      "Id": "bad480565ccc44e589c01122ae3dc0e0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "583c2377d08a4fdcb7e992dfcb658b87",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "50d664f537a440f19bcbcbb993aa3394",
+      "Inputs": [
+        {
+          "Id": "028ab574b0b34dda942bb6266cf79eea",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f488edf392c448368734d1a9f598e8b6",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# -*- coding: UTF-8 -*-\r\nimport clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nimport Autodesk\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nviewcollector = FilteredElementCollector(doc).OfClass(View3D).ToElements()\r\n\r\ndef tolist(x):\r\n    if hasattr(x ,'__iter__'): return x\r\n    else : return [x]\r\n\r\ndef flatten(x):\r\n    result = [ ]\r\n    for el in x:\r\n        if hasattr(el, \"__iter__\") and not isinstance(el, basestring):\r\n            result.extend(flatten(el))\r\n        else:\r\n            result.append(el)\r\n    return result\r\n\r\ndef GetLevelAbove(level):\r\n    allLevels = FilteredElementCollector(doc).OfClass(Level).ToElements( )\r\n    elevations = [ i.Elevation for i in allLevels ]\r\n    sortedLevels = [ x for (y, x) in sorted(zip(elevations, allLevels)) ]\r\n    sortedLevelNames = [ i.Name for i in sortedLevels ]\r\n    index = sortedLevelNames.index(level.Name)\r\n    if index + 1 >= len(sortedLevels):\r\n        return None\r\n    else:\r\n        return sortedLevels[ index + 1 ]\r\n\r\ndef GetExteriorWallDirection(item):\r\n    if type(item) == Autodesk.Revit.DB.Wall:\r\n        locationCurve = item.Location\r\n        if locationCurve != None:\r\n            curve = locationCurve.Curve\r\n            direction = XYZ.BasisX\r\n            if type(curve) == Autodesk.Revit.DB.Line:\r\n                direction = curve.ComputeDerivatives(0, True).BasisX.Normalize( )\r\n            else:\r\n                direction = (curve.GetEndPoint(1) - curve.GetEndPoint(0)).Normalize( )\r\n            exteriorDirection = XYZ.BasisZ.CrossProduct(direction)\r\n            if item.Flipped:\r\n                exteriorDirection = -exteriorDirection\r\n            return exteriorDirection\r\n\r\ndef GetWallLocationPoints(item):\r\n    curve = wall.Location.Curve\r\n    halfthickness = 0.5 * wall.WallType.Width\r\n    extvector = GetExteriorWallDirection(wall)\r\n    startPoint = curve.GetEndPoint(0)\r\n    endPoint = curve.GetEndPoint(1)\r\n    vdirect = (endPoint - startPoint).Normalize( )\r\n    pstr = startPoint - vdirect + halfthickness * extvector\r\n    pend = endPoint + vdirect + halfthickness * extvector\r\n    pmidl = (pstr + pend) / 2\r\n    points = [ pstr, pmidl, pend ]\r\n    return points\r\n\r\ndef View3D():\r\n\tviewlist = filter(lambda x: x, viewcollector)\r\n\tresult = []\r\n\tfor view in viewlist:\r\n\t\tif view.ViewType == ViewType.ThreeD:\r\n\t\t\tif not(view.IsTemplate):\r\n\t\t\t\tif view.Name in \"{3D}\":\r\n\t\t\t\t\tresult = view\r\n\treturn result\r\n\r\ndef GetHeightPoint(RayStartPoints):\r\n\tclr.AddReference('System')\r\n\tfrom System.Collections.Generic import List\r\n        builtInCats = List[ BuiltInCategory ]( )\r\n        builtInCats.Add(BuiltInCategory.OST_Roofs)\r\n        builtInCats.Add(BuiltInCategory.OST_Ceilings)\r\n        builtInCats.Add(BuiltInCategory.OST_Floors)\r\n        builtInCats.Add(BuiltInCategory.OST_GenericModel)\r\n        filter = ElementMulticategoryFilter(List[ BuiltInCategory ](builtInCats))\r\n        ri = ReferenceIntersector(filter, FindReferenceTarget.Element, View3D( ))\r\n        ri.FindReferencesInRevitLinks = False\r\n        direction = XYZ(0, 0, 1)\r\n        Hpoint = [ ]\r\n        TopElements = [ ]\r\n        for p in RayStartPoints:\r\n            ref = ri.FindNearest(p, direction)\r\n            if ref != None:\r\n                refp = ref.GetReference( ).GlobalPoint\r\n                refp = refp - p\r\n                pts = refp\r\n                Hpoint.append(pts.Z)\r\n                TopElements.append(doc.GetElement(ref.GetReference( ).ElementId))\r\n        if TopElements:\r\n            return min(tolist(Hpoint))\r\n\r\n########################## INPUT ##################################\r\nuwalls = None\r\nuwalls = flatten(tolist(UnwrapElement(IN[ 0 ])))\r\n###################################################################\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nlocpoints = [ ]\r\nraypoints = [ ]\r\nresult = [ ]\r\ntest = [ ]\r\nfor wall in uwalls:\r\n    points = GetWallLocationPoints(wall)\r\n    locpoints.append(points)\r\n    toppoint = GetHeightPoint(points)\r\n    raypoints.append(toppoint)\r\n    wallheight = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM).AsDouble( )\r\n    if toppoint == None:\r\n        test.append(\"Нет Луча\")\r\n        result.append(None)\r\n    elif toppoint and toppoint != wallheight and wallheight >= 2000 / 304.8:\r\n        WallHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE)\r\n        baselvlId = wall.get_Parameter(BuiltInParameter.WALL_BASE_CONSTRAINT).AsElementId( )\r\n        blevel = doc.GetElement(baselvlId)\r\n        alevel = GetLevelAbove(blevel)\r\n        if alevel and toppoint < alevel.Elevation:\r\n            levelheight = alevel.Elevation - blevel.Elevation\r\n            resultval = -(levelheight - toppoint)\r\n            WallHeightPrm.Set(alevel.Id)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Верхний уровень выше\")\r\n            result.append(resultval * 304.8)\r\n        elif alevel and toppoint > alevel.Elevation:\r\n            levelheight = alevel.Elevation - blevel.Elevation\r\n            resultval = toppoint - levelheight\r\n            WallHeightPrm.Set(alevel.Id)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Верхний уровень ниже\")\r\n            result.append(resultval * 304.8)\r\n        else:\r\n            resultval = toppoint\r\n            inv = ElementId.InvalidElementId\r\n            WallHeightPrm.Set(inv)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Неприсоединенный уровень\")\r\n            result.append(resultval * 304.8)\r\n\r\nTransactionManager.Instance.TransactionTaskDone( )\r\n\r\nOUT =  locpoints",
+      "VariableInputPorts": true,
+      "Id": "e5dd1fb683d34a109bdd8ded19ef35bb",
+      "Inputs": [
+        {
+          "Id": "e85cfe01b16a4e3faafedb79e4b257fb",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2567d087c5ff410e95e567b5c2bcc3f3",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "9f07d6ab95024a108526a7620c60073a",
+      "Inputs": [
+        {
+          "Id": "83e46b0df6334a93a96c15accbac19db",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0919f3f0d793477ab5dbd77a5aa66ad6",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# -*- coding: UTF-8 -*-\r\nimport clr\r\nfrom _ast import List\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nimport Autodesk\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\ndef tolist(x):\r\n    if hasattr(x ,'__iter__'): return x\r\n    else : return [x ]\r\n\r\ndef flatten(x):\r\n    result = [ ]\r\n    for el in x:\r\n        if hasattr(el, \"__iter__\") and not isinstance(el, basestring):\r\n            result.extend(flatten(el))\r\n        else:\r\n            result.append(el)\r\n    return result\r\n\r\ndef GetFinishingWall(items):\r\n    finishingwall = None\r\n    items = tolist(items)\r\n    finishingwall = [ ]\r\n    doc = items[0].Document\r\n    for idx, wall in enumerate(items):\r\n        if type(wall) == Autodesk.Revit.DB.Wall:\r\n                Compstruc = wall.WallType.GetCompoundStructure( )\r\n                # ExtIndx = Compstruc.GetCoreBoundaryLayerIndex(ShellLayerType.Exterior)\r\n                # IntIndx = Compstruc.GetCoreBoundaryLayerIndex(ShellLayerType.Interior)\r\n                CoreIndx = Compstruc.GetFirstCoreLayerIndex( )  # Серцевина\r\n                if CoreIndx >= 0:\r\n\t\t\t\t\tif Compstruc.GetLayerWidth(CoreIndx) * 304.8 < 40:\r\n\t\t\t\t\t\tfinishingwall.append(wall)\r\n    return finishingwall\r\n\r\n########################## INPUT ##################################\r\nuwalls = None\r\nuwalls = flatten(tolist(UnwrapElement(IN[ 0 ])))\r\n###################################################################\r\n\r\nfinishingwall = GetFinishingWall(uwalls)\r\n\r\nOUT = finishingwall",
+      "VariableInputPorts": true,
+      "Id": "a842610098224554a0e3de49a623b284",
+      "Inputs": [
+        {
+          "Id": "02b7d68781704ed58ebffa9af0a6b851",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "96f67eb57bdb4bdfb3b9303277c75433",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# -*- coding: UTF-8 -*-\r\nimport clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nimport Autodesk\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nviewcollector = FilteredElementCollector(doc).OfClass(View3D).ToElements()\r\n\r\ndef tolist(x):\r\n    if hasattr(x ,'__iter__'): return x\r\n    else : return [x]\r\n\r\ndef flatten(x):\r\n    result = [ ]\r\n    for el in x:\r\n        if hasattr(el, \"__iter__\") and not isinstance(el, basestring):\r\n            result.extend(flatten(el))\r\n        else:\r\n            result.append(el)\r\n    return result\r\n\r\ndef GetLevelAbove(level):\r\n    allLevels = FilteredElementCollector(doc).OfClass(Level).ToElements( )\r\n    elevations = [ i.Elevation for i in allLevels ]\r\n    sortedLevels = [ x for (y, x) in sorted(zip(elevations, allLevels)) ]\r\n    sortedLevelNames = [ i.Name for i in sortedLevels ]\r\n    index = sortedLevelNames.index(level.Name)\r\n    if index + 1 >= len(sortedLevels):\r\n        return None\r\n    else:\r\n        return sortedLevels[ index + 1 ]\r\n\r\ndef GetExteriorWallDirection(item):\r\n    if type(item) == Autodesk.Revit.DB.Wall:\r\n        locationCurve = item.Location\r\n        if locationCurve != None:\r\n            curve = locationCurve.Curve\r\n            direction = XYZ.BasisX\r\n            if type(curve) == Autodesk.Revit.DB.Line:\r\n                direction = curve.ComputeDerivatives(0, True).BasisX.Normalize( )\r\n            else:\r\n                direction = (curve.GetEndPoint(1) - curve.GetEndPoint(0)).Normalize( )\r\n            exteriorDirection = XYZ.BasisZ.CrossProduct(direction)\r\n            if item.Flipped:\r\n                exteriorDirection = -exteriorDirection\r\n            return exteriorDirection\r\n\r\ndef GetWallLocationPoints(item):\r\n    curve = wall.Location.Curve\r\n    halfthickness = 0.5 * wall.WallType.Width\r\n    extvector = GetExteriorWallDirection(wall)\r\n    startPoint = curve.GetEndPoint(0)\r\n    endPoint = curve.GetEndPoint(1)\r\n    vdirect = (endPoint - startPoint).Normalize( )\r\n    pstr = startPoint - vdirect + halfthickness * extvector\r\n    pend = endPoint + vdirect + halfthickness * extvector\r\n    pmidl = (pstr + pend) / 2\r\n    points = [ pstr, pmidl, pend ]\r\n    return points\r\n\r\ndef View3D():\r\n\tviewlist = filter(lambda x: x, viewcollector)\r\n\tresult = []\r\n\tfor view in viewlist:\r\n\t\tif view.ViewType == ViewType.ThreeD:\r\n\t\t\tif not(view.IsTemplate):\r\n\t\t\t\tif view.Name in \"{3D}\":\r\n\t\t\t\t\tresult = view\r\n\treturn result\r\n\r\ndef LoadByRoom(i):\r\n\titem = UnwrapElement(i)\r\n\toptions = SpatialElementBoundaryOptions()\r\n\tsegments = item.GetBoundarySegments(options)\r\n\tlines = [i.GetCurve() for i in segments[0]]\r\n\t#newlines = []\r\n\tfloorCurves = CurveLoop()\r\n\tfor i in lines:\r\n\t\tif i.GetType().Name == \"Line\":\r\n\t\t\t#newlines.append(i)\r\n\t\t\tfloorCurves.Append(i)\r\n\r\n\r\ndef GetHeightPoint(RayStartPoints):\r\n\tclr.AddReference('System')\r\n\tfrom System.Collections.Generic import List\r\n        builtInCats = List[ BuiltInCategory ]( )\r\n        builtInCats.Add(BuiltInCategory.OST_Roofs)\r\n        builtInCats.Add(BuiltInCategory.OST_Ceilings)\r\n        builtInCats.Add(BuiltInCategory.OST_Floors)\r\n        builtInCats.Add(BuiltInCategory.OST_GenericModel)\r\n        filter = ElementMulticategoryFilter(List[ BuiltInCategory ](builtInCats))\r\n        ri = ReferenceIntersector(filter, FindReferenceTarget.Element, View3D( ))\r\n        ri.FindReferencesInRevitLinks = False\r\n        direction = XYZ(0, 0, 1)\r\n        Hpoint = [ ]\r\n        TopElements = [ ]\r\n        for p in RayStartPoints:\r\n            ref = ri.FindNearest(p, direction)\r\n            if ref != None:\r\n                refp = ref.GetReference( ).GlobalPoint\r\n                refp = refp - p\r\n                pts = refp\r\n                Hpoint.append(pts.Z)\r\n                TopElements.append(doc.GetElement(ref.GetReference( ).ElementId))\r\n        if TopElements:\r\n            return min(tolist(Hpoint))\r\n\r\n########################## INPUT ##################################\r\nuwalls = None\r\nuwalls = flatten(tolist(UnwrapElement(IN[ 0 ])))\r\n###################################################################\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nlocpoints = [ ]\r\nraypoints = [ ]\r\nresult = [ ]\r\ntest = [ ]\r\nfor wall in uwalls:\r\n    points = GetWallLocationPoints(wall)\r\n    locpoints.append(points)\r\n    toppoint = GetHeightPoint(points)\r\n    raypoints.append(toppoint)\r\n    wallheight = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM).AsDouble( )\r\n    if toppoint == None:\r\n        test.append(\"Нет Луча\")\r\n        result.append(None)\r\n    elif toppoint and toppoint != wallheight and wallheight >= 2000 / 304.8:\r\n        WallHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE)\r\n        baselvlId = wall.get_Parameter(BuiltInParameter.WALL_BASE_CONSTRAINT).AsElementId( )\r\n        blevel = doc.GetElement(baselvlId)\r\n        alevel = GetLevelAbove(blevel)\r\n        if alevel and toppoint < alevel.Elevation:\r\n            levelheight = alevel.Elevation - blevel.Elevation\r\n            resultval = -(levelheight - toppoint)\r\n            WallHeightPrm.Set(alevel.Id)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Верхний уровень выше\")\r\n            result.append(resultval * 304.8)\r\n        elif alevel and toppoint > alevel.Elevation:\r\n            levelheight = alevel.Elevation - blevel.Elevation\r\n            resultval = toppoint - levelheight\r\n            WallHeightPrm.Set(alevel.Id)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Верхний уровень ниже\")\r\n            result.append(resultval * 304.8)\r\n        else:\r\n            resultval = toppoint\r\n            inv = ElementId.InvalidElementId\r\n            WallHeightPrm.Set(inv)\r\n            SetHeightPrm = wall.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM)\r\n            SetHeightPrm.Set(resultval)\r\n            test.append(\"Тест прошел условие // Неприсоединенный уровень\")\r\n            result.append(resultval * 304.8)\r\n\r\nTransactionManager.Instance.TransactionTaskDone( )\r\n\r\nOUT =  locpoints",
+      "VariableInputPorts": true,
+      "Id": "a700047eb0104ff09bacf03bcedfa3cc",
+      "Inputs": [
+        {
+          "Id": "892e03680cc3468499a3eae9edb1b1d8",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d389707b4edf49ffa8069da443196bf8",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "d2a8c274-9163-4661-8784-5e976e583184",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "699c851c2bb346c4a6486cf05ea7e452",
+      "Inputs": [
+        {
+          "Id": "545a7ad28d9145e0b45dab8a4cd5cf72",
+          "Name": "/*Rooms where to model finishes*/\r\nRooms: var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b18a163ae9a646bba5eb6dba74b73a57",
+          "Name": "WallFinishParam",
+          "Description": "Name of the parameter that stores the Wall Name\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "cfe77e4f4fea44d9bb8bb6993dabc582",
+          "Name": "CeilingHeightParam",
+          "Description": "Name of the parameter that stores the Ceiling Height\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4224d58db97f4d259ae2918a85e8bf2a",
+          "Name": "finishes",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Place wall finishes with the info contained in room parameters"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "470bf74f-e4ab-486e-b5fe-120b4a327855",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "4cda984d93474bdf805eca2abc7c8baf",
+      "Inputs": [
+        {
+          "Id": "9d400f749f9a4105ad329b56c5feea53",
+          "Name": "Elements",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2ad8940f53a947dcb4b316ce862fec0a",
+          "Name": "Rooms",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "47ac5716f6d24ef4b9129c54d7a1bf1b",
+          "Name": "Link Instance",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d923387f798e4f0697106aeff42f764a",
+          "Name": "Elements",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": ""
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "b1c08346-4bd4-4548-bce5-c6504f7a9586",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "2cb0a07a28714018a2b7de62b2e23b53",
+      "Inputs": [
+        {
+          "Id": "dfb9d5c595ca43ec85dd66abe569f682",
+          "Name": "dialog",
+          "Description": "bool\nЗначение по умолчанию : true",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "55fa84fcef0a4bc9b7d9db556d5b21fc",
+          "Name": "refresh",
+          "Description": "bool\nЗначение по умолчанию : true",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e4219d5560444890b517880df1785b7f",
+          "Name": "elements",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1c8d7961de054ad78a8622491354506a",
+          "Name": "transform",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Select the linked instance first. Then select multiple elements from the Revit document in the desired order. Hit ESC to stop picking. To refresh the node, connect a boolean switch node."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "be26ae5b-f9eb-40bb-96c8-4a49224b0e8e",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "78d9efc71ef342a395f98ffa66b1f43f",
+      "Inputs": [
+        {
+          "Id": "ff8d9ab6e9994adf84be4d1fde66dcd3",
+          "Name": "VARCurves",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f290311452bf418083a625f9e3748a39",
+          "Name": "VARCurvesamp",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1c93c84fa8d14f90a3dbe6a1000f99d8",
+          "Name": "VARNodeInfo",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Join all connected curves into Polycurves even they are intersected"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "9e3d949d252b429b964244c5c395fe32",
+      "End": "02b7d68781704ed58ebffa9af0a6b851",
+      "Id": "29369dd872f444d8bfcb2b0114b8c45f"
+    },
+    {
+      "Start": "9e3d949d252b429b964244c5c395fe32",
+      "End": "e85cfe01b16a4e3faafedb79e4b257fb",
+      "Id": "9fc16b9bb93e4fd483a7fa61c4fbb30e"
+    },
+    {
+      "Start": "9e3d949d252b429b964244c5c395fe32",
+      "End": "892e03680cc3468499a3eae9edb1b1d8",
+      "Id": "bf8436540ab44e6d978630d9d7b6326d"
+    },
+    {
+      "Start": "020065d3c37d4065b7cb510d66236d7f",
+      "End": "aa01ac79f8c44620b5aeab84848cd52b",
+      "Id": "373ca2a470644374ad4d56d7bfb12671"
+    },
+    {
+      "Start": "b8cd579f7a194e0b86cb532c8f54fe41",
+      "End": "546124b8a8b04c73a0c0fe8a7a304916",
+      "Id": "8b691873d1cc4294afea5c781ed27c6e"
+    },
+    {
+      "Start": "2c5903c92832483b97e11d783ac4a2d3",
+      "End": "86dfc43ceeb34f4b99f74ab64dac5fe9",
+      "Id": "5daef036ea1b40d7bc232742aaaa85da"
+    },
+    {
+      "Start": "b7ffba4401a94c8ca21c8825b7a68522",
+      "End": "dd4022ff8eff4c03aac98dae4ecb72d4",
+      "Id": "e623da15659f4cc6b55512becba9ccb6"
+    },
+    {
+      "Start": "7dbb3f51af26405189cc38513674205b",
+      "End": "11a7ee5a385546f3965b420e25b3013d",
+      "Id": "0f89ea58fd7d4b13a781a27ff40f6a58"
+    },
+    {
+      "Start": "0770d9929c3043c0b12a5b5ef75ffb7b",
+      "End": "2a4ec836e992462f8986c0da3f1f4bc6",
+      "Id": "4762a923901f47e1ad28316fbd89ece4"
+    },
+    {
+      "Start": "748a6483682f4e1f807ecb73c3b2eef2",
+      "End": "03245939311247acbd16ee59a6e6e02d",
+      "Id": "67bbb83838fb47e1b182c0a570b60f94"
+    },
+    {
+      "Start": "fd398423361644e2a6b7dad5c6d8e46d",
+      "End": "f8c03f463cb045c4acaf64b1c2898c94",
+      "Id": "c470274ad6864420b1808e8b57ed89e3"
+    },
+    {
+      "Start": "e9edcef179a54511a147ed8083e8215a",
+      "End": "6c00a5d98899459eb5db2b602997af7f",
+      "Id": "a3b69c3688ce462db0f624bfe51f78dc"
+    },
+    {
+      "Start": "b9b007ca63d042debae7d7d7b023a9d2",
+      "End": "faa00f8e3b68464d9f28b11ec3f3fc60",
+      "Id": "c2c23fcf5aad4e169bc92aca4f303403"
+    },
+    {
+      "Start": "b3f7459dae7b472288cf4fc37822a15f",
+      "End": "7b507754c05b4583aa92f4af8118906e",
+      "Id": "6367b9482ab040feb5e2b9a7d3877f7e"
+    },
+    {
+      "Start": "a0e6984f3af34a67981edf1c044c6095",
+      "End": "7ca61833130f42b8a91aff02a08dc78b",
+      "Id": "e109031ece6e4de6a6c72384ab0c28a8"
+    },
+    {
+      "Start": "0cbe3b70474d47a88354b20440d67bdf",
+      "End": "81d4926799e247e5ba368c0b497a8376",
+      "Id": "0d5bc13d41254e64a389ddc93e6f37e6"
+    },
+    {
+      "Start": "22ff64b088ef40bf8349190e3563ae2e",
+      "End": "a84ae240107845848cec36e30557a061",
+      "Id": "fdaef0ce5d4a4c7794bfee2db4d6d9cb"
+    },
+    {
+      "Start": "25cb4e9af30c43ae9228e17e55a75cc2",
+      "End": "b11f90b795f142a49cd7903740bf079c",
+      "Id": "b4ce514252af45ccb0f2e683c8a2be4b"
+    },
+    {
+      "Start": "519424b0a8bb425a8c4151365cd74496",
+      "End": "d0bab90ad55a496b859341dd1670f9a6",
+      "Id": "ee43f69aac054cff856ccea2264ff542"
+    },
+    {
+      "Start": "96100776c20e441aa9d6c3bf08e9ce1e",
+      "End": "4666664df284470499c763c6c4e74b1b",
+      "Id": "8e465163d0c64a49bc384f969a29f16d"
+    },
+    {
+      "Start": "8add3ec2bef2495fb896b6972f32b7d6",
+      "End": "028ab574b0b34dda942bb6266cf79eea",
+      "Id": "fb6a41821d2646f8ad077b689a82c358"
+    },
+    {
+      "Start": "583c2377d08a4fdcb7e992dfcb658b87",
+      "End": "29d3c8fbabfe4ede8ac357bcde92cdb8",
+      "Id": "6f13993908d74e78b54b6bac65776ee8"
+    },
+    {
+      "Start": "2567d087c5ff410e95e567b5c2bcc3f3",
+      "End": "83e46b0df6334a93a96c15accbac19db",
+      "Id": "36fa010e81e5400ca711eccbc9681019"
+    },
+    {
+      "Start": "f290311452bf418083a625f9e3748a39",
+      "End": "063f507b0e054d238cba06f0813a9b5a",
+      "Id": "73f2b91dd1d8452d82a303689c676c23"
+    },
+    {
+      "Start": "f290311452bf418083a625f9e3748a39",
+      "End": "e9c3886335cc40bfaf9d3413698bf275",
+      "Id": "55b41916fdc44bdba67d3fd177211c89"
+    }
+  ],
+  "Dependencies": [
+    "a1370551-a1d1-4a47-a1a3-8afdfd8f78aa",
+    "45a07cf0-da9c-497b-8835-7b8fbedd5671",
+    "2b08b874-ab51-4689-930b-f3e673995359",
+    "8cdef8e6-1c8e-4797-b5ae-d8f467afc8f2",
+    "d2a8c274-9163-4661-8784-5e976e583184",
+    "470bf74f-e4ab-486e-b5fe-120b4a327855",
+    "b1c08346-4bd4-4548-bce5-c6504f7a9586",
+    "be26ae5b-f9eb-40bb-96c8-4a49224b0e8e"
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 10000.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -38.881601992001052,
+      "EyeY": 42.121732265379052,
+      "EyeZ": 187.92773392866326,
+      "LookX": 38.881601992001052,
+      "LookY": -42.121732265379052,
+      "LookZ": -187.92773392866326,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "PyScr Elements collector",
+        "Id": "ea03901e55814f5cacee00307f0d289a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1209.84058777117,
+        "Y": -1383.75328488981
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "eb76b6cb0b4f4bcc826986a4886176ff",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1697.5824310779481,
+        "Y": -1264.2236948193856
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK",
+        "Id": "ecffac5860544b21a9243942c41ecb60",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1482.66350853369,
+        "Y": -1381.56889572013
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK NAME",
+        "Id": "8a15a398fa6e473e93e1469a37f1e16e",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1531.97335655525,
+        "Y": -1326.10371846181
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Levels",
+        "Id": "47a16a4c4190421eb8000c79da7c9e9a",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1502.7209999795009,
+        "Y": -1179.6923582179611
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Py Script GetWallHeightLimit from Room",
+        "Id": "a4a030d0ed5d4dc4a6d755c1eda20ee4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1075.5631245799311,
+        "Y": -793.37012819336121
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "FamilyInstances.ByLine",
+        "Id": "2f5611915fef418b9080de00bbf3f0a7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1271.0407334994811,
+        "Y": -909.20759490857927
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Line.ByStartPointEndPoint",
+        "Id": "16fde175be42499e8ae8e5ccbf698a30",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 988.06942719083509,
+        "Y": -881.34036884150044
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Curve.EndPoint",
+        "Id": "7201d12dfd75461aa118fa67d1aec9a3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 750.4771610626849,
+        "Y": -854.23216828932743
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Curve.StartPoint",
+        "Id": "d076885b979b405ab4c81c1c9b77c82a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 750.73144105843494,
+        "Y": -942.0991948098964
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CW.TurnIntoList",
+        "Id": "cd3852bc7b884db188d40e2b97c88497",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -269.81450056503814,
+        "Y": -996.37406513890062
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.UniqueItems",
+        "Id": "4644f8153e7441ac9275a842be00a2bf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 67.7158921454928,
+        "Y": -910.78863694896609
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script FindInserts",
+        "Id": "04eacc13a2934eda8c46c01a937aaa9d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -13.478105564908844,
+        "Y": -707.42664328197111
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CW.DetailLine.FromCurve",
+        "Id": "4bf10a6b6ac948fa8e6fbed4187a6440",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -264.12565900256885,
+        "Y": -895.91138222707514
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK",
+        "Id": "d428467010dc4eb89b32fefb87c5c33c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1475.5147435156196,
+        "Y": -823.23628716376982
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK NAME",
+        "Id": "5d87ebfd0b134538b22e6ca72a7cfeaa",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1532.5868958919405,
+        "Y": -765.559098133135
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Levels",
+        "Id": "a493ae8908f441428d18d9268e37e126",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1494.6077957206817,
+        "Y": -707.36233861234155
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "PyScr Room collector",
+        "Id": "9e098bcccff54584a48d431ff29d8f56",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -1269.5215702053795,
+        "Y": -791.99784002904562
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script Split Geometry",
+        "Id": "61cbc78cd5db44118495c4c3778580f4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -903.34544212933622,
+        "Y": -1110.5996198535508
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Flatten",
+        "Id": "0307d51414f44fce8172e91526e120c1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -247.40507269678784,
+        "Y": -706.87053200756009
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Wall.Flip",
+        "Id": "085e5fea60a94036be120c18c0519289",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 175.34752488092738,
+        "Y": -710.22320596747011
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "7f3d5e2afe5945cc858c6d0562941b00",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -754.17856942263438,
+        "Y": -792.66030438709686
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Family Types",
+        "Id": "95b28f96f5834fdb98719bdaaf394b41",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 836.95807475575839,
+        "Y": -1054.9757212807572
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "PyScript ElementFilter.ByParameterValueContains",
+        "Id": "1cfe4f2af2934d3e8719a12927f23be7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -1041.9521385204575,
+        "Y": -560.86200554517745
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Filter Parameter",
+        "Id": "1221b9f1014f46b9a827eb25f9839894",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1359.4840894326728,
+        "Y": -529.34806665295241
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "6d85de8e1176475ca6b4ae03f925c977",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1285.2766283558162,
+        "Y": -427.42343303283525
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "GetBuiltInCategory",
+        "Id": "2ece32cabc71490e8213469080ead720",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -651.51156210194836,
+        "Y": -391.11970773212568
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "bad480565ccc44e589c01122ae3dc0e0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -1041.6245534100481,
+        "Y": -390.14690966202579
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "50d664f537a440f19bcbcbb993aa3394",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -254.1541582196935,
+        "Y": -389.52697546182515
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Py Script  WallHeightLimit",
+        "Id": "e5dd1fb683d34a109bdd8ded19ef35bb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -905.38863259589084,
+        "Y": -1338.3094762331875
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "9f07d6ab95024a108526a7620c60073a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -654.17799487116213,
+        "Y": -1337.8562219671578
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Py Script GetWallFinishes",
+        "Id": "a842610098224554a0e3de49a623b284",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -903.7952096152319,
+        "Y": -1447.6736214130242
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Py Script  WallHeightLimit",
+        "Id": "a700047eb0104ff09bacf03bcedfa3cc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -903.51719244806463,
+        "Y": -1234.6289534230289
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "WallFinishesByRoom",
+        "Id": "699c851c2bb346c4a6486cf05ea7e452",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -1510.9507645134993,
+        "Y": -1088.7341954998108
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Elements Fom Linked File in Room",
+        "Id": "4cda984d93474bdf805eca2abc7c8baf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1692.6021081781869,
+        "Y": -1655.2772396829926
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "ꟿ SelectLinkedElementsInOrder",
+        "Id": "2cb0a07a28714018a2b7de62b2e23b53",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1418.2811115655577,
+        "Y": -1655.4776312391562
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CW.Curve.SuperJoin",
+        "Id": "78d9efc71ef342a395f98ffa66b1f43f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 405.05902677316044,
+        "Y": -941.68037487522838
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "8d69f01862da49c284fdcbd501c0e21d",
+        "Title": "Element collector by level",
+        "Nodes": [
+          "ea03901e55814f5cacee00307f0d289a",
+          "eb76b6cb0b4f4bcc826986a4886176ff",
+          "ecffac5860544b21a9243942c41ecb60",
+          "8a15a398fa6e473e93e1469a37f1e16e",
+          "47a16a4c4190421eb8000c79da7c9e9a"
+        ],
+        "Left": -1707.5824310779481,
+        "Top": -1429.75328488981,
+        "Width": 670.741843306778,
+        "Height": 343.06092667184885,
+        "FontSize": 30.0,
+        "InitialTop": -1383.75328488981,
+        "InitialHeight": 349.06092667184885,
+        "TextblockHeight": 36.0,
+        "Background": "#FFE8F7AD"
+      },
+      {
+        "Id": "de841311f33a46529c06d404dfe249d2",
+        "Title": "Room collector by level",
+        "Nodes": [
+          "d428467010dc4eb89b32fefb87c5c33c",
+          "5d87ebfd0b134538b22e6ca72a7cfeaa",
+          "a493ae8908f441428d18d9268e37e126",
+          "9e098bcccff54584a48d431ff29d8f56",
+          "a4a030d0ed5d4dc4a6d755c1eda20ee4",
+          "7f3d5e2afe5945cc858c6d0562941b00"
+        ],
+        "Left": -1542.5868958919405,
+        "Top": -869.23628716376982,
+        "Width": 876.40832646930608,
+        "Height": 254.87394855142827,
+        "FontSize": 30.0,
+        "InitialTop": -823.23628716376982,
+        "InitialHeight": 260.87394855142827,
+        "TextblockHeight": 36.0,
+        "Background": "#FFFFC999"
+      },
+      {
+        "Id": "a20649789e6a444aa166eb0f5857227d",
+        "Title": "FindInserts (двери в стенах)",
+        "Nodes": [
+          "04eacc13a2934eda8c46c01a937aaa9d",
+          "0307d51414f44fce8172e91526e120c1",
+          "085e5fea60a94036be120c18c0519289"
+        ],
+        "Left": -257.40507269678784,
+        "Top": -756.22320596747011,
+        "Width": 631.75259757771528,
+        "Height": 168.35267395991002,
+        "FontSize": 30.0,
+        "InitialTop": -710.22320596747011,
+        "InitialHeight": 148.35267395991002,
+        "TextblockHeight": 36.0,
+        "Background": "#FFD8D8D8"
+      },
+      {
+        "Id": "0b5410f89b8c4781b118d9056d13cdc7",
+        "Title": "Взять линкованный элемент",
+        "Nodes": [
+          "4cda984d93474bdf805eca2abc7c8baf",
+          "2cb0a07a28714018a2b7de62b2e23b53"
+        ],
+        "Left": -1702.6021081781869,
+        "Top": -1708.4776312391562,
+        "Width": 518.32099661262919,
+        "Height": 198.20039155616359,
+        "FontSize": 36.0,
+        "InitialTop": -1655.4776312391562,
+        "InitialHeight": 145.20039155616359,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 1855.7826832871974,
+    "Y": 871.18933685294428,
+    "Zoom": 0.94358676784899786
+  }
+}

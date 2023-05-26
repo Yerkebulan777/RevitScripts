@@ -1,0 +1,330 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "SetFamilyParameterAndValueInProject",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "DSCore.List": {
+        "Key": "DSCore.List",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import sys\r\n#sys.path.append('C:\\Program Files\\IronPython 2.7\\Lib')\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport codecs\r\n\r\ntry:\r\n\tfilePath = IN[0]\r\n\twith codecs.open(filePath, 'rb', \"utf-8\") as inf:\r\n\t\tlines = inf.readlines()\r\n\tOUT = ''.join(lines)\r\nexcept:\r\n\tOUT = \"No file\"",
+      "VariableInputPorts": true,
+      "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+      "Inputs": [
+        {
+          "Id": "7463dc1e3f584086af4797b96e73b831",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c53d58ae70ab459dad42e87d420eb885",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonStringNode, PythonNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b7f7a76146b04277a72d4d60d30d583d",
+      "Inputs": [
+        {
+          "Id": "cf981f8df02f4d07936f99eb0a24dae2",
+          "Name": "script",
+          "Description": "Сценарий Python для запуска.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5e21a14f6be2406e830586a255b9aed6",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b516350a0a9a482bbca1c6f8c803cf76",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "eef3bf9a478443e59302ee11cd40a3ed",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение сценария IronPython из строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\YandexDisk\\RevitExportConfig\\DynamoScripts\\SetFamilyParameterAndValueInProject.py",
+      "InputValue": "..\\DynamoScripts\\SetFamilyParameterAndValueInProject.py",
+      "NodeType": "ExtensionNode",
+      "Id": "298105726a5946948913e4a66b568d11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "161f783c2d9b4b71a27f039345b2e006",
+      "Inputs": [
+        {
+          "Id": "b8d1a49d36d842e494278b983368801a",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4914b330b24b453486dfc6d31b9d0383",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "551aa58e67104221a69e656f7cf06a62",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cb1a33794f9141799cac029701800e17",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "Orchid.E.RevitProject.Common.SharedParameter, OrchidRE",
+      "SelectedIndex": -1,
+      "NodeType": "ExtensionNode",
+      "Id": "f6d26aace4894fa3aef43c9b8716ce4a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "84339c03905c408fb0f9b3924eda1a73",
+          "Name": "Parameter",
+          "Description": "Выбрано Parameter",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Dropdown for shared parameters in the document"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c53d58ae70ab459dad42e87d420eb885",
+      "End": "cf981f8df02f4d07936f99eb0a24dae2",
+      "Id": "080bbd7a6ed6464798f3b9517b316ea5"
+    },
+    {
+      "Start": "eef3bf9a478443e59302ee11cd40a3ed",
+      "End": "b8d1a49d36d842e494278b983368801a",
+      "Id": "166a7df1f57d462da6cb8502bd379abc"
+    },
+    {
+      "Start": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+      "End": "7463dc1e3f584086af4797b96e73b831",
+      "Id": "bf65a9a0ae2242b78da3e7cd91696f17"
+    },
+    {
+      "Start": "cb1a33794f9141799cac029701800e17",
+      "End": "b516350a0a9a482bbca1c6f8c803cf76",
+      "Id": "03d55ee6932041829757f317a4d9c486"
+    },
+    {
+      "Start": "84339c03905c408fb0f9b3924eda1a73",
+      "End": "5e21a14f6be2406e830586a255b9aed6",
+      "Id": "7418d1ba24cf4fdd973464e82b229a2c"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -90.457888696737115,
+      "EyeY": 19.892351850752256,
+      "EyeZ": 79.498939411118528,
+      "LookX": 90.457888696737115,
+      "LookY": -19.892351850752256,
+      "LookZ": -79.498939411118528,
+      "UpX": -0.039311717152337534,
+      "UpY": 0.99862953475463434,
+      "UpZ": 0.034549113018973593
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Find file and import it!",
+        "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 882.46674781648971,
+        "Y": 478.83567172804987
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script From String",
+        "Id": "b7f7a76146b04277a72d4d60d30d583d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1212.8009725591123,
+        "Y": 477.46654627074417
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к файлу Python:",
+        "Id": "298105726a5946948913e4a66b568d11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 482.0797492898144,
+        "Y": 478.60134455356484
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "161f783c2d9b4b71a27f039345b2e006",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1451.9122350123396,
+        "Y": 477.07059049164087
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "isInstance Parameter (экзепляр)",
+        "Id": "551aa58e67104221a69e656f7cf06a62",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 870.42038133578023,
+        "Y": 674.07598165212221
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Shared Parameters",
+        "Id": "f6d26aace4894fa3aef43c9b8716ce4a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 869.54573614741719,
+        "Y": 582.50448013802031
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "468a38177729493c8057a5e1744b9cf7",
+        "Title": "Вставка общего параметра в семейства (в проекте, без сохранения семейства)\r\nПараметр будет установлен во все семейства по связанной категории параметра \r\nНеобходимо что бы в проект был загружен ФОП общего параметра\r\n\r\n",
+        "Nodes": [
+          "b7f7a76146b04277a72d4d60d30d583d",
+          "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+          "298105726a5946948913e4a66b568d11",
+          "161f783c2d9b4b71a27f039345b2e006",
+          "551aa58e67104221a69e656f7cf06a62",
+          "f6d26aace4894fa3aef43c9b8716ce4a"
+        ],
+        "Left": 472.0797492898144,
+        "Top": 359.07059049164087,
+        "Width": 1279.8324857225252,
+        "Height": 495.99999999999994,
+        "FontSize": 18.0,
+        "InitialTop": 477.07059049164087,
+        "InitialHeight": 342.00539116048134,
+        "TextblockHeight": 108.0,
+        "Background": "#FFD4B6DB"
+      }
+    ],
+    "X": -295.6094592933548,
+    "Y": -226.90293206377169,
+    "Zoom": 0.980216220433363
+  }
+}

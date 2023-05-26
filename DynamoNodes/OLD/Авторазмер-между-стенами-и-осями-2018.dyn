@@ -1,0 +1,204 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Авторазмер-между-стенами-и-осями-2018",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "6703b6e1928a405f8f6ed255caa20fee",
+      "Name": "restart",
+      "Type": "boolean",
+      "Value": "false",
+      "Description": "Выбор между значениями true и false."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "6703b6e1928a405f8f6ed255caa20fee",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4e2a69558eaf4600acf1937c4984dfcf",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "b34226a1-faf6-4b93-9d0c-f06edcb43406-003b85ad",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2696",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d269a",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d269b",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d269f",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d26a0",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d276f",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2770",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2771",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2773",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2775",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d277b",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d277d",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d277f",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2783",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2785",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d278e",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d278f",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2792",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2793",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2796",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d2798",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d279e",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27a0",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27a1",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27a5",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27a7",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27c0",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27c1",
+        "d089f419-5210-4450-84c5-fd08793948a7-003d27c4",
+        "abf95e9e-92bf-4d95-b9e0-5e34e8747c12-00409e15"
+      ],
+      "Id": "178e3fa961e44e6fa2bc48b6e31a14fb",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2bb92e1a34bf4c78804e17d1b55b33a1",
+          "Name": "Elements",
+          "Description": "Выбранные элементы.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\n\nclr.AddReference('RevitNodes')\nimport Revit\nclr.ImportExtensions(Revit.GeometryConversion)\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference('RevitServices')\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference('ProtoGeometry')\n#from Autodesk.DesignScript.Geometry import *\nimport Autodesk.DesignScript.Geometry as ge # ИБО КОНФЛИКТ REFERENCE !!!!!!!!\n\ndoc = DocumentManager.Instance.CurrentDBDocument \n\nwalls=[]\ngrids=[]\nlengths=[]\ninc = 304.8\nfor i in IN[0]:\n\ttypename = i.GetType().Name\n\tif typename == \"Wall\":\n\t\twalls.append(i)\n\t\tlengths.append(UnwrapElement(i).Location.Curve.Length * 304.8)\n\telif typename == \"Grid\":\n\t\tgrids.append(i)\n\nfor i in walls:\n\tif (UnwrapElement(i).Location.Curve.Length * 304.8) == min(lengths):\n\t\tshortWall = i\n\n\ncurve = UnwrapElement(shortWall).Location.Curve.ToProtoType()\npt0=curve.PointAtParameter(0.5)\nx0 = curve.PointAtParameter(0).X\nx1 = curve.PointAtParameter(1).X\ny0 = curve.PointAtParameter(0).Y\ny1 = curve.PointAtParameter(1).Y\nif abs(y0-y1)<10:\n\tpt1= ge.Point.ByCoordinates(pt0.X, pt0.Y+1000, pt0.Z)\n\tline= ge.Line.ByStartPointEndPoint(pt0,pt1).ToRevitType()\nelif abs(x0-x1)<10:\n\tpt1= ge.Point.ByCoordinates(pt0.X+1000, pt0.Y, pt0.Z)\n\tline= ge.Line.ByStartPointEndPoint(pt0,pt1).ToRevitType()\n\n\nwalls = UnwrapElement(walls)\ngrids = UnwrapElement(grids)\nRef = ReferenceArray()\nopt = Options()\nopt.ComputeReferences = True\nopt.IncludeNonVisibleObjects = True\nopt.View = doc.ActiveView\n\nfor grid in grids:\n\tfor obj in grid.get_Geometry(opt):\n\t\tif isinstance(obj, Line):\n\t\t\tgline = obj\n\t\t\tRef.Append(gline.Reference)\n\t\t\nfor element in walls:\n\ta = HostObjectUtils.GetSideFaces(element, ShellLayerType.Exterior)\n\tfor i in a:\n\t\tRef.Append(i)\n\tb = HostObjectUtils.GetSideFaces(element, ShellLayerType.Interior)\n\tfor i in b:\n\t\tRef.Append(i)\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n\nnewdim = doc.Create.NewDimension(doc.ActiveView, line, Ref).ToDSType(False)\n\nTransactionManager.Instance.TransactionTaskDone()\nOUT=newdim\n",
+      "VariableInputPorts": true,
+      "Id": "15da382888e84957a709b91de4c60853",
+      "Inputs": [
+        {
+          "Id": "73cdfef661d84c4887a3de56e45755be",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "abe00a18184640f091a4b7c45606baf9",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b460988d1643401f96223d2192f04ae1",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "4e2a69558eaf4600acf1937c4984dfcf",
+      "End": "abe00a18184640f091a4b7c45606baf9",
+      "Id": "62a1eb1a8ad345669837b600a9c37a6c"
+    },
+    {
+      "Start": "2bb92e1a34bf4c78804e17d1b55b33a1",
+      "End": "73cdfef661d84c4887a3de56e45755be",
+      "Id": "9ed74cd20e664d03b3ef409de1477131"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.1.5055",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "restart",
+        "Id": "6703b6e1928a405f8f6ed255caa20fee",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1539.5122323622,
+        "Y": 1023.90294907062
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "178e3fa961e44e6fa2bc48b6e31a14fb",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1897.4902781078815,
+        "Y": 867.52964806166756
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "15da382888e84957a709b91de4c60853",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1332.93680199363,
+        "Y": 916.799602449373
+      }
+    ],
+    "Annotations": [],
+    "X": 1846.7283103110678,
+    "Y": -295.74499626334523,
+    "Zoom": 0.71533726729413383
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "SharedParameterDelete",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "DSCore.List": {
+        "Key": "DSCore.List",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Orchid.E.RevitProject.Common.SharedParameter, OrchidRE",
+      "SelectedIndex": 0,
+      "NodeType": "ExtensionNode",
+      "Id": "e00402ae4025485cbbe27eb508c53ea6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f59e31ef3ab94fb7bee9f810ee288699",
+          "Name": "Parameter",
+          "Description": "Выбрано Parameter",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Dropdown for shared parameters in the document"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Orchid.RevitProject.Elements.Element.Delete@Revit.Elements.Element",
+      "Id": "1d3f3877276945c08610c69c859fa121",
+      "Inputs": [
+        {
+          "Id": "986bac57f66c44dfa299e6c2c9fca6a9",
+          "Name": "element",
+          "Description": "Element as Dynamo type.\n\nElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d252d662ba2e40fbbf760771693aa85f",
+          "Name": "boolean",
+          "Description": "Boolean value if element is deleted (if element existed).",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Delete elements. Note: If a wall element is a member of a stacked wall, will this element lead to the entire stacked wall will be deleted. The other stacked wall members will return false.\n\nElement.Delete (element: Element): bool"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "1c6d48c47636450988ea61584a9743bb",
+      "Inputs": [
+        {
+          "Id": "5233ad546da44dba8e06d0eb8b81867b",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2ae58e6305104b868ad74d2c14a4089e",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "f59e31ef3ab94fb7bee9f810ee288699",
+      "End": "986bac57f66c44dfa299e6c2c9fca6a9",
+      "Id": "d4589a93ce894a3098124bed2bac8734"
+    },
+    {
+      "Start": "d252d662ba2e40fbbf760771693aa85f",
+      "End": "5233ad546da44dba8e06d0eb8b81867b",
+      "Id": "6882601ecfa84b3f8900360d564f99af"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -90.457888696737115,
+      "EyeY": 19.892351850752256,
+      "EyeZ": 79.498939411118528,
+      "LookX": 90.457888696737115,
+      "LookY": -19.892351850752256,
+      "LookZ": -79.498939411118528,
+      "UpX": -0.039311717152337534,
+      "UpY": 0.99862953475463434,
+      "UpZ": 0.034549113018973593
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Shared Parameters",
+        "Id": "e00402ae4025485cbbe27eb508c53ea6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1318.9100952168792,
+        "Y": 669.6756354717885
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.Delete",
+        "Id": "1d3f3877276945c08610c69c859fa121",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1671.7907803290345,
+        "Y": 669.34508135250849
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "1c6d48c47636450988ea61584a9743bb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1934.2974992677846,
+        "Y": 669.99938314054873
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "4c3b10fcb9b741c0b315c30045b15d12",
+        "Title": "Shared parameter Delete",
+        "Nodes": [
+          "e00402ae4025485cbbe27eb508c53ea6",
+          "1d3f3877276945c08610c69c859fa121",
+          "1c6d48c47636450988ea61584a9743bb"
+        ],
+        "Left": 1308.9100952168792,
+        "Top": 616.34508135250849,
+        "Width": 713.38740405090539,
+        "Height": 162.65430178804024,
+        "FontSize": 36.0,
+        "InitialTop": 669.34508135250849,
+        "InitialHeight": 146.48256586356888,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -1099.3882320502441,
+    "Y": -485.27969632120573,
+    "Zoom": 1.1479330840479289
+  }
+}

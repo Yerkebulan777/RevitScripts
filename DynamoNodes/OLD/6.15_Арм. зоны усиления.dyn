@@ -1,0 +1,244 @@
+<Workspace Version="1.3.2.2480" X="1038.08610983169" Y="-319.696596090781" zoom="0.56233829426619" ScaleFactor="100" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="False">
+  <NamespaceResolutionMap>
+    <ClassMap partialName="Math.PI" resolvedName="DSCore.Math" assemblyName="DSCoreNodes.dll" />
+  </NamespaceResolutionMap>
+  <Elements>
+    <PythonNodeModels.PythonNode guid="83488e8d-4b21-4921-984d-55edafabf730" type="PythonNodeModels.PythonNode" nickname="PyS: Зона усиления плиты" x="-1398.3779028019" y="849.538194009971" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="4">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
+      <PortInfo index="3" default="False" />
+      <Script>#Подключение библиотек
+import clr
+from System.Threading import Thread, ThreadStart
+from operator import itemgetter
+import math
+clr.AddReference('ProtoGeometry')
+from Autodesk.DesignScript.Geometry import *
+clr.AddReference('RevitAPI')
+from Autodesk.Revit.DB import *
+import Autodesk
+DPoint = Autodesk.DesignScript.Geometry.Point
+DPolyCurve = Autodesk.DesignScript.Geometry.PolyCurve
+DCurve = Autodesk.DesignScript.Geometry.Curve
+DLine = Autodesk.DesignScript.Geometry.Line
+DSurface = Autodesk.DesignScript.Geometry.Surface
+DPolySurface = Autodesk.DesignScript.Geometry.PolySurface
+DGeometry = Autodesk.DesignScript.Geometry.Geometry
+DSolid = Autodesk.DesignScript.Geometry.Solid
+DPlane = Autodesk.DesignScript.Geometry.Plane
+DVector = Autodesk.DesignScript.Geometry.Vector
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+doc = DocumentManager.Instance.CurrentDBDocument
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.Elements)
+from System.Collections.Generic import *
+RS = Autodesk.Revit.DB.Structure
+#--------------Взятие элементов------------------------
+all_rebar_types = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rebar).WhereElementIsElementType().ToElements()
+rebar_bar_types = []
+rebar_hook_types = []
+rebar_shapes = []
+for rebar_type in all_rebar_types:
+	name = rebar_type.GetType().Name
+	if name == "RebarBarType":
+		rebar_bar_types.append(rebar_type)	
+	elif name == "RebarHookType":
+		rebar_hook_types.append(rebar_type)
+	elif name == "RebarShape":
+		rebar_shapes.append(rebar_type)
+r_orient = RS.RebarHookOrientation()	
+#---------------------------------------------------------------
+hook_type = None
+#--------------Входные данные--------------------
+Dy_el = IN[0]
+Dy_g = Dy_el.Geometry()[0]
+el = UnwrapElement(Dy_el)
+arm = UnwrapElement(IN[1])
+pars1 = IN[2]
+up = IN[3]
+message=[]
+#------------Берем параметры------
+par_l1 = pars1[0]
+par_w1 = pars1[1]
+par_s1 = pars1[2]
+#------------Вычисляем параметры----------
+name = arm.Name
+RebarType1 = None
+for rt in rebar_bar_types:
+	name1 = rt.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString()
+	if name1==name:
+		RebarType1 = rt
+#-------------ФУНКЦИИ----------------------
+def toPoint(pt):
+	x=pt.X*304.8
+	y=pt.Y*304.8
+	z=pt.Z*304.8
+	return DPoint.ByCoordinates(x,y,z)
+def toXYZ(pt):
+	x=pt.X/304.8
+	y=pt.Y/304.8
+	z=pt.Z/304.8
+	return XYZ(x,y,z)
+def get_zs(el,parameter):
+	zs_id = el.get_Parameter(parameter).AsElementId()
+	zs_el = doc.GetElement(zs_id)
+	zs = zs_el.CoverDistance
+	return zs
+def get_pars_floor(el):
+	floor = el
+	type = get_type(floor)
+	val_thickness = type.get_Parameter(BuiltInParameter.FLOOR_ATTR_DEFAULT_THICKNESS_PARAM).AsDouble()
+	zs_other = get_zs(floor,BuiltInParameter.CLEAR_COVER_OTHER)
+	zs_top = get_zs(floor,BuiltInParameter.CLEAR_COVER_TOP)
+	zs_bottom = get_zs(floor,BuiltInParameter.CLEAR_COVER_BOTTOM)
+	return val_thickness,zs_other,zs_top,zs_bottom
+def get_type(el):
+	type_id = el.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM).AsElementId()
+	type = doc.GetElement(type_id)
+	return type
+def get_new_point(x1,y1,z1,fx,fy,a):
+	x2 = x1+(fx)*math.cos(math.radians(a))-(fy)*math.sin(math.radians(a))
+	y2 = y1+(fx)*math.sin(math.radians(a))+(fy)*math.cos(math.radians(a))
+	pt2 = XYZ(x2,y2,z1)
+	#pt2 = DPoint.ByCoordinates(x2,y2,z1)
+	return pt2
+def get_angle(a):
+	x1 = a.X
+	y1 = a.Y
+	a1 = DVector.ByCoordinates(x1,y1,0)
+	angle = DVector.AngleAboutAxis(a1,DVector.XAxis(),DVector.ZAxis())
+	return angle
+def get_lines(stirrup_pts):
+	list=[]
+	i=0
+	for pt in stirrup_pts:
+		if i==0:
+			new_pt1=pt
+			new_pt3=pt
+		else:
+			list.append(Line.CreateBound(new_pt1,pt))
+			new_pt1=pt			
+		i=i+1
+	return list	
+def iterate(src, res):
+	for k, i in enumerate(src):
+		vec1 = Vector.ByTwoPoints(i.EndPoint, res[-1].StartPoint).Length 
+		vec2 = Vector.ByTwoPoints(i.StartPoint, res[-1].EndPoint).Length 
+		vec3 = Vector.ByTwoPoints(i.EndPoint, res[-1].EndPoint).Length
+		vec4 = Vector.ByTwoPoints(i.StartPoint, res[-1].StartPoint).Length
+		gap = 0.000001 
+		if vec1 &lt; gap or vec2 &lt; gap or vec3 &lt; gap or vec4 &lt; gap :
+			res.Add(src.pop(k)) 
+			return iterate(src, res) 
+	return res	
+def get_z(slab):	
+	crvs=[]
+	_points = None
+	z3 = None
+	geom = slab
+	faces = geom.Faces
+	facelist=[]
+	areas=[]
+	for face in faces:
+		areas.append(face.SurfaceGeometry().Area)
+	A1 = max(areas)
+	i=0
+	for A2 in areas:
+		if round(A2)==round(A1):
+			facelist.append(faces[i])
+		i=i+1	
+	f2=None
+	z=-1000
+	for face in facelist:		
+		pts = face.Vertices
+		z2 = pts[0].PointGeometry.Z
+		if z2&gt;z:
+			f2=face
+			z=z2
+	return z
+def get_center(el):
+	bb = el.BoundingBox
+	p1 = bb.MinPoint
+	p2 = bb.MaxPoint
+	x = (p1.X+p2.X)/2
+	y = (p1.Y+p2.Y)/2
+	z = (p1.Z+p2.Z)/2
+	return XYZ(x,y,z)
+#----ОСНОВНОЙ КОД-----
+pars = get_pars_floor(el)
+val_thickness = pars[0]
+zs_other = pars[1]
+zs_top = pars[2]
+zs_bottom = pars[3]
+val_l1 = arm.LookupParameter(par_l1).AsDouble()
+val_w1 = arm.LookupParameter(par_w1).AsDouble()
+s1 = arm.LookupParameter(par_s1).AsDouble()
+pt1 = arm.Location.Point
+z = get_z(Dy_g)
+
+TransactionManager.Instance.EnsureInTransaction(doc)
+angle = -get_angle(arm.HandOrientation)
+x1 = pt1.X
+y1 = pt1.Y
+z1 = z
+if up:
+	k = z1-zs_top
+else:
+	k = z1-val_thickness+zs_bottom
+z1 = k	
+pt1 = XYZ(x1,y1,z1)
+pt2 = get_new_point(x1,y1,z1,val_l1,0,angle)
+stirrup = [Line.CreateBound(pt1,pt2)]
+o1 = arm.FacingOrientation
+n = val_w1//s1+1
+last_s = round((val_w1*304.8-(n-1)*s1*304.8)/10)*10/304.8
+norm2 = o1 #XYZ(o1.X,o1.Y,o1.Z)
+rebar = RS.Rebar.CreateFromCurves(doc,RS.RebarStyle.StirrupTie,RebarType1,hook_type,hook_type,el,norm2,stirrup,RS.RebarHookOrientation.Right,RS.RebarHookOrientation.Left,True,True)
+rebar.SetLayoutAsNumberWithSpacing(n,s1,True,True,True)
+TransactionManager.Instance.TransactionTaskDone()
+#Назначьте вывод переменной OUT.	
+OUT = rebar</Script>
+    </PythonNodeModels.PythonNode>
+    <Dynamo.Nodes.DSModelElementSelection guid="b9f34727-d05e-46d6-8dbc-260eda57930f" type="Dynamo.Nodes.DSModelElementSelection" nickname="Выберите плиту перекрытия" x="-1766.71560677398" y="771.329046686426" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <instance id="abd0f9e5-dae3-4853-b435-68556193cc69-000b3df6" />
+    </Dynamo.Nodes.DSModelElementSelection>
+    <Dynamo.Nodes.DSModelElementSelection guid="ee846c69-c23c-4fbd-a947-e9e3733cdda8" type="Dynamo.Nodes.DSModelElementSelection" nickname="Выберите 2D зону усиления" x="-1761.17118005572" y="892.575944164012" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <instance id="79a80630-8e89-4ab6-bbb2-239889bcab0f-000b69bd" />
+    </Dynamo.Nodes.DSModelElementSelection>
+    <Dynamo.Graph.Nodes.CodeBlockNodeModel guid="cb6cc65f-b6bb-4ed1-9141-fcaf7f01c1f6" type="Dynamo.Graph.Nodes.CodeBlockNodeModel" nickname="Code Block" x="-1573.79538667847" y="1050.97589923043" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" CodeText="&quot;Арм.Размер А&quot;;&#xA;&quot;Арм.ШиринаЗоны&quot;;&#xA;&quot;ARM_Шаг&quot;;" ShouldFocus="false" />
+    <CoreNodeModels.CreateList guid="4d2d4130-8238-4662-be83-ee669c769fe9" type="CoreNodeModels.CreateList" nickname="List.Create" x="-1363.61330883729" y="1043.27856367705" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" inputcount="3">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
+    </CoreNodeModels.CreateList>
+    <CoreNodeModels.Input.BoolSelector guid="82177627-7d59-4c0d-9708-c035c5fb6f96" type="CoreNodeModels.Input.BoolSelector" nickname="Низ / Верх" x="-1758.75682308039" y="1013.0503913395" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>False</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="b9f34727-d05e-46d6-8dbc-260eda57930f" start_index="0" end="83488e8d-4b21-4921-984d-55edafabf730" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="ee846c69-c23c-4fbd-a947-e9e3733cdda8" start_index="0" end="83488e8d-4b21-4921-984d-55edafabf730" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="cb6cc65f-b6bb-4ed1-9141-fcaf7f01c1f6" start_index="0" end="4d2d4130-8238-4662-be83-ee669c769fe9" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="cb6cc65f-b6bb-4ed1-9141-fcaf7f01c1f6" start_index="1" end="4d2d4130-8238-4662-be83-ee669c769fe9" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="cb6cc65f-b6bb-4ed1-9141-fcaf7f01c1f6" start_index="2" end="4d2d4130-8238-4662-be83-ee669c769fe9" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="4d2d4130-8238-4662-be83-ee669c769fe9" start_index="0" end="83488e8d-4b21-4921-984d-55edafabf730" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="82177627-7d59-4c0d-9708-c035c5fb6f96" start_index="0" end="83488e8d-4b21-4921-984d-55edafabf730" end_index="3" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="6f3ceee8-8e66-439f-8f8b-70de4f540861" annotationText="Ввод" left="-1776.71560677398" top="725.329046686426" width="221.333333333333" height="355.388011319741" fontSize="30" InitialTop="771.329046686426" InitialHeight="339.388011319743" TextblockHeight="36" backgrouund="#FFC1D676">
+      <Models ModelGuid="b9f34727-d05e-46d6-8dbc-260eda57930f" />
+      <Models ModelGuid="ee846c69-c23c-4fbd-a947-e9e3733cdda8" />
+      <Models ModelGuid="82177627-7d59-4c0d-9708-c035c5fb6f96" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+  </Annotations>
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="-495.379211425781" eyeY="-496.430938720703" eyeZ="672.996520996094" lookX="495.379211425781" lookY="496.430938720703" lookZ="-672.996520996094" upX="0.186462506651878" upY="-0.949242651462555" upZ="-0.253318279981613" />
+  </Cameras>
+</Workspace>

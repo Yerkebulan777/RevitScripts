@@ -1,0 +1,331 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "ReloadNestedFamily",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "DSCore.List": {
+        "Key": "DSCore.List",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import sys\r\n#sys.path.append('C:\\Program Files\\IronPython 2.7\\Lib')\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport codecs\r\n\r\ntry:\r\n\tfilePath = IN[0]\r\n\twith codecs.open(filePath, 'rb', \"utf-8\") as inf:\r\n\t\tlines = inf.readlines()\r\n\tOUT = ''.join(lines)\r\nexcept:\r\n\tOUT = \"No file\"",
+      "VariableInputPorts": true,
+      "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+      "Inputs": [
+        {
+          "Id": "7463dc1e3f584086af4797b96e73b831",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c53d58ae70ab459dad42e87d420eb885",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonStringNode, PythonNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b7f7a76146b04277a72d4d60d30d583d",
+      "Inputs": [
+        {
+          "Id": "cf981f8df02f4d07936f99eb0a24dae2",
+          "Name": "script",
+          "Description": "Сценарий Python для запуска.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1e0f182970f844b98083496b8c6c9394",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a55e04000cef476084f8f59d93a0244d",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "eef3bf9a478443e59302ee11cd40a3ed",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение сценария IronPython из строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\YandexDisk\\RevitExportConfig\\DynamoScripts\\ReloadNestedFamilies.py",
+      "InputValue": "..\\DynamoScripts\\ReloadNestedFamilies.py",
+      "NodeType": "ExtensionNode",
+      "Id": "298105726a5946948913e4a66b568d11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "161f783c2d9b4b71a27f039345b2e006",
+      "Inputs": [
+        {
+          "Id": "b8d1a49d36d842e494278b983368801a",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4914b330b24b453486dfc6d31b9d0383",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 398,
+      "NodeType": "ExtensionNode",
+      "Id": "6a8d7483d1bc48e8a098b028526fd66f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c669ada4cb7c4773a2353a412c2e17d0",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "K:\\02_Библиотека\\AR\\01_Семейства\\Каркас несущий и Перемычка\\Перемычка\\Металлическая перемычка.rfa",
+      "InputValue": "K:\\02_Библиотека\\AR\\01_Семейства\\Каркас несущий и Перемычка\\Перемычка\\Металлическая перемычка.rfa",
+      "NodeType": "ExtensionNode",
+      "Id": "febd6311f4df4038ba3e65c1293192d2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c350a0c654794c18afc4d6f0c1a6a941",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c53d58ae70ab459dad42e87d420eb885",
+      "End": "cf981f8df02f4d07936f99eb0a24dae2",
+      "Id": "c08dc57928ca455abd2a7a2382a5ff14"
+    },
+    {
+      "Start": "eef3bf9a478443e59302ee11cd40a3ed",
+      "End": "b8d1a49d36d842e494278b983368801a",
+      "Id": "166a7df1f57d462da6cb8502bd379abc"
+    },
+    {
+      "Start": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+      "End": "7463dc1e3f584086af4797b96e73b831",
+      "Id": "bf65a9a0ae2242b78da3e7cd91696f17"
+    },
+    {
+      "Start": "c669ada4cb7c4773a2353a412c2e17d0",
+      "End": "a55e04000cef476084f8f59d93a0244d",
+      "Id": "d85037c77c4a4226bae64c898d158ae9"
+    },
+    {
+      "Start": "c350a0c654794c18afc4d6f0c1a6a941",
+      "End": "1e0f182970f844b98083496b8c6c9394",
+      "Id": "6ae5b36010d243d3a48f0ca301c46276"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": 89.7235021396701,
+      "EyeY": 159.33123109806149,
+      "EyeZ": 70.578481402797593,
+      "LookX": -89.7235021396701,
+      "LookY": -159.33123109806149,
+      "LookZ": -70.578481402797593,
+      "UpX": -0.52591766729316469,
+      "UpY": 0.74314482547742911,
+      "UpZ": -0.41369841140031327
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Find file and import it!",
+        "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1244.6877612765468,
+        "Y": 612.83778747879649
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script From String",
+        "Id": "b7f7a76146b04277a72d4d60d30d583d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1551.86590377429,
+        "Y": 612.219030972376
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к файлу Python:",
+        "Id": "298105726a5946948913e4a66b568d11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 918.35676103546666,
+        "Y": 613.34357548506284
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "161f783c2d9b4b71a27f039345b2e006",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1846.1800314433442,
+        "Y": 611.54073725088449
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "6a8d7483d1bc48e8a098b028526fd66f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1227.20457717293,
+        "Y": 814.727152479864
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к вложенному семейству",
+        "Id": "febd6311f4df4038ba3e65c1293192d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 909.7792249231602,
+        "Y": 718.80452234878294
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "468a38177729493c8057a5e1744b9cf7",
+        "Title": "",
+        "Nodes": [
+          "b7f7a76146b04277a72d4d60d30d583d",
+          "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+          "298105726a5946948913e4a66b568d11",
+          "161f783c2d9b4b71a27f039345b2e006",
+          "febd6311f4df4038ba3e65c1293192d2",
+          "6a8d7483d1bc48e8a098b028526fd66f"
+        ],
+        "Left": 899.7792249231602,
+        "Top": 565.54073725088449,
+        "Width": 1246.400806520184,
+        "Height": 424.0,
+        "FontSize": 30.0,
+        "InitialTop": 611.54073725088449,
+        "InitialHeight": 348.18641522897951,
+        "TextblockHeight": 36.0,
+        "Background": "#FFD4B6DB"
+      }
+    ],
+    "X": -788.14682631567212,
+    "Y": -444.06960167839384,
+    "Zoom": 0.97118830969191161
+  }
+}

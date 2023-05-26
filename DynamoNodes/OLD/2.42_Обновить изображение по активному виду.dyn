@@ -1,0 +1,67 @@
+<Workspace Version="1.3.3.4111" X="924.901535282258" Y="-616.903533646903" zoom="1.45721790230586" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+  <NamespaceResolutionMap />
+  <Elements>
+    <PythonNodeModels.PythonNode guid="30897ff4-ba80-453c-b710-2cfdd364e822" type="PythonNodeModels.PythonNode" nickname="Python Script" x="-341.059216512386" y="571.159954367564" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="1">
+      <PortInfo index="0" default="False" />
+      <Script>import clr
+import sys
+sys.path.append(r'C:\Program Files (x86)\IronPython 2.7\Lib')
+import os
+appdata = os.getenv('APPDATA')
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+clr.AddReference("RevitAPI")
+import Autodesk
+from Autodesk.Revit.DB import *
+clr.AddReference('System.Windows.Forms')
+clr.AddReference('System.Drawing')
+from System.Drawing import *
+from System.Windows.Forms import *
+doc = DocumentManager.Instance.CurrentDBDocument
+uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument
+views = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).WhereElementIsNotElementType().ToElements()
+images = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RasterImages).WhereElementIsElementType().ToElements()
+ex_opts = ImageExportOptions()
+ex_opts.PixelSize = 3000
+
+legend = doc.ActiveView
+TransactionManager.Instance.EnsureInTransaction(doc)
+name = legend.get_Parameter(BuiltInParameter.VIEW_NAME).AsString()
+file = appdata+"\\"+name+".jpg"
+ex_opts.FilePath = file
+doc.ExportImage(ex_opts)
+check=0
+for image in images:
+	name2 = image.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString()
+	if name2==name:
+		image.ReloadFrom(file)
+		image.Name = name
+		check=1
+		break
+if check==0:	
+	view2 = ImageType.Create(doc,file)
+	view2.Name = name
+os.remove(file)	
+TransactionManager.Instance.TransactionTaskDone()
+TransactionManager.Instance.ForceCloseTransaction()
+	
+OUT = "ok"
+
+</Script>
+    </PythonNodeModels.PythonNode>
+    <CoreNodeModels.Input.BoolSelector guid="c2356ef0-b014-4d22-a154-b6cd15ff19be" type="CoreNodeModels.Input.BoolSelector" nickname="Retry" x="-553.5013467116" y="570.721422845608" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>True</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="c2356ef0-b014-4d22-a154-b6cd15ff19be" start_index="0" end="30897ff4-ba80-453c-b710-2cfdd364e822" end_index="0" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations />
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="242.924530029297" eyeY="532.0439453125" eyeZ="-147.189254760742" lookX="-247.924530029297" lookY="-521.0439453125" lookZ="139.189254760742" upX="-0.658090531826019" upY="0.65605902671814" upZ="0.369463741779327" />
+  </Cameras>
+</Workspace>

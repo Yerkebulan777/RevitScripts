@@ -1,0 +1,330 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "ReloadFamilies",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "249a992749ab4fc7b179139097b1dbe3",
+      "Name": "Директория библиотеки",
+      "Type": "string",
+      "Value": "K:\\02_Библиотека",
+      "Description": "Позволяет выбрать папку в системе и получить путь к ней"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonStringNode, PythonNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b782abe7c3b04dc78d62f1c5cce0e57c",
+      "Inputs": [
+        {
+          "Id": "8308a1728e554e219ec5cf6e75e57275",
+          "Name": "script",
+          "Description": "Сценарий Python для запуска.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e7d56a6c7e7c441d8956f3f9bd4aec1c",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b047d1c0f6554339a63c0d7afead85ff",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6cc74687e2234902aa1292211725960b",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение сценария IronPython из строки."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import sys\r\n#sys.path.append('C:\\Program Files\\IronPython 2.7\\Lib')\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport codecs\r\n\r\ntry:\r\n\tfilePath = IN[0]\r\n\twith codecs.open(filePath, 'rb', \"utf-8\") as inf:\r\n\t\tlines = inf.readlines()\r\n\tOUT = ''.join(lines)\r\nexcept:\r\n\tOUT = \"No file\"",
+      "VariableInputPorts": true,
+      "Id": "7fa79e35649a4fed9544344d961158d1",
+      "Inputs": [
+        {
+          "Id": "46e3dfd62bba45ff9c4e01ca65362c1d",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5845cf538069400f9304fe4f675d2568",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\YandexDisk\\RevitExportConfig\\DynamoScripts\\ReloadFamilies.py",
+      "InputValue": "..\\DynamoScripts\\ReloadFamilies.py",
+      "NodeType": "ExtensionNode",
+      "Id": "60bd066e7dd14202888af95230ae3ee2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a083416021024352ad389e61dde413b8",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "ebaf580fb94b495ba4923bdbe96a6caa",
+      "Inputs": [
+        {
+          "Id": "4a7a50eeb6a244fca4caac1900772adb",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "94e80a34f9054f2fa538b9c20774405f",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Directory, CoreNodeModels",
+      "HintPath": "K:\\02_Библиотека",
+      "InputValue": "K:\\02_Библиотека",
+      "NodeType": "ExtensionNode",
+      "Id": "249a992749ab4fc7b179139097b1dbe3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "38ada22e608542c8a9f777d7912df8fd",
+          "Name": "",
+          "Description": "Directory",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать папку в системе и получить путь к ней"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 124,
+      "NodeType": "ExtensionNode",
+      "Id": "f42634e63b87443db3bd722c80af71ca",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "05f70daab8e04c43b38fe658dc326921",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "6cc74687e2234902aa1292211725960b",
+      "End": "4a7a50eeb6a244fca4caac1900772adb",
+      "Id": "d3178e97d9bc40428ab15527db04819f"
+    },
+    {
+      "Start": "5845cf538069400f9304fe4f675d2568",
+      "End": "8308a1728e554e219ec5cf6e75e57275",
+      "Id": "acf724a936cb4beca33d3d468a031634"
+    },
+    {
+      "Start": "a083416021024352ad389e61dde413b8",
+      "End": "46e3dfd62bba45ff9c4e01ca65362c1d",
+      "Id": "461c3f3ee3144cf7ac600ad4e525590f"
+    },
+    {
+      "Start": "38ada22e608542c8a9f777d7912df8fd",
+      "End": "e7d56a6c7e7c441d8956f3f9bd4aec1c",
+      "Id": "7949509d71324c7baed5731886b2886c"
+    },
+    {
+      "Start": "05f70daab8e04c43b38fe658dc326921",
+      "End": "b047d1c0f6554339a63c0d7afead85ff",
+      "Id": "c5c817df89d7463fae1b1a8cff52a1f4"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script From String",
+        "Id": "b782abe7c3b04dc78d62f1c5cce0e57c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1092.085727057628,
+        "Y": 407.67829372149197
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Find file and import it!",
+        "Id": "7fa79e35649a4fed9544344d961158d1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 784.907584559888,
+        "Y": 407.417631786582
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к файлу Python:",
+        "Id": "60bd066e7dd14202888af95230ae3ee2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 496.0,
+        "Y": 407.336300198005
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "ebaf580fb94b495ba4923bdbe96a6caa",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1386.3998547266879,
+        "Y": 407.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Директория библиотеки",
+        "Id": "249a992749ab4fc7b179139097b1dbe3",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 759.95476883159779,
+        "Y": 504.68448167390579
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "f42634e63b87443db3bd722c80af71ca",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 762.02823462160461,
+        "Y": 598.0817590052369
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "a3c32fc16cae47328f54d0bbe049931e",
+        "Title": "",
+        "Nodes": [
+          "7fa79e35649a4fed9544344d961158d1",
+          "b782abe7c3b04dc78d62f1c5cce0e57c",
+          "60bd066e7dd14202888af95230ae3ee2",
+          "ebaf580fb94b495ba4923bdbe96a6caa",
+          "249a992749ab4fc7b179139097b1dbe3",
+          "f42634e63b87443db3bd722c80af71ca"
+        ],
+        "Left": 486.0,
+        "Top": 361.0,
+        "Width": 1200.3998547266879,
+        "Height": 424.0,
+        "FontSize": 30.0,
+        "InitialTop": 407.0,
+        "InitialHeight": 336.79279829169707,
+        "TextblockHeight": 36.0,
+        "Background": "#FFD4B6DB"
+      }
+    ],
+    "X": -620.88452605570228,
+    "Y": -328.26924109633217,
+    "Zoom": 1.3122671896284319
+  }
+}

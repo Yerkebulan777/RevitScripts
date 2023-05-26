@@ -1,0 +1,886 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "AR_ROOMNUMBER TO explication of floors",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "a7ac77d162de469aaf2568de7fee893c",
+      "Name": "Заполняемый параметр",
+      "Type": "string",
+      "Value": "Комментарии",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "30058e46988f44108ec6296a08eddac4",
+      "Name": "Разделитель",
+      "Type": "string",
+      "Value": ";",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "361077e007674a47afa8ae17b162fd4f",
+      "Name": "Тире",
+      "Type": "string",
+      "Value": "-",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "0b261cfa122b4674aabac96331cdc176",
+      "Name": "Retry",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "Id": "bbe683da47464849ba997168da2fb8ee",
+      "Name": "Тип пола",
+      "Type": "string",
+      "Value": "Тип пола",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "c92ded1f0dc84f9f98ad5b7d3af4aefe",
+      "Name": "LINK",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "Id": "4e0ba4a65bf54262aed7ef467be45075",
+      "Name": "LINK NAME",
+      "Type": "string",
+      "Value": "BI TOWER_AR_B1_WIP_R18",
+      "Description": "Создание строки."
+    },
+    {
+      "Id": "b3c50402c2b64ede86147d0514326992",
+      "Name": "LINK",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "Id": "cddbcad3a70447a691a5c30644e5c9ed",
+      "Name": "LINK NAME",
+      "Type": "string",
+      "Value": "BI TOWER_AR_B1_WIP_R18",
+      "Description": "Создание строки."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Комментарии",
+      "Id": "a7ac77d162de469aaf2568de7fee893c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "96ed60d4a0dc4d16838ce3a20c652812",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": ";",
+      "Id": "30058e46988f44108ec6296a08eddac4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "945e4d03241b4ae9994286e3144862ff",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "-",
+      "Id": "361077e007674a47afa8ae17b162fd4f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dcb4e20032804eb1bbf26883bdfdfe46",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\t\ndoc = DocumentManager.Instance.CurrentDBDocument\nrooms = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType().ToElements()\nfloor = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Floors).WhereElementIsNotElementType().ToElements()\n#-----------ВХОДНЫЕ ДАННЫЕ------------------\npar1=IN[1]\nsetpar=IN[2]\ntire = \"-\"#IN[3]\nzap = \";\" #IN[4]\n#----------ФУНКЦИИ------------------\ndef get3p(room):\n\ttry:\n\t\tval1 = room.LookupParameter(par1).AsValueString()\n\texcept:\n\t\tval1=\"\"\t\t\n\tif val1 is None:\n\t\tval1=\"\"\n\tvalob=val1\n\treturn valob\t\n#----------СОРТИРОВКА ПОМЕЩЕНИЙ ПО НОМЕРУ--------------\nr1=[]\nlist1=[]\nfor room in rooms:\n\tif room.Area>0:\n\t\tr1.append(room)\n\t\tnum1=room.get_Parameter(BuiltInParameter.ROOM_NUMBER).AsString()\n\t\tnum2=\"\"\n\t\tnum3=\"\"\n\t\tnum4=\"\"\n\t\tnum5=\"\"\n\t\tnum6=\"\"\n\t\tif \".\" in num1:\n\t\t\tc1=num1.find(\".\")\n\t\t\tnum2=num1[c1+1:]\n\t\t\tnum1=num1[:c1]\n\t\t\tif \".\" in num2:\n\t\t\t\tc2=num2.find(\".\")\n\t\t\t\tnum3=num2[c2+1:]\n\t\t\t\tnum2=num2[:c2]\n\t\t\t\tif \".\" in num3:\n\t\t\t\t\tc3=num3.find(\".\")\n\t\t\t\t\tnum4=num3[c3+1:]\n\t\t\t\t\tnum3=num3[:c3]\n\t\t\t\t\tif \".\" in num4:\n\t\t\t\t\t\tc4=num4.find(\".\")\n\t\t\t\t\t\tnum5=num4[c4+1:]\n\t\t\t\t\t\tnum4=num4[:c4]\n\t\t\t\t\t\tif \".\" in num5:\n\t\t\t\t\t\t\tc5=num5.find(\".\")\n\t\t\t\t\t\t\tnum6=num5[c5+1:]\n\t\t\t\t\t\t\tnum5=num5[:c5]\n\t\tif num1!=\"\":\n\t\t\tnum1=int(float(num1))\n\t\tif num2!=\"\":\n\t\t\tnum2=int(float(num2))\n\t\tif num3!=\"\":\n\t\t\tnum3=int(float(num3))\n\t\tif num4!=\"\":\n\t\t\tnum4=int(float(num4))\n\t\tif num5!=\"\":\n\t\t\tnum5=int(float(num5))\n\t\tif num6!=\"\":\n\t\t\tnum6=int(float(num6))\t\t\n\t\tlist1.append([room,num1,num2,num3,num4,num5,num6])\n\t\t#list1.append(UnwrapElement(room).get_Parameter(BuiltInParameter.ROOM_NUMBER).AsString())\nfrom operator import itemgetter\nb = sorted(list1,key = itemgetter(1,2,3,4,5,6))\nlist2=[]\nfor b1 in b:\n\tnm1 = str(b1[1])\n\tif b1[2]!=\"\":\n\t\tnm1=nm1+\".\"+str(b1[2])\n\tif b1[3]!=\"\":\n\t\tnm1=nm1+\".\"+str(b1[3])\t\t\n\tif b1[4]!=\"\":\n\t\tnm1=nm1+\".\"+str(b1[4])\n\tif b1[5]!=\"\":\n\t\tnm1=nm1+\".\"+str(b1[5])\n\tif b1[6]!=\"\":\n\t\tnm1=nm1+\".\"+str(b1[6])\t\t\n\tlist2.append([b1[0],nm1])\t\n#---------------БЕРЕМ ПАРАМЕТРЫ-----------------------\nuniq=[]\nfor room1 in list2:\n\troom = room1[0]\n\tvalob = get3p(room)\n\tif valob not in uniq:\n\t\tuniq.append(valob)\nnumlist=[]\nroomlist=[]\nroomtxt=[]\nfor val in uniq:\n\tlist=[]\n\ttext=[]\n\ttxt=\"\"\n\tfor room1 in list2:\n\t\troom=room1[0]\n\t\tnum = room1[1]\n\t\tvalob = get3p(room)\n\t\tif valob==val:\n\t\t\tlist.append(room)\n\t\t\ttext.append(num)\n\t\t\ttxt=txt+num+zap\n\troomtxt.append(txt[:len(txt)-1])\t\t\n\tnumlist.append(text)\n\troomlist.append(list)\n\t\n\"\"\"\t\ni=0\nlist3=[]\nlist4=[]\nfor num in numlist:\n\ti=0\n\tlist5=[]\n\tfor n in num:\n\t\tnum1=n\n\t\tnum2=\"\"\n\t\tnum3=\"\"\n\t\tnum4=\"\"\n\t\tnum5=\"\"\n\t\tnum6=\"\"\n\t\tif \".\" in num1:\n\t\t\tc1=num1.find(\".\")\n\t\t\tnum2=num1[c1+1:]\n\t\t\tnum1=num1[:c1]\n\t\t\tif \".\" in num2:\n\t\t\t\tc2=num2.find(\".\")\n\t\t\t\tnum3=num2[c2+1:]\n\t\t\t\tnum2=num2[:c2]\n\t\t\t\tif \".\" in num3:\n\t\t\t\t\tc3=num3.find(\".\")\n\t\t\t\t\tnum4=num3[c3+1:]\n\t\t\t\t\tnum3=num3[:c3]\n\t\t\t\t\tif \".\" in num4:\n\t\t\t\t\t\tc4=num4.find(\".\")\n\t\t\t\t\t\tnum5=num4[c4+1:]\n\t\t\t\t\t\tnum4=num4[:c4]\n\t\t\t\t\t\tif \".\" in num5:\n\t\t\t\t\t\t\tc5=num5.find(\".\")\n\t\t\t\t\t\t\tnum6=num5[c5+1:]\n\t\t\t\t\t\t\tnum5=num5[:c5]\n\t\tif num1!=\"\":\n\t\t\tnum1=int(float(num1))\n\t\tif num2!=\"\":\n\t\t\tnum2=int(float(num2))\n\t\tif num3!=\"\":\n\t\t\tnum3=int(float(num3))\n\t\tif num4!=\"\":\n\t\t\tnum4=int(float(num4))\n\t\tif num5!=\"\":\n\t\t\tnum5=int(float(num5))\n\t\tif num6!=\"\":\n\t\t\tnum6=int(float(num6))\t\t\n\t\tlist5.append([num1,num2,num3,num4,num5,num6,n])\n\n\n#---------Вносим в группы номера, идущие подряд-----------\n\n\tj=0\n\tgr=[]\n\tgr1=[]\n\twhile j<list5.Count:\n\t\tif j==list5.Count-1:\n\t\t\tgr.append(list5[j][6])\t\n\t\t\tgr1.append(gr)\n\t\telse:\n\t\t\tgr.append(list5[j][6])\n\t\t\tif list5[j][5]==\"\" and list5[j+1][5]==\"\":\n\t\t\t\tif list5[j][4]==\"\" and list5[j+1][4]==\"\":\n\t\t\t\t\tif list5[j][3]==\"\" and list5[j+1][3]==\"\":\n\t\t\t\t\t\tif list5[j][2]==\"\" and list5[j+1][2]==\"\":\n\t\t\t\t\t\t\tif list5[j][1]==\"\" and list5[j+1][1]==\"\":\n\t\t\t\t\t\t\t\tif list5[j][0]==\"\" and list5[j+1][0]==\"\":\n\t\t\t\t\t\t\t\t\ta=1\n\t\t\t\t\t\t\t\telse: \n\t\t\t\t\t\t\t\t\tif list5[j][0]+1!=list5[j+1][0]:\t\n\t\t\t\t\t\t\t\t\t\tgr1.append(gr)\n\t\t\t\t\t\t\t\t\t\tgr=[]\n\t\t\t\t\t\t\telse:\n\t\t\t\t\t\t\t\tif list5[j][1]+1!=list5[j+1][1] or list5[j][0]!=list5[j+1][0]:\t\n\t\t\t\t\t\t\t\t\tgr1.append(gr)\n\t\t\t\t\t\t\t\t\tgr=[]\t\n\t\t\t\t\t\telse:\n\t\t\t\t\t\t\tif list5[j][2]+1!=list5[j+1][2] or list5[j][1]!=list5[j+1][1] or list5[j][0]!=list5[j+1][0]:\t\n\t\t\t\t\t\t\t\tgr1.append(gr)\n\t\t\t\t\t\t\t\tgr=[]\t\t\t\n\t\t\t\t\telse:\n\t\t\t\t\t\tif list5[j][3]+1!=list5[j+1][3] or list5[j][2]!=list5[j+1][2] or list5[j][1]!=list5[j+1][1] or list5[j][0]!=list5[j+1][0]:\t\n\t\t\t\t\t\t\tgr1.append(gr)\n\t\t\t\t\t\t\tgr=[]\n\t\t\t\telse:\n\t\t\t\t\tif list5[j][4]+1!=list5[j+1][4] or list5[j][3]!=list5[j+1][3] or list5[j][2]!=list5[j+1][2] or list5[j][1]!=list5[j+1][1] or list5[j][0]!=list5[j+1][0]:\t\n\t\t\t\t\t\tgr1.append(gr)\n\t\t\t\t\t\tgr=[]\t\n\t\t\telse:\n\t\t\t\tif list5[j][5]+1!=list5[j+1][5] or list5[j][4]!=list5[j+1][4] or list5[j][3]!=list5[j+1][3] or list5[j][2]!=list5[j+1][2] or list5[j][1]!=list5[j+1][1] or list5[j][0]!=list5[j+1][0]:\t\n\t\t\t\t\tgr1.append(gr)\n\t\t\t\t\tgr=[]\n\t\tlist3.append(gr1)\t\t\t\t\t\n\t\tj=j+1\n\ttxt=\"\"\n#--------------Добавляем запятые и тире, раскрывая группы в список-----\t\n\tfor gr1 in list3:\n\t\tfor k in gr1:\n\t\t\tif k.Count==1:\n\t\t\t\ttxt=txt+k[0]+zap\n\t\t\telif k.Count==2:\n\t\t\t\ttxt=txt+k[0]+zap+k[1]+zap\n\t\t\telif k.Count>2:\n\t\t\t\ttxt=k[0]+tire+k[k.Count-1]+zap\t\n\tlist4.append(txt[:len(txt)-1])\n\ti=i+1\"\"\"\nTransactionManager.Instance.EnsureInTransaction(doc)\ni=0\nfor rooms in roomlist:\n\tfor room in rooms:\n\t\troom.LookupParameter(setpar).Set(roomtxt[i])\n\ti=i+1\nTransactionManager.Instance.TransactionTaskDone()\n\t\nOUT = roomlist",
+      "VariableInputPorts": true,
+      "Id": "81eea006941b4debb1c696f18c578e67",
+      "Inputs": [
+        {
+          "Id": "9e1eefa40a3249698c853b40f667a92f",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6f85fb0e6080476894d8d4089e74219e",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "06b99414636641a29a18c7f0f95421ad",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4b752a45f7f54807b618b443ec0c9f8a",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e970f9ada768450c9f4e30976f9f47a9",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1b811673d7434687a0247fbfd1dfb235",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "0b261cfa122b4674aabac96331cdc176",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "340a3aea0b3247e38e15befa8ee79479",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Тип пола",
+      "Id": "bbe683da47464849ba997168da2fb8ee",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "79daa2fc9d274d928db4e5bb4e0b0f3e",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Default imports\nimport System\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n# Import ToDSType(bool) extension method\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\nclr.ImportExtensions(Revit.GeometryConversion)\n\n#Import Collections\nfrom System.Collections.Generic import *\n\n#The inputs to this node will be stored as a list in the IN variable.\ndataEnteringNode = IN\n\nToggleLink = IN[0]\n\nLinkinstname = IN[1]\n\nCategory = IN[2]\n\nlevelInput = IN[3]\n\napp =  DocumentManager.Instance.CurrentUIApplication.Application\ndoc = DocumentManager.Instance.CurrentDBDocument\nlinkInstances = Autodesk.Revit.DB.FilteredElementCollector(doc).OfClass(Autodesk.Revit.DB.RevitLinkInstance)\nBuiltIn = System.Enum.ToObject(BuiltInCategory, Category.Id)\n\n\nif ToggleLink == False:\n\n\tfilter = ElementCategoryFilter(BuiltIn)\n\tListelem = Autodesk.Revit.DB.FilteredElementCollector(doc).WherePasses(filter).WhereElementIsNotElementType().ToElements()\n\tlevelFilter = ElementLevelFilter(UnwrapElement(levelInput).Id)\n\tlogicalFilter = LogicalAndFilter(levelFilter, filter)\n\tOUT = FilteredElementCollector(doc).OfCategory(BuiltIn).WherePasses(logicalFilter).ToElements()\n\t\nif ToggleLink == True:\n\n\ti = ()\n\tfor i in linkInstances:\n\t\tif Linkinstname.ToLower() in i.Name.ToLower():\n\t\t\tlinkDoc = i.GetLinkDocument()\n\t\t\t\n\tfilter = ElementCategoryFilter(BuiltIn)\t\t\t\n\tListelem = FilteredElementCollector(linkDoc).WherePasses(filter).ToElements()\n\t#levelFilter = ElementLevelFilter(UnwrapElement(levelInput).Id)\n\t#logicalFilter = LogicalAndFilter(levelFilter, filter)\n\tOUT = FilteredElementCollector(linkDoc).OfCategory(BuiltIn).WherePasses(filter).ToElements()\n\t\n\t# Level filter does not work?\n\t\n\n\n\n\n",
+      "VariableInputPorts": true,
+      "Id": "f1d8eddca4c54e23b88e5965ea90c373",
+      "Inputs": [
+        {
+          "Id": "6a9ff3f221a74d6990724294c031fc8e",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7aef5b7f979a4789a2d99963a05e11ec",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d32d3f1dcfa64bae8c3c35742ebd8fd1",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0c70ebc127eb4a109589f85970f07e5c",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2788860c20424a1a836fe53636cd3c39",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "c92ded1f0dc84f9f98ad5b7d3af4aefe",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fa30f7cf896a4d0db8369e6b30a2ad5f",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "BI TOWER_AR_B1_WIP_R18",
+      "Id": "4e0ba4a65bf54262aed7ef467be45075",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cf3f84be3d6e46758a12a68b10464186",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 435,
+      "NodeType": "ExtensionNode",
+      "Id": "0c04725d7522487ea26cb16eea80042f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b0511fcf4f044583b8edb859c2c1633e",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Levels, DSRevitNodesUI",
+      "SelectedIndex": -1,
+      "NodeType": "ExtensionNode",
+      "Id": "57be36e0b98144918bfbd72c2cc4ff7f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ea1a717c83e04fabaa9eeb9b93c1b00a",
+          "Name": "Levels",
+          "Description": "Выбрано Levels",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выберите уровень в активном документе"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Default imports\nimport System\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n# Import ToDSType(bool) extension method\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\nclr.ImportExtensions(Revit.GeometryConversion)\n\n#Import Collections\nfrom System.Collections.Generic import *\n\n#The inputs to this node will be stored as a list in the IN variable.\ndataEnteringNode = IN\n\nToggleLink = IN[0]\n\nLinkinstname = IN[1]\n\nlevelInput = IN[2]\n\napp =  DocumentManager.Instance.CurrentUIApplication.Application\nlinkInstances = Autodesk.Revit.DB.FilteredElementCollector(DocumentManager.Instance.CurrentDBDocument).OfClass(Autodesk.Revit.DB.RevitLinkInstance)\n\nif ToggleLink == False:\n\n\tselectDOC = DocumentManager.Instance.CurrentDBDocument\n\tlevelFilter = ElementLevelFilter(UnwrapElement(levelInput).Id)\n\t\t\nif ToggleLink == True:\n\n\ti = ()\n\tfor i in linkInstances:\n\t\tif Linkinstname.ToLower() in i.Name.ToLower():\n\t\t\tselectDOC = i.GetLinkDocument()\n\t\n\tbipELEV = BuiltInParameter.LEVEL_ELEV\n\tLevelElev = UnwrapElement(levelInput).get_Parameter(bipELEV).AsDouble()\n\t\t\t\n\truleValDb = LevelElev\n\tpvp = ParameterValueProvider(ElementId(bipELEV))\n\tfnrv = FilterNumericEquals()\n\tlevelparamfilter = ElementParameterFilter(FilterDoubleRule(pvp, fnrv, ruleValDb, 10.-3))\n\tlevels = FilteredElementCollector(selectDOC).OfClass(Level)\n\tLevelcollect = FilteredElementCollector(selectDOC).OfClass(Level).WherePasses(levelparamfilter).FirstElement()\n\tlevelFilter = ElementLevelFilter(Levelcollect.Id)\n\n\n################################################# FIND VALID ROOMS ############################################\n\ncollector = FilteredElementCollector(selectDOC)\n\nareaFilter = AreaFilter()\nareaExcludes = collector.WherePasses(areaFilter).ToElements()\nareaExcludes = list(areaExcludes)\nelement_set = ElementSet()\nexcludes = List[ElementId]()\nif len(areaExcludes) == 0:\n\tlogicalFilter = levelFilter\nelse:\n\tfor i in areaExcludes:\n\t\telement_set.Insert(i)\n\t\telemIter = element_set.ForwardIterator()\n\t\telemIter.Reset()\n\t\twhile elemIter.MoveNext():\n\t\t\tcurElem = elemIter.Current\n\t\t\texcludes.Add(curElem.Id)\n\tfilter = ExclusionFilter(excludes)\n\tlogicalFilter = LogicalAndFilter(levelFilter, filter)\n\n\nallRoomsOnLevel = FilteredElementCollector(selectDOC).OfClass(Autodesk.Revit.DB.SpatialElement).WherePasses(logicalFilter).ToElements()\nvalidRooms = []\nRoomlevelName = []\n\nfor i in allRoomsOnLevel:\n\tif i.Area != 0:\n\t\tvalidRooms.append(UnwrapElement(i))\n\t\tRoomlevelName.append(i.Level)\n\nOUT = validRooms",
+      "VariableInputPorts": true,
+      "Id": "c025e221e7c7411cba9a1f93a76e6901",
+      "Inputs": [
+        {
+          "Id": "30b8a0588a2349e0a0967741564c924a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b624cf174ebc427facf277db49f46543",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2399486186ab44878f980397f185dfd9",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "bf2f82a3b4e741439a5995a4182a8fa2",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "b3c50402c2b64ede86147d0514326992",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "33ae022dce7a442db364b40d5d9731d4",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "BI TOWER_AR_B1_WIP_R18",
+      "Id": "cddbcad3a70447a691a5c30644e5c9ed",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cab33816a2694351a9c105d547808d17",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Levels, DSRevitNodesUI",
+      "SelectedIndex": -1,
+      "NodeType": "ExtensionNode",
+      "Id": "f6f85a4d2ce34fa2ba016acd0acbccf5",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "094d3511836248d99f5f5e4048f241be",
+          "Name": "Levels",
+          "Description": "Выбрано Levels",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выберите уровень в активном документе"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 451,
+      "NodeType": "ExtensionNode",
+      "Id": "014238189e1047549d89d66e8dcc733a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "05db1f99b36c4e539c1ca9334f7576ae",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementsOfCategory, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "Id": "ab8b0437b6fa4a2da4bb32246245f781",
+      "Inputs": [
+        {
+          "Id": "6c118378010f4044817aefbba2bde34c",
+          "Name": "Category",
+          "Description": "Категория",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "aa9a114f75a84ca191499df238a715e7",
+          "Name": "Elements",
+          "Description": "Тип элемента.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Получение из модели всех элементов определенной категории."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "96ed60d4a0dc4d16838ce3a20c652812",
+      "End": "06b99414636641a29a18c7f0f95421ad",
+      "Id": "84b5164bc91043ffad63b7b2cea14a91"
+    },
+    {
+      "Start": "945e4d03241b4ae9994286e3144862ff",
+      "End": "e970f9ada768450c9f4e30976f9f47a9",
+      "Id": "36b61651575a400cb7ca36a727f9849d"
+    },
+    {
+      "Start": "dcb4e20032804eb1bbf26883bdfdfe46",
+      "End": "4b752a45f7f54807b618b443ec0c9f8a",
+      "Id": "42e3c220d3bb4b6389b9fc8cb11ebd72"
+    },
+    {
+      "Start": "340a3aea0b3247e38e15befa8ee79479",
+      "End": "9e1eefa40a3249698c853b40f667a92f",
+      "Id": "6c9c6472558e447bae385429866e8663"
+    },
+    {
+      "Start": "79daa2fc9d274d928db4e5bb4e0b0f3e",
+      "End": "6f85fb0e6080476894d8d4089e74219e",
+      "Id": "047de4419b82421ba7059e560cd2119d"
+    },
+    {
+      "Start": "fa30f7cf896a4d0db8369e6b30a2ad5f",
+      "End": "30b8a0588a2349e0a0967741564c924a",
+      "Id": "44ec0433277b450c9b2cddc5c78d106e"
+    },
+    {
+      "Start": "cf3f84be3d6e46758a12a68b10464186",
+      "End": "b624cf174ebc427facf277db49f46543",
+      "Id": "fbea4877527c4505a2c4fc106c12060c"
+    },
+    {
+      "Start": "b0511fcf4f044583b8edb859c2c1633e",
+      "End": "d32d3f1dcfa64bae8c3c35742ebd8fd1",
+      "Id": "77032ea9d83b4aed8a92a4f166126684"
+    },
+    {
+      "Start": "ea1a717c83e04fabaa9eeb9b93c1b00a",
+      "End": "2399486186ab44878f980397f185dfd9",
+      "Id": "f11003ee451d44a0a5d00870718ff49c"
+    },
+    {
+      "Start": "33ae022dce7a442db364b40d5d9731d4",
+      "End": "6a9ff3f221a74d6990724294c031fc8e",
+      "Id": "47eab9180ffd45c3b508e1ca42002dcb"
+    },
+    {
+      "Start": "cab33816a2694351a9c105d547808d17",
+      "End": "7aef5b7f979a4789a2d99963a05e11ec",
+      "Id": "c6e8072a9f81472185967034a283b699"
+    },
+    {
+      "Start": "094d3511836248d99f5f5e4048f241be",
+      "End": "0c70ebc127eb4a109589f85970f07e5c",
+      "Id": "2bb20b5f60e54a21b7ef5980f53980fb"
+    },
+    {
+      "Start": "05db1f99b36c4e539c1ca9334f7576ae",
+      "End": "6c118378010f4044817aefbba2bde34c",
+      "Id": "c2510e01b3ee4c7abbd5bac55358aab4"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Заполняемый параметр",
+        "Id": "a7ac77d162de469aaf2568de7fee893c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2545.66740135663,
+        "Y": -5.42749794512761
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Разделитель",
+        "Id": "30058e46988f44108ec6296a08eddac4",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2623.48431886995,
+        "Y": 113.496867187047
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Тире",
+        "Id": "361077e007674a47afa8ae17b162fd4f",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2659.18531350498,
+        "Y": 58.8916263150195
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "PyS Тип пола и Номера помещений в помещениях ",
+        "Id": "81eea006941b4debb1c696f18c578e67",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": 2804.89809596612,
+        "Y": -123.026467357695
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Retry",
+        "Id": "0b261cfa122b4674aabac96331cdc176",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2582.05592899853,
+        "Y": -121.506858522598
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Тип пола",
+        "Id": "bbe683da47464849ba997168da2fb8ee",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2627.74775190961,
+        "Y": -64.0151460610686
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "PyScr Elements collector",
+        "Id": "f1d8eddca4c54e23b88e5965ea90c373",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": 3613.58313914384,
+        "Y": -61.5894309913425
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK",
+        "Id": "c92ded1f0dc84f9f98ad5b7d3af4aefe",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3325.04148803363,
+        "Y": 298.524084435431
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK NAME",
+        "Id": "4e0ba4a65bf54262aed7ef467be45075",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3275.26930824594,
+        "Y": 354.261504489465
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "0c04725d7522487ea26cb16eea80042f",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3292.67262809896,
+        "Y": 52.8128126848845
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Levels",
+        "Id": "57be36e0b98144918bfbd72c2cc4ff7f",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3307.45086096945,
+        "Y": 409.127265884306
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "PyScr Room collector",
+        "Id": "c025e221e7c7411cba9a1f93a76e6901",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": 3544.36733796683,
+        "Y": 299.102220326234
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK",
+        "Id": "b3c50402c2b64ede86147d0514326992",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3328.10262670383,
+        "Y": -62.1580423970614
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LINK NAME",
+        "Id": "cddbcad3a70447a691a5c30644e5c9ed",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3276.28783516181,
+        "Y": -5.02290279177143
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Levels",
+        "Id": "f6f85a4d2ce34fa2ba016acd0acbccf5",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3300.14778084986,
+        "Y": 133.299841120533
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "014238189e1047549d89d66e8dcc733a",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3292.80685128452,
+        "Y": 523.079980401075
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "All Elements of Category",
+        "Id": "ab8b0437b6fa4a2da4bb32246245f781",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3509.69817510827,
+        "Y": 522.891918642528
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "e0d21f270fd8478b9338a8d659a692bf",
+        "Title": "",
+        "Nodes": [
+          "30058e46988f44108ec6296a08eddac4",
+          "361077e007674a47afa8ae17b162fd4f",
+          "81eea006941b4debb1c696f18c578e67",
+          "a7ac77d162de469aaf2568de7fee893c",
+          "0b261cfa122b4674aabac96331cdc176",
+          "bbe683da47464849ba997168da2fb8ee"
+        ],
+        "Left": 2535.66740135663,
+        "Top": -153.026467357695,
+        "Width": 627.23069460949,
+        "Height": 334.523334544742,
+        "FontSize": 14.0,
+        "InitialTop": -123.026467357695,
+        "InitialHeight": 155.777996221273,
+        "TextblockHeight": 20.0,
+        "Background": "#FF48B9FF"
+      },
+      {
+        "Id": "ef643207ae5b454191656ca383d2a5a2",
+        "Title": "Параметры",
+        "Nodes": [
+          "a7ac77d162de469aaf2568de7fee893c",
+          "bbe683da47464849ba997168da2fb8ee",
+          "0b261cfa122b4674aabac96331cdc176"
+        ],
+        "Left": 2535.66740135663,
+        "Top": -151.506858522598,
+        "Width": 186.08035055298024,
+        "Height": 214.0793605774704,
+        "FontSize": 14.0,
+        "InitialTop": -121.506858522598,
+        "InitialHeight": 228.101126552377,
+        "TextblockHeight": 20.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "c09a997491bd46408625be3f781f40ce",
+        "Title": "Element collector by level ДОПИЛИТЬ НАДО",
+        "Nodes": [
+          "f1d8eddca4c54e23b88e5965ea90c373",
+          "0c04725d7522487ea26cb16eea80042f",
+          "b3c50402c2b64ede86147d0514326992",
+          "cddbcad3a70447a691a5c30644e5c9ed",
+          "f6f85a4d2ce34fa2ba016acd0acbccf5"
+        ],
+        "Left": 3266.28783516181,
+        "Top": -144.15804239706139,
+        "Width": 520.29530398203,
+        "Height": 370.45788351759438,
+        "FontSize": 30.0,
+        "InitialTop": -62.1580423970614,
+        "InitialHeight": 202.189119270028,
+        "TextblockHeight": 72.0,
+        "Background": "#FFFFC999"
+      },
+      {
+        "Id": "76968e52ad1f42b7ba4c0f9b265462b1",
+        "Title": "Room collector by level",
+        "Nodes": [
+          "c92ded1f0dc84f9f98ad5b7d3af4aefe",
+          "4e0ba4a65bf54262aed7ef467be45075",
+          "57be36e0b98144918bfbd72c2cc4ff7f",
+          "c025e221e7c7411cba9a1f93a76e6901"
+        ],
+        "Left": 3265.26930824594,
+        "Top": 252.524084435431,
+        "Width": 431.09802972088983,
+        "Height": 249.60318144887498,
+        "FontSize": 30.0,
+        "InitialTop": 298.524084435431,
+        "InitialHeight": 237.992723088873,
+        "TextblockHeight": 36.0,
+        "Background": "#FFFFC999"
+      }
+    ],
+    "X": -1962.8956479599669,
+    "Y": 235.51154612541973,
+    "Zoom": 0.80691736449529827
+  }
+}

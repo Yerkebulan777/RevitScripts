@@ -1,0 +1,286 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Py_from_string",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "DSCore.List": {
+        "Key": "DSCore.List",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import sys\r\n#sys.path.append('C:\\Program Files\\IronPython 2.7\\Lib')\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport codecs\r\n\r\ntry:\r\n\tfilePath = IN[0]\r\n\twith codecs.open(filePath, 'rb', \"utf-8\") as inf:\r\n\t\tlines = inf.readlines()\r\n\tOUT = ''.join(lines)\r\nexcept:\r\n\tOUT = \"No file\"",
+      "VariableInputPorts": true,
+      "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+      "Inputs": [
+        {
+          "Id": "7463dc1e3f584086af4797b96e73b831",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c53d58ae70ab459dad42e87d420eb885",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonStringNode, PythonNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b7f7a76146b04277a72d4d60d30d583d",
+      "Inputs": [
+        {
+          "Id": "cf981f8df02f4d07936f99eb0a24dae2",
+          "Name": "script",
+          "Description": "Сценарий Python для запуска.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "db4e6f9d8984472297fe282bb945febf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "eef3bf9a478443e59302ee11cd40a3ed",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение сценария IronPython из строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\YandexDisk\\RevitExportConfig\\DynamoScripts\\UngroupAll.py",
+      "InputValue": "..\\DynamoScripts\\UngroupAll.py",
+      "NodeType": "ExtensionNode",
+      "Id": "298105726a5946948913e4a66b568d11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "161f783c2d9b4b71a27f039345b2e006",
+      "Inputs": [
+        {
+          "Id": "b8d1a49d36d842e494278b983368801a",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4914b330b24b453486dfc6d31b9d0383",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\TOKYO_E_EOM_S1_RP\\TOKYO_E_EOM_S1_RP - Лист-1 - Общие данные.dwg",
+      "InputValue": "..\\..\\..\\TOKYO_E_EOM_S1_RP\\TOKYO_E_EOM_S1_RP - Лист-1 - Общие данные.dwg",
+      "NodeType": "ExtensionNode",
+      "Id": "a9baebe8c1694908b27f8762cb45594e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cdfe5dc3a7c94a928494305681e77459",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c53d58ae70ab459dad42e87d420eb885",
+      "End": "cf981f8df02f4d07936f99eb0a24dae2",
+      "Id": "c08dc57928ca455abd2a7a2382a5ff14"
+    },
+    {
+      "Start": "eef3bf9a478443e59302ee11cd40a3ed",
+      "End": "b8d1a49d36d842e494278b983368801a",
+      "Id": "166a7df1f57d462da6cb8502bd379abc"
+    },
+    {
+      "Start": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+      "End": "7463dc1e3f584086af4797b96e73b831",
+      "Id": "bf65a9a0ae2242b78da3e7cd91696f17"
+    },
+    {
+      "Start": "cdfe5dc3a7c94a928494305681e77459",
+      "End": "db4e6f9d8984472297fe282bb945febf",
+      "Id": "8950dee23a6241b881a94506dc18d996"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -90.457888696737115,
+      "EyeY": 19.892351850752256,
+      "EyeZ": 79.498939411118528,
+      "LookX": 90.457888696737115,
+      "LookY": -19.892351850752256,
+      "LookZ": -79.498939411118528,
+      "UpX": -0.039311717152337534,
+      "UpY": 0.99862953475463434,
+      "UpZ": 0.034549113018973593
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Find file and import it!",
+        "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1194.1154107565137,
+        "Y": 492.45348818283719
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script From String",
+        "Id": "b7f7a76146b04277a72d4d60d30d583d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1402.9963451915462,
+        "Y": 492.38696883954958
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к файлу Python:",
+        "Id": "298105726a5946948913e4a66b568d11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 841.122035492903,
+        "Y": 492.71361230383854
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "161f783c2d9b4b71a27f039345b2e006",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1674.1090232991617,
+        "Y": 493.177160985456
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "ФОП",
+        "Id": "a9baebe8c1694908b27f8762cb45594e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 826.80635687086738,
+        "Y": 585.91920359360643
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "468a38177729493c8057a5e1744b9cf7",
+        "Title": "",
+        "Nodes": [
+          "b7f7a76146b04277a72d4d60d30d583d",
+          "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+          "298105726a5946948913e4a66b568d11",
+          "161f783c2d9b4b71a27f039345b2e006",
+          "a9baebe8c1694908b27f8762cb45594e"
+        ],
+        "Left": 816.80635687086738,
+        "Top": 446.38696883954958,
+        "Width": 945.30266642829429,
+        "Height": 233.53223475405684,
+        "FontSize": 30.0,
+        "InitialTop": 492.38696883954958,
+        "InitialHeight": 238.53223475405684,
+        "TextblockHeight": 36.0,
+        "Background": "#FFD4B6DB"
+      }
+    ],
+    "X": -729.04921102014089,
+    "Y": -328.52836230627776,
+    "Zoom": 1.1172601156039017
+  }
+}

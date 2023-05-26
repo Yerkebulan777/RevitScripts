@@ -1,0 +1,250 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "6.13_Арм. контура плиты_4",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math.PI": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [
+    {
+      "Id": "49681fd803d14b818c5e3e93f29d532d",
+      "Name": "Шаг П-шек",
+      "Type": "number",
+      "Value": "400",
+      "MaximumValue": 1000.0,
+      "MinimumValue": 100.0,
+      "StepValue": 50.0,
+      "NumberType": "Double",
+      "Description": "Регулятор, создающий числовые значения."
+    },
+    {
+      "Id": "48f08a4cd27547049512b04889d7c8e6",
+      "Name": "Длина П-шек",
+      "Type": "number",
+      "Value": "500",
+      "MaximumValue": 1000.0,
+      "MinimumValue": 0.0,
+      "StepValue": 50.0,
+      "NumberType": "Double",
+      "Description": "Регулятор, создающий числовые значения."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#Подключение библиотек\nimport clr\nfrom System.Threading import Thread, ThreadStart\nfrom operator import itemgetter\nimport math\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nimport Autodesk\nDPoint = Autodesk.DesignScript.Geometry.Point\nDPolyCurve = Autodesk.DesignScript.Geometry.PolyCurve\nDCurve = Autodesk.DesignScript.Geometry.Curve\nDLine = Autodesk.DesignScript.Geometry.Line\nDSurface = Autodesk.DesignScript.Geometry.Surface\nDPolySurface = Autodesk.DesignScript.Geometry.PolySurface\nDGeometry = Autodesk.DesignScript.Geometry.Geometry\nDSolid = Autodesk.DesignScript.Geometry.Solid\nDPlane = Autodesk.DesignScript.Geometry.Plane\nDVector = Autodesk.DesignScript.Geometry.Vector\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\ndoc = DocumentManager.Instance.CurrentDBDocument\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\nfrom System.Collections.Generic import *\nRS = Autodesk.Revit.DB.Structure\n#--------------Взятие элементов------------------------\n#---------------------------------------------------------------\nhook_type = None\n#--------------Входные данные--------------------\nDy_el = IN[0]\nDy_g = Dy_el.Geometry()[0]\nel = UnwrapElement(Dy_el)\nRebarType1 = UnwrapElement(IN[1])\ns1 = IN[2]/304.8\nl_U = IN[3]/304.8\ns15=15/304.8\nmessage=[]\n#------------Берем параметры------\n#------------Вычисляем параметры----------\nd1 = RebarType1.BarDiameter\n#-------------ФУНКЦИИ----------------------\ndef toPoint(pt):\n\tx=pt.X*304.8\n\ty=pt.Y*304.8\n\tz=pt.Z*304.8\n\treturn DPoint.ByCoordinates(x,y,z)\ndef toXYZ(pt):\n\tx=pt.X/304.8\n\ty=pt.Y/304.8\n\tz=pt.Z/304.8\n\treturn XYZ(x,y,z)\ndef get_zs(el,parameter):\n\tzs_id = el.get_Parameter(parameter).AsElementId()\n\tzs_el = doc.GetElement(zs_id)\n\tzs = zs_el.CoverDistance\n\treturn zs\ndef get_pars_floor(el):\n\tfloor = el\n\ttype = get_type(floor)\n\tval_thickness = type.get_Parameter(BuiltInParameter.FLOOR_ATTR_DEFAULT_THICKNESS_PARAM).AsDouble()\n\tzs_other = get_zs(floor,BuiltInParameter.CLEAR_COVER_OTHER)\n\tzs_top = get_zs(floor,BuiltInParameter.CLEAR_COVER_TOP)\n\tzs_bottom = get_zs(floor,BuiltInParameter.CLEAR_COVER_BOTTOM)\n\treturn val_thickness,zs_other,zs_top,zs_bottom\ndef get_type(el):\n\ttype_id = el.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM).AsElementId()\n\ttype = doc.GetElement(type_id)\n\treturn type\n\ndef get_check_point(pt1,pt2,a):\n\tx1=pt1.X\n\ty1=pt1.Y\n\tz1=pt1.Z\n\tx2=pt2.X\n\ty2=pt2.Y\n\tz2=pt2.Z\n\tx3 = (x1+x2)/2\n\ty3 = (y1+y2)/2\n\tpt3 = get_new_point(x3,y3,z1,0,1,a)\n\treturn pt3\ndef create_U_bylinepoints(pts,l,s1,zs_other,zs_top,zs_bottom,t,Dy_el):\n\tpt1 = pts[0]\n\tpt2 = pts[1]\n\tln = Line.CreateBound(pt1,pt2)\t\n\to1 = ln.Direction\t\n\ta = -get_angle(o1)\n\tch_pt = get_check_point(pt1,pt2,a)\n\ty = DGeometry.DoesIntersect(Dy_el,toPoint(ch_pt))\n\tmessage.append(y)\n\tk=-1\n\tif not y:\n\t\tpt3=pt1\n\t\tpt1=pt2\n\t\tpt2=pt3\n\t\tln = Line.CreateBound(pt1,pt2)\t\n\t\to1 = ln.Direction\t\n\t\ta = -get_angle(o1)\n\t\tk=1\n\tx1 = pt1.X\n\ty1 = pt1.Y\n\tz1 = pt1.Z\n\tzs1 = (zs_other+s15)*k\t\n\tpt3 = get_new_point(x1,y1,z1-zs_top,zs1,l+zs_other,a)\n\tpt4 = get_new_point(x1,y1,z1-zs_top,zs1,zs_other,a)\n\tpt5 = get_new_point(x1,y1,z1-t+zs_bottom,zs1,zs_other,a)\n\tpt6 = get_new_point(x1,y1,z1-t+zs_bottom,zs1,l+zs_other,a)\n\tstirrup = get_lines([pt3,pt4,pt5,pt6])\n\tl1 = ln.Length-zs_other*2-30/304.8\n\tn = l1//s1+1\n\tlast_s = round((l1*304.8-(n-1)*s1*304.8)/10)*10/304.8\n\tnorm2 = XYZ(o1.X,o1.Y,o1.Z)\n\trebar = RS.Rebar.CreateFromCurves(doc,RS.RebarStyle.StirrupTie,RebarType1,hook_type,hook_type,el,norm2,stirrup,RS.RebarHookOrientation.Right,RS.RebarHookOrientation.Left,True,True)\n\trebar.SetLayoutAsNumberWithSpacing(n,s1,True,True,True)\n\tif last_s>(50/304.8):\n\t\tx1 = pt2.X\n\t\ty1 = pt2.Y\n\t\tz1 = pt2.Z\n\t\tzs1 = (-zs_other-s15)*k\n\t\tpt3 = get_new_point(x1,y1,z1-zs_top,zs1,l+zs_other,a)\n\t\tpt4 = get_new_point(x1,y1,z1-zs_top,zs1,zs_other,a)\n\t\tpt5 = get_new_point(x1,y1,z1-t+zs_bottom,zs1,zs_other,a)\n\t\tpt6 = get_new_point(x1,y1,z1-t+zs_bottom,zs1,l+zs_other,a)\n\t\tstirrup =  get_lines([pt3,pt4,pt5,pt6])\n\t\trebar = RS.Rebar.CreateFromCurves(doc,RS.RebarStyle.StirrupTie,RebarType1,hook_type,hook_type,el,norm2,stirrup,RS.RebarHookOrientation.Right,RS.RebarHookOrientation.Left,True,True)\n\treturn rebar\ndef get_new_point(x1,y1,z1,fx,fy,a):\n\tx2 = x1+(fx)*math.cos(math.radians(a))-(fy)*math.sin(math.radians(a))\n\ty2 = y1+(fx)*math.sin(math.radians(a))+(fy)*math.cos(math.radians(a))\n\tpt2 = XYZ(x2,y2,z1)\n\t#pt2 = DPoint.ByCoordinates(x2,y2,z1)\n\treturn pt2\ndef get_angle(a):\n\tx1 = a.X\n\ty1 = a.Y\n\ta1 = DVector.ByCoordinates(x1,y1,0)\n\tangle = DVector.AngleAboutAxis(a1,DVector.XAxis(),DVector.ZAxis())\n\treturn angle\ndef get_lines(stirrup_pts):\n\tlist=[]\n\ti=0\n\tfor pt in stirrup_pts:\n\t\tif i==0:\n\t\t\tnew_pt1=pt\n\t\t\tnew_pt3=pt\n\t\telse:\n\t\t\tlist.append(Line.CreateBound(new_pt1,pt))\n\t\t\tnew_pt1=pt\t\t\t\n\t\ti=i+1\n\treturn list\t\ndef iterate(src, res):\n\tfor k, i in enumerate(src):\n\t\tvec1 = Vector.ByTwoPoints(i.EndPoint, res[-1].StartPoint).Length \n\t\tvec2 = Vector.ByTwoPoints(i.StartPoint, res[-1].EndPoint).Length \n\t\tvec3 = Vector.ByTwoPoints(i.EndPoint, res[-1].EndPoint).Length\n\t\tvec4 = Vector.ByTwoPoints(i.StartPoint, res[-1].StartPoint).Length\n\t\tgap = 0.000001 \n\t\tif vec1 < gap or vec2 < gap or vec3 < gap or vec4 < gap :\n\t\t\tres.Add(src.pop(k)) \n\t\t\treturn iterate(src, res) \n\treturn res\t\ndef getpolycurves(slab):\t\n\tcrvs=[]\n\t_points = None\n\tz3 = None\n\tgeom = slab\n\tfaces = geom.Faces\n\tfacelist=[]\n\tareas=[]\n\tfor face in faces:\n\t\tareas.append(face.SurfaceGeometry().Area)\n\tA1 = max(areas)\n\ti=0\n\tfor A2 in areas:\n\t\tif round(A2)==round(A1):\n\t\t\tfacelist.append(faces[i])\n\t\ti=i+1\t\n\tf2=None\n\tz=-1000\n\tfor face in facelist:\t\t\n\t\tpts = face.Vertices\n\t\tz2 = pts[0].PointGeometry.Z\n\t\tif z2>z:\n\t\t\tf2=face\n\t\t\tz=z2\n\t\t\t_edges = face.Edges\n\tsrc=[]\n\tfor e in _edges:\n\t\tsrc.append(e.CurveGeometry)\n\tcontour = [] \n\tcontours = []\n\twhile src.Count>0:\n\t\tcontour.Add(src.pop(0))\n\t\tcontour = iterate(src, contour)\n\t\tcontours.Add(contour)\n\t\tcontour = []\n\tL=0\n\tpc=None\n\tfor contour in contours:\n\t\tc = DPolyCurve.ByJoinedCurves(contour)\n\t\tlen = c.Length\n\t\tif len > L:\n\t\t\tpc = c\n\t\t\tL = len\n\tcrvs.append(pc)\n\treturn crvs\t\ndef get_center(el):\n\tbb = el.BoundingBox\n\tp1 = bb.MinPoint\n\tp2 = bb.MaxPoint\n\tx = (p1.X+p2.X)/2\n\ty = (p1.Y+p2.Y)/2\n\tz = (p1.Z+p2.Z)/2\n\treturn XYZ(x,y,z)\n#----ОСНОВНОЙ КОД-----\npars = get_pars_floor(el)\nval_thickness = pars[0]\nzs_other = pars[1]\nzs_top = pars[2]\nzs_bottom = pars[3]\ncontour1 = getpolycurves(Dy_g)[0]\ncurves = contour1.Curves()\nlist_pts=[]\nfor curve in curves:\n\tpt1=toXYZ(curve.StartPoint)\n\tpt2=toXYZ(curve.EndPoint)\n\tlist_pts.append([pt1,pt2])\n\nTransactionManager.Instance.EnsureInTransaction(doc)\nfor pts in list_pts:\n\trebar = create_U_bylinepoints(pts,l_U,s1,zs_other,zs_top,zs_bottom,val_thickness,Dy_g)\nTransactionManager.Instance.TransactionTaskDone()\n#Назначьте вывод переменной OUT.\nOUT = rebar",
+      "VariableInputPorts": true,
+      "Id": "83488e8d4b214921984d55edafabf730",
+      "Inputs": [
+        {
+          "Id": "c0c89464cd204dbbaad400fba5b1c39a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a7119ebe60934efa96dd7137988df7c8",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5f37ba2d7d4142db8353ac5bca2ff34b",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "61463665958b4a8db677971d75289800",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1d0f4430b11c42ef9b75fd86af196e84",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 1000.0,
+      "MinimumValue": 100.0,
+      "StepValue": 50.0,
+      "InputValue": 400.0,
+      "Id": "49681fd803d14b818c5e3e93f29d532d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fc0522d97bb147448312073752ae3b18",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Регулятор, создающий числовые значения."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 1000.0,
+      "MinimumValue": 0.0,
+      "StepValue": 50.0,
+      "InputValue": 500.0,
+      "Id": "48f08a4cd27547049512b04889d7c8e6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a9ab02eb14cd49f3b8f65d5cb1b20593",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Регулятор, создающий числовые значения."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "fc0522d97bb147448312073752ae3b18",
+      "End": "5f37ba2d7d4142db8353ac5bca2ff34b",
+      "Id": "b59431d2ba0c43baa1b05e2d1fd4effd"
+    },
+    {
+      "Start": "a9ab02eb14cd49f3b8f65d5cb1b20593",
+      "End": "61463665958b4a8db677971d75289800",
+      "Id": "aafec2a3f44e496a8cbe3a7fe6b6ae14"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -495.37921142578125,
+      "EyeY": -496.43093872070313,
+      "EyeZ": 672.99652099609375,
+      "LookX": 495.37921142578125,
+      "LookY": 496.43093872070313,
+      "LookZ": -672.99652099609375,
+      "UpX": 0.18646250665187836,
+      "UpY": -0.94924265146255493,
+      "UpZ": -0.25331827998161316
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "PyS: Усиление контура плиты",
+        "Id": "83488e8d4b214921984d55edafabf730",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1456.08156547061,
+        "Y": 842.708083262758
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Шаг П-шек",
+        "Id": "49681fd803d14b818c5e3e93f29d532d",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1834.76974569975,
+        "Y": 966.327618797323
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Длина П-шек",
+        "Id": "48f08a4cd27547049512b04889d7c8e6",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1835.8770135788,
+        "Y": 1039.61041551327
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "bd8922e92e3e4a99b24fa78675090b26",
+        "Title": "Ввод значений",
+        "Nodes": [
+          "49681fd803d14b818c5e3e93f29d532d"
+        ],
+        "Left": -1844.76974569975,
+        "Top": 920.327618797323,
+        "Width": 319.0,
+        "Height": 114.0,
+        "FontSize": 30.0,
+        "InitialTop": 966.327618797323,
+        "InitialHeight": 747.324825425341,
+        "TextblockHeight": 36.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "a597a77228c347f480cd35180f73213b",
+        "Title": "Требуется установка пакета\r\nDynamo for Rebar",
+        "Nodes": [],
+        "Left": -1812.5401958228765,
+        "Top": 854.30788575237864,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 2951.1406761153203,
+    "Y": -964.976999594591,
+    "Zoom": 1.4769449039017628
+  }
+}

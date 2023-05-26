@@ -1,0 +1,227 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Схема полов",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#Загрузка библиотек\nimport System\nimport clr\n\nfrom System import Array\nfrom System.Collections.Generic import *\n\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nimport Autodesk\n\nclr.AddReference('System')\nfrom System.Collections.Generic import List\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nfrom System import Array\nfrom System.Collections.Generic import *\n\nimport sys\n\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\nsys.path.append(pyt_path)\n\nimport os\n\n\n#ФУНКЦИИ ДЛЯ СОЗДАНИЯ ЧЕРТЕЖНЫХ ВИДОВ\n# Функция выбора типоразмера данного экземпляра\ndef get_type(element):\n\treturn doc.GetElement(element.GetTypeId()) \n#Является ли элемент списком\t\ndef to_list(item):\n\tlistA = []\n\tif hasattr(item, \"__iter__\"):\n\t\tfor i in range(0,len(item)):\n\t\t\tlistA.append(item[i])\n\telse:\n\t\tlistA.append(item)\n\treturn listA\t\n\t\n\t\n#функция последовательного приращения толщины слоя\ndef thickness(lst):\n\ta, b = [], [0]\n\tfor e in lst:\n\t\tif e !=0:\n\t\t\ta.append(e)\n\t\t\tb.append(sum(a))\n\treturn b\t\n\n#функция добавления толщины слоя\ndef result(lst):\n\ta, b = [], []\n\tfor  e in lst:\n\t\ta.append(e)\n\t\tb.append(sum(a))\n\treturn b\n\t\n#Функция отрисовки линий для привязки размера\ndef dim_lines(structure):\n\tstructure.insert(0,0)\n\t# Линии для привязки размера\n\tfor i, f in enumerate(structure):\n\t\t#Создание линий\n\t\tif i == 0:\n\t\t\tDL0 = doc.Create.NewDetailCurve(View, draw_line(f))\n\t\t\tLR0 = DL0.GeometryCurve.Reference\t \t\n\t\t\tRA.Append(LR0)\t\t\n\t\telif i<len(structure) and structure[i] != structure[i-1]:\t \t\t\n\t\t\tDL = doc.Create.NewDetailCurve(View, draw_line(f))\n\t\t\tLR = DL.GeometryCurve.Reference \t \t\t\n\t\t\tRA.Append(LR)\n\t\t\t#Линия гидроизоляции\n\t\t\tif i+1<len(structure) and structure[i] == structure[i+1]:\n\t\t\t\tDL.LineStyle = Dashed\n\treturn RA\n\n#Получение толщин слоев с учетом нулевых толщин\t\ndef getThickness(lst):\n\th = result(lst)\n\tcontainer = []\n\tt = 15 #толщина зазора\n\tfor i, e in enumerate(lst):\n\t\t# значение, если следующий слой улевой толщины\n\t\tif i+1<len(lst) and lst[i+1] == 0:\n\t\t\tcontainer.append([h[i]-e, h[i]-t/304.8])\n\t\t# значение, если предыдущий слой улевой толщины\t\n\t\telif i<len(lst) and lst[i-1] == 0:\n\t\t\tcontainer.append([h[i]-e + t/304.8, h[i]])\n\t\t# значение, если слой улевой толщины\t\n\t\telif lst[i] == 0:\n\t\t\tpass\n\t\t#Общий случай\t\t\t\n\t\telse:\n\t\t\tcontainer.append([h[i]-e, h[i]])\n\treturn container\n\t\ndef draw_line(f):\n\tpt0 = XYZ(0,f,0)\n\tpt1 = XYZ(1,f,0)\n\tline = Autodesk.Revit.DB.Line.CreateBound(pt0,pt1)\n\treturn line\t\t\n\t\n#Контуры для областей\ndef fillloop(l):\t\n\tprofileloops = List[CurveLoop]()\n\tprofileloop = []\n\tpt0 = XYZ(0,l[0],0)\n\tpt1 = XYZ(0,l[1],0)\n\tpt2 = XYZ(1,l[1],0)\n\tpt3 = XYZ(1,l[0],0)\n\tpt4 = XYZ(0,l[0],0)\n\tp = [pt0,pt1,pt2,pt3,pt4]\t\t\t\n\tfor i, e in zip(p,p[1:]):\n\t\tln = Autodesk.Revit.DB.Line.CreateBound(i,e)\n\t\tprofileloop.append(ln)\n\tprofileloops.Add(CurveLoop.Create(profileloop))\n\treturn profileloops\n\t\n#Линии детализации для размеров\ndef detlines(m, u):\n\tc = sum(m)\n\tm.append(u)\n\tv = sum(m)\n\tpt0 = XYZ(0,v,0)\n\tpt1 = XYZ(2,v,0)\n\treturn Autodesk.Revit.DB.Line.CreateBound(pt0,pt1)\n\t\n#Размерная линия\ndef perpline(x):\n\tpt0 = XYZ(x,0,0)\n\tpt1 = XYZ(x,3,0)\n\treturn Autodesk.Revit.DB.Line.CreateBound(pt0,pt1)\n\t\n#Фнкция создание новых типов цветовых областей или выбор существующих\t\ndef fillpatternCreate(mat):\n\tFillRegionsCollector = FilteredElementCollector(doc).OfClass(FilledRegionType)\n\tf = FillRegionsCollector.FirstElement().Id\n\tFillRegions = [fr for fr in FillRegionsCollector]\n\tFPNames = [fill.LookupParameter(\"Имя типа\").AsString() for fill in FillRegions]\n\tif mat:\n\t\tname = 'Штриховка ' + mat.Name\n\t\t#Если у материала задана штриховка\n\t\tif str(mat.CutPatternId) != \"-1\" :\n\t\t\t#Id образца штриховки материал\n\t\t\tMaterialPattern = mat.CutPatternId\n\t\t#Если материал без штриховки\t\n\t\telse:\n\t\t\tMaterialPattern = ElementId(-1)\n\telse:\n\t\tname = 'Штриховка без образца'\n\t\tMaterialPattern = ElementId(-1)\n\t#Если область с таким именем уже есть\n\tif name in FPNames:\n\t\t#Область штриховки\n\t\tfill = FillRegions[FPNames.index(name)]\n\t\t#Параметр образца штриховки области штриховки\n\t\tPatternParameter = fill.get_Parameter(BuiltInParameter.FOREGROUND_ANY_PATTERN_ID_PARAM)\n\t\t#Id образца штриховки\n\t\tPatternId = PatternParameter.AsElementId()\n\t\t#Если образцы штриховки материала и области штриховки совпадают\n\t\tif str(MaterialPattern) == str(PatternId):\n\t\t\treturn fill\n\t\telse:\n\t\t\tPatternParameter.Set(MaterialPattern)\n\t\t\treturn\tfill\n\telse:\n\t\tfill = doc.GetElement(f).Duplicate(name)\n\t\tfillpattern = fill.get_Parameter(BuiltInParameter.FOREGROUND_ANY_PATTERN_ID_PARAM).Set(MaterialPattern)\n\t\treturn fill\t\n\n#Изъятие первого элемента из коллекции элементов на виде, являющийся собственно видом\t\ndef elemToIds(collection):\n\tids = []\n\tfor e in collection:\n\t\tids.append(e)\n\treturn List[ElementId](ids[1:])\n\t\n#Создание нового чертежного вида\ndef draftviewCreate(arg):\n\tviewFamilyType = FilteredElementCollector(doc).OfClass(ViewFamilyType)\n\tdraftViews = []\n\tDWTpesNames = []\n\tDWNames = []\n\tfor v in viewFamilyType:\n\t\t# Выбор первого типоразмера чертежного вида для создания копий\n\t\tif \"Drafting\" in v.ViewFamily.ToString():\n\t\t\tdraftViews.append(v)\n\t\t\tDWTpesNames.append(v.LookupParameter(\"Имя типа\").AsString())\n\t\t\tview = v\n\t# Проверка, существует ли уже такой типоразмер\n\tif \"Схема полов\" in DWTpesNames:\n\t\ti = draftViews[DWTpesNames.index(\"Схема полов\")]\t\n\telse:\n\t\ti = doc.GetElement(view.Id).Duplicate(\"Схема полов\")\n\tAllDW = FilteredElementCollector(doc).OfClass(ViewDrafting).WhereElementIsNotElementType()\t\n\tfor draftView in AllDW:\n\t\tif draftView.Name == arg:\n\t\t\tElementsInView = FilteredElementCollector(doc, draftView.Id).ToElementIds()\n\t\t\telements = elemToIds(ElementsInView)\n\t\t\tdoc.Delete(elements)\n\t\t\treturn draftView\n\tNewDraftView = ViewDrafting.Create(doc,view.Id)\n\tNewDraftView.LookupParameter(\"Имя вида\").Set(arg)\t\t\t\n\treturn NewDraftView\n\t\n#ФУНКЦИИ ДЛЯ СОЗДАНИЯ ИЗОБРАЖЕНИЯ\n#Создание набора видов\ndef CreateViewSet(views):\n\tviewSet = List[ElementId]()\n\tfor i in views:\n\t\tviewSet.Add(i.Id)\n\treturn viewSet\n\t\n#Параметры экспорта изображения\ndef export_option(views):\n\tieo = ImageExportOptions()\n\tieo.FilePath = filePath\n\tieo.HLRandWFViewsFileType = ImageFileType.PNG\n\tieo.ZoomType  = ZoomFitType.FitToPage\n\tieo.PixelSize = 512\n\tieo.ExportRange = ExportRange.SetOfViews\n\tieo.SetViewsAndSheets(CreateViewSet(to_list(views)))\n\tieo.FitDirection = FitDirectionType.Horizontal\n\treturn ieo\n#Удаление существующих изображений\t\ndef del_images():\n\tBuiltin = BuiltInCategory.OST_RasterImages\n\tfilter = ElementCategoryFilter(Builtin)\n\tCollector = FilteredElementCollector(doc).WherePasses(filter)\n\tRasterImages = Collector.ToElements()\n\tif len(RasterImages)>0:\n\t\tfor image in RasterImages:\n\t\t\tImageName = Element.Name.__get__(image)\n\t\t\tif \"Пол\" in ImageName:\n\t\t\t\tdoc.Delete(image.Id)\n\telse:\n\t\tpass\n\treturn \"Выполненно\"\n\t\n#Данные\ndoc = DocumentManager.Instance.CurrentDBDocument\nfloors = UnwrapElement(IN[0])\nfilePath = 'C:/Temp/'\n\n#Выбор графического стиля линии гидроизоляции\nLinesCat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines);\nGrStyle = LinesCat.SubCategories.get_Item(\"Невидимые линии\");\nDashed = GrStyle.GetGraphicsStyle( GraphicsStyleType.Projection)\n\nviews = []\n\nif IN[1] == True:\n\tTransactionManager.Instance.EnsureInTransaction(doc)\n\t#Все типоразмеры цветовых областей в проекте\n\tfills = FilteredElementCollector(doc).OfClass(FilledRegionType) \n\t#Все типоразмеры видов в проекте\n\tviewFamilyType = FilteredElementCollector(doc).OfClass(ViewFamilyType)\n\t#Удаление существующих изображений полов\n\tdel_images()\n\t\n\tfor floor in floors:\n\t\tRA = ReferenceArray()\n\t\t# Создание нового чертежного видавида\n\t\tView = draftviewCreate(Element.Name.__get__(floor))\n\t\t# Структура пола\t\t\n\t\tcompstruc = floor.GetCompoundStructure()\t\n\t\tcount = list(range(compstruc.LayerCount))\n\t\t#Список толщин\n\t\tLayersHeight = [compstruc.GetLayerWidth(i) for i in count]\n\t\th = list(reversed(LayersHeight))\n\t\t#Список материалов\n\t\tLayersMaterial = [floor.Document.GetElement(compstruc.GetMaterialId(i)) for i in count if LayersHeight[i]!=0]\n\t\tMaterials = list(reversed(LayersMaterial))\n\t\t#Диапозон толщин\n\t \tThickness = getThickness(h)\n\t \t#Штриховки для материалов\n\t \tFillTypes = [fillpatternCreate(material) for material in Materials]\n\t \t#Контуры штриховок\n\t \tloops = [fillloop(thick) for thick in Thickness]\n\t \t\n\t \t#Создание цветовых областей\n\t \tfor ft, loop in zip(FillTypes, loops):\n\t \t\tFill = FilledRegion.Create(doc, ft.Id, View.Id, loop)\n\t \t\t\n\t \t#Добавление толщин слоев\t\n\t \tstructure = result(h)\n\t \t#Линии привязки размера\n\t \tRA = dim_lines(structure)\n\t \t#Размерная линия\t\t\n\t\tPerp = perpline(1.3)\n\t\t#Создание размера\t\n\t\tdim = doc.Create.NewDimension(View, Perp, RA) \n\t\t#ЭКСПОРТ ВИДА В .PNG\n\t\t#Параметры экспорта\n\t\tieo = export_option(View)\n\t\t#Экспорт изображения\n\t\tdoc.ExportImage(ieo)\n\t\t#Имя, присваемое изображению\n\t\tImageName = ImageExportOptions.GetFileName(doc,View.Id ) + '.PNG' \n\t\t#Полное имя изображения на диске\n\t\tFileName = os.path.join(filePath, ImageName)\n\t\t#Новое имя изображения на диске\n\t\tNewFileName = os.path.join(filePath, View.Name+ '.PNG')\n\t\t#Переименование файла изображения\n\t\tos.rename(FileName, NewFileName)\n\t\t#Загрузка зображений в проект\n\t\tFloorImage = ImageType.Create(doc,  NewFileName)\n\t\t#Заполнение параметра\n\t\tfloor.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_IMAGE).Set(FloorImage.Id)\n\t\t#Удаление файлов изображений с диска\t\n\t\tos.remove(NewFileName)\n\t\tviews.append(View) \t\t\n\t\t\n\tTransactionManager.Instance.TransactionTaskDone()\n\tOUT = views\nelse:\n\tOUT = IN[0]\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "VariableInputPorts": true,
+      "Id": "29888d3a873b4d23b61c08cd3bd60d8c",
+      "Inputs": [
+        {
+          "Id": "4205a5137b4e4a1189d1c6f199e550ab",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "43a5d8b931f54315b43c291131dfd581",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "944b42a16bdd4e30af309cdca19a7730",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "4aa177d2af6a4a1eacfff5f4c79ce5ef",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "60d58cc2fc6749f0964bde910ac73384",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import System\r\nimport clr\r\n\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom System.Collections.Generic import *\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\ndef floors(floor_string):\r\n\t#фильтр по параметру\r\n\tid = ElementId(BuiltInParameter.SYMBOL_NAME_PARAM)\r\n\tprovider = ParameterValueProvider(id)\r\n\tevaluator = FilterStringContains()\r\n\t#значение параметра\r\n\tFloorName = floor_string\r\n\t#Соответствие параметра\r\n\trule = FilterStringRule( provider, evaluator, FloorName, False)\r\n\tFloorFilter = ElementParameterFilter(rule)\r\n\t#Перекрытия в проекте\r\n\tCollector = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Floors).WhereElementIsElementType()\r\n\t#Полы\r\n\tCollector = Collector.WherePasses(FloorFilter).ToElements()\r\n\treturn Collector\r\n\r\nif IN[0] == True:\r\n\tOUT = floors(\"Пол\")\r\nelse:\r\n\tOUT = \"Обновить\"",
+      "VariableInputPorts": true,
+      "Id": "ba6e29097ea0448aac3bfb18939672cf",
+      "Inputs": [
+        {
+          "Id": "a945c595c39748a3b21f811fc5d1d3a5",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c277f94017be48ea8fe1e68d4b1c5af7",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nimport Autodesk\n\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.GeometryConversion)\n\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nfrom System.Collections.Generic import *\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\ndef layer_discription(floor, num):\n\tcompstruc = floor.GetCompoundStructure() \n\tmaterial = floor.Document.GetElement(compstruc.GetMaterialId(num))\n\tif material:\n\t\t#Описание материала\n\t\tdiscription = material.LookupParameter(\"Описание\").AsString() \n\t\treturn discription\n\telse:\n\t\treturn \"Не определено\"\n\ndef layer_thickness(floor, num):\n\tcompstruc = floor.GetCompoundStructure()\n\tLayerThick = compstruc.GetLayerWidth(num)*304.8 #Толщина слоя\n\tif \tLayerThick > 0:\n\t\treturn \" - \" + str(LayerThick)[:-2]+\" мм\"\n\telse:\n\t\treturn \"\"\n\ndef layers(floor):\n\tDataSring = [] \n\tComm = floor.LookupParameter(\"Комментарии к типоразмеру\").AsString()\t\t\n\tcompstruc = floor.GetCompoundStructure() \n\tnum = compstruc.LayerCount #Счётчик слоёв пола\n\tcount = list(range(compstruc.LayerCount))\n\t#Список толщин\n\tLayersThickness = [layer_thickness(floor, i) for i in count]\n\t#Список материалов\n\tLayersMaterial = [layer_discription(floor, i) for i in count]\n\t#Составление описания слоев\n\tfor num, (mat, thick) in enumerate(zip(LayersMaterial, LayersThickness)):\t\t\t\n\t\tDataSring.append( \"\".join([str(num +1)+\". \" + mat, thick])) #Сборка строки состава пола\n\tif Comm != None:\n\t\tDataSring.append(str(num + 1) + \". \" + Comm) #Добавление комментария\n\tparam = \"\\r\\n\".join(DataSring)\n\treturn param\n\nAllFloors = UnwrapElement(IN[0])\nFloorData = [] #пустой список для общего списка слоёв и их толщин\n\nif isinstance(AllFloors, str):\n\tOUT = AllFloors\nelse:\n\tTransactionManager.Instance.EnsureInTransaction(doc)\n\tfor floor in AllFloors:\n\t\tParam = floor.LookupParameter(\"Описание\").Set(layers(floor))\n\t\tFloorData.append(layers(floor))\n\tTransactionManager.Instance.TransactionTaskDone()\n\tOUT =  FloorData",
+      "VariableInputPorts": true,
+      "Id": "9bc2c82acf1842fb9d3812fedc8cd6bb",
+      "Inputs": [
+        {
+          "Id": "f0d3f261f60e4709b292cc62bf401632",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "cd82689b2e8040b4938187460a1ab8f0",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "60d58cc2fc6749f0964bde910ac73384",
+      "End": "a945c595c39748a3b21f811fc5d1d3a5",
+      "Id": "0461ca939304479aa427a183a810d6bb"
+    },
+    {
+      "Start": "60d58cc2fc6749f0964bde910ac73384",
+      "End": "43a5d8b931f54315b43c291131dfd581",
+      "Id": "1a7cdbba7115406d9b340fa31ad12023"
+    },
+    {
+      "Start": "c277f94017be48ea8fe1e68d4b1c5af7",
+      "End": "4205a5137b4e4a1189d1c6f199e550ab",
+      "Id": "4b58c4bdec934182a16ae88d46eb8823"
+    },
+    {
+      "Start": "c277f94017be48ea8fe1e68d4b1c5af7",
+      "End": "f0d3f261f60e4709b292cc62bf401632",
+      "Id": "9fae59440b0b45979722a5eab55a955d"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.1.5055",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": 289.99655151367187,
+      "EyeY": 44754.99609375,
+      "EyeZ": -697.54840087890625,
+      "LookX": 441.32223510742187,
+      "LookY": -41318.30859375,
+      "LookZ": -11543.7744140625,
+      "UpX": 0.033730734139680862,
+      "UpY": 0.46947157382965088,
+      "UpZ": -0.88230305910110474
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Схема пола",
+        "Id": "29888d3a873b4d23b61c08cd3bd60d8c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 936.6114647913929,
+        "Y": -356.6574648229643
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "4aa177d2af6a4a1eacfff5f4c79ce5ef",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 460.18263321785446,
+        "Y": -331.28418084309692
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Выбор и фильтрация",
+        "Id": "ba6e29097ea0448aac3bfb18939672cf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 674.68463170890561,
+        "Y": -431.55217578018573
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Состав пола ",
+        "Id": "9bc2c82acf1842fb9d3812fedc8cd6bb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 935.52527492293507,
+        "Y": -489.760761554666
+      }
+    ],
+    "Annotations": [],
+    "X": -477.10322084040558,
+    "Y": 794.03482027698556,
+    "Zoom": 1.1788623331021388
+  }
+}

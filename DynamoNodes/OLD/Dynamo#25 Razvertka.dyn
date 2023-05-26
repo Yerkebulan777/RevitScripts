@@ -1,0 +1,257 @@
+<Workspace Version="0.9.0.3067" X="29.1777737610965" Y="-29.0718267039068" zoom="0.450289314887347" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+  <NamespaceResolutionMap />
+  <Elements>
+    <Dynamo.Nodes.DSModelElementSelection guid="8abb292c-9c5e-4152-92a9-01a66b6362da" type="Dynamo.Nodes.DSModelElementSelection" nickname="Select Model Element" x="136.729829015864" y="563.874169264602" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True">
+      <instance id="69e80191-2b5b-4714-8ff2-c157ee27589b-0022ff97" />
+    </Dynamo.Nodes.DSModelElementSelection>
+    <PythonNodeModels.PythonNode guid="5cc58f95-303f-4657-a50b-bbcfd3b440d2" type="PythonNodeModels.PythonNode" nickname="PyS: Create Detail Filled Region" x="1872.49387637304" y="412.987932762036" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" inputcount="3">
+      <Script># Create Detail Filled Region
+# ©2016, Khasan Mamaev
+# www.dynamobim.ru
+
+reset = IN[0]
+if IN[1] != True: off = 1/0
+
+import clr 
+
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+doc = DocumentManager.Instance.CurrentDBDocument
+
+clr.AddReference("RevitAPI")
+import Autodesk
+from Autodesk.Revit.DB import *
+
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.GeometryConversion)
+
+clr.AddReference("System")
+import System
+from System.Collections.Generic import List
+
+curves1 = IN[2]
+
+fec = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()
+vDraft = FilteredElementCollector(doc).OfClass(ViewDrafting).ToElements()
+fecIds = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElementIds()
+fillR = FilteredElementCollector(doc).OfClass(FilledRegionType)
+
+ff = [i for i in fillR][0]
+
+vv = [i for i in fec if i.FamilyName == "Чертежный вид"]
+
+vdd = [i for i in vDraft if i.Name == "Развертка крыши"]
+
+cLoo2 = []
+for n in curves1:
+	cc = List[Curve]()
+	for j in n:
+		cc.Add(j.ToRevitType())
+	cLoop = CurveLoop.Create(cc)
+	curveLoops = List[CurveLoop]()
+	curveLoops.Add(cLoop)
+	cLoo2.append(curveLoops)
+
+viewId = doc.ActiveView.Id
+
+TransactionManager.Instance.EnsureInTransaction(doc)
+
+Fill = [FilledRegion.Create(doc, ff.Id, vdd[0].Id, i) for i in cLoo2]
+
+TransactionManager.Instance.TransactionTaskDone()
+
+OUT = Fill</Script>
+    </PythonNodeModels.PythonNode>
+    <Prorubim.DS.Common.ForceChildrensEval guid="2ce1b972-da3d-4ad5-b073-0aa472248921" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="328.835462098578" y="440.993050999789" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" />
+    <PythonNodeModels.PythonNode guid="5c0c0ad9-f3a4-4a51-a284-584a0c253f9b" type="PythonNodeModels.PythonNode" nickname="PyS: Roof Surface Scan" x="1047.89366491166" y="460.335904410177" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" inputcount="3">
+      <Script># Roof Surface Scan
+# ©2016, Khasan Mamaev
+# www.dynamobim.ru
+
+reset = IN[0]
+if IN[1] != True: off = 1/0
+
+import clr
+clr.AddReference('ProtoGeometry')
+import Autodesk
+from Autodesk.DesignScript.Geometry import *
+
+DPoint = Autodesk.DesignScript.Geometry.Point
+DSurface = Autodesk.DesignScript.Geometry.Surface
+DLine = Autodesk.DesignScript.Geometry.Line
+DPlane = Autodesk.DesignScript.Geometry.Plane
+
+clr.AddReference("RevitAPI")
+from Autodesk.Revit.DB import *
+
+clr.AddReference('DSCoreNodes')
+import DSCore
+from DSCore import *
+
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.Elements)
+clr.ImportExtensions(Revit.GeometryConversion)
+
+faces = IN[2].Faces
+
+сurveLo = []
+vectors = []
+for i in faces:
+	if i.FaceNormal.Z &gt;0:
+		сurveLo.append(i.GetEdgesAsCurveLoops())
+		vectors.append([i.Normal.ToVector(), i.Origin.ToPoint()])
+		
+сurveLo = [i[0] for i in сurveLo]
+
+pps = []
+lins = []
+for i in сurveLo:
+	gg = []
+	hh = []
+	for j in i:
+		gg.append(j.ToProtoType().StartPoint)
+		gg.append(j.ToProtoType().EndPoint)
+		hh.append(j.ToProtoType())
+	pps.append(gg)
+	lins.append(hh)
+
+def RotaVec(el,vec,pt):
+	zVec = Vector.ZAxis()
+	angl = zVec.AngleBetween(vec)
+	crosVec = vec.Cross(zVec)
+	return el.Rotate(pt,crosVec,angl)
+
+def PtRnd(p):
+	n = 6
+	pt = DPoint.ByCoordinates(round(float(p.X),n),round(float(p.Y),n),round(float(p.Z),n))
+	return pt
+
+pts = []
+for i in pps:
+	ss = []
+	for j in i:
+		ss.append(PtRnd(j))
+	pts.append(ss)
+
+rotLins = []
+for i,j in enumerate(lins):
+	bb = []
+	for x in j:
+		bb.append(RotaVec(x,vectors[i][0],vectors[i][1]))
+	rotLins.append(bb)
+
+ontoPlan = []
+bBox = []
+for i in rotLins:
+	kk = []
+	for j in i:
+		kk.append(j.PullOntoPlane(DPlane.XY()))
+	ontoPlan.append(PolyCurve.ByJoinedCurves(kk))
+	bBox.append(BoundingBox.ByGeometry(PolyCurve.ByJoinedCurves(kk)))
+
+def pt3(p1,p2):
+	return DPoint.ByCoordinates(p2.X,p1.Y,p2.Z)
+
+def delt(p1,p2):
+	return [p1.X-p2.X, p1.Y-p2.Y]
+
+def listSum(lis):
+	su = []
+	for i,k in enumerate(lis):
+		a=[]
+		for j in range(i):
+			a.append(lis[j])
+		su.append(sum(a))
+	return su
+
+bBoxPt = []
+for i in bBox:
+	bBoxPt.append([i.MinPoint, pt3(i.MinPoint,i.MaxPoint)])
+
+lents = [abs(delt(i[0],i[1])[0]) for i in bBoxPt]
+
+lentsDel = [i+0.2*lents[0] for i in lents]
+
+xSum = listSum(lentsDel)
+
+yDelt = [delt(bBoxPt[0][0],i[0])[1] for i in bBoxPt]
+
+xDelt = [delt(bBoxPt[0][0],i[0])[0]+xSum[k] for k,i in enumerate(bBoxPt)]
+
+
+series = []
+for i,k in enumerate(ontoPlan): 
+	series.append(k.Translate(xDelt[i],yDelt[i],0))
+
+OUT = series</Script>
+    </PythonNodeModels.PythonNode>
+    <PythonNodeModels.PythonNode guid="2f7c24c1-e78b-4bfc-b7a1-a16fc46110a3" type="PythonNodeModels.PythonNode" nickname="PyS: Get Geometry" x="562.476079560244" y="512.130904251602" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" inputcount="3">
+      <Script>reset = IN[0]
+if IN[1] != True: off = 1/0
+
+import clr
+
+clr.AddReference("RevitAPI")
+from Autodesk.Revit.DB import *
+
+elem = UnwrapElement(IN[2])
+
+opt = Options()
+geo = elem.get_Geometry(opt)
+
+OUT = [i for i in geo][0]</Script>
+    </PythonNodeModels.PythonNode>
+    <Prorubim.DS.Common.ForceChildrensEval guid="0ad66183-d159-4a07-b09f-73ad29fd6ea9" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="1647.89156341436" y="345.790971614525" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" />
+    <Dynamo.Nodes.DSFunction guid="325046db-70cd-431a-8515-d30188b208a1" type="Dynamo.Nodes.DSFunction" nickname="Geometry.Explode" x="1239.86379174693" y="460.716314337516" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" assembly="ProtoGeometry.dll" function="Autodesk.DesignScript.Geometry.Geometry.Explode" />
+    <DSCoreNodesUI.BoolSelector guid="f82d4281-07ba-4302-9d98-5d532469addf" type="DSCoreNodesUI.BoolSelector" nickname="ON/OFF" x="1679.80534768163" y="437.438814991371" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True">
+      <System.Boolean>True</System.Boolean>
+    </DSCoreNodesUI.BoolSelector>
+    <Prorubim.DS.Common.ForceChildrensEval guid="61f8dd3d-5d6d-432c-b98e-d55167a1c9d3" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="813.723940860606" y="385.815519212426" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" />
+    <DSCoreNodesUI.BoolSelector guid="8aa30827-4534-4cc5-b320-f0c1effe8a4b" type="DSCoreNodesUI.BoolSelector" nickname="ON/OFF" x="863.301828146331" y="480.25279989085" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True">
+      <System.Boolean>True</System.Boolean>
+    </DSCoreNodesUI.BoolSelector>
+    <DSCoreNodesUI.BoolSelector guid="f4a1ad27-b948-41ba-a627-dd18c2fd7a96" type="DSCoreNodesUI.BoolSelector" nickname="ON/OFF" x="390.421157197537" y="534.945736518755" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True">
+      <System.Boolean>True</System.Boolean>
+    </DSCoreNodesUI.BoolSelector>
+  </Elements>
+  <Connectors>
+    <Dynamo.Models.ConnectorModel start="8abb292c-9c5e-4152-92a9-01a66b6362da" start_index="0" end="2f7c24c1-e78b-4bfc-b7a1-a16fc46110a3" end_index="2" portType="0" />
+    <Dynamo.Models.ConnectorModel start="2ce1b972-da3d-4ad5-b073-0aa472248921" start_index="0" end="2f7c24c1-e78b-4bfc-b7a1-a16fc46110a3" end_index="0" portType="0" />
+    <Dynamo.Models.ConnectorModel start="5c0c0ad9-f3a4-4a51-a284-584a0c253f9b" start_index="0" end="325046db-70cd-431a-8515-d30188b208a1" end_index="0" portType="0" />
+    <Dynamo.Models.ConnectorModel start="2f7c24c1-e78b-4bfc-b7a1-a16fc46110a3" start_index="0" end="5c0c0ad9-f3a4-4a51-a284-584a0c253f9b" end_index="2" portType="0" />
+    <Dynamo.Models.ConnectorModel start="0ad66183-d159-4a07-b09f-73ad29fd6ea9" start_index="0" end="5cc58f95-303f-4657-a50b-bbcfd3b440d2" end_index="0" portType="0" />
+    <Dynamo.Models.ConnectorModel start="325046db-70cd-431a-8515-d30188b208a1" start_index="0" end="5cc58f95-303f-4657-a50b-bbcfd3b440d2" end_index="2" portType="0" />
+    <Dynamo.Models.ConnectorModel start="f82d4281-07ba-4302-9d98-5d532469addf" start_index="0" end="5cc58f95-303f-4657-a50b-bbcfd3b440d2" end_index="1" portType="0" />
+    <Dynamo.Models.ConnectorModel start="61f8dd3d-5d6d-432c-b98e-d55167a1c9d3" start_index="0" end="5c0c0ad9-f3a4-4a51-a284-584a0c253f9b" end_index="0" portType="0" />
+    <Dynamo.Models.ConnectorModel start="8aa30827-4534-4cc5-b320-f0c1effe8a4b" start_index="0" end="5c0c0ad9-f3a4-4a51-a284-584a0c253f9b" end_index="1" portType="0" />
+    <Dynamo.Models.ConnectorModel start="f4a1ad27-b948-41ba-a627-dd18c2fd7a96" start_index="0" end="2f7c24c1-e78b-4bfc-b7a1-a16fc46110a3" end_index="1" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations>
+    <Dynamo.Models.AnnotationModel guid="ddebe4e6-d9ea-4328-b787-6f29d31615a7" annotationText="1. Получение геометрии" left="126.729829015864" top="410.993050999789" width="572.74625054438" height="246.881118264813" fontSize="14" InitialTop="440.993050999789" InitialHeight="246.881118264812" TextblockHeight="20" backgrouund="#FFC1D676">
+      <Models ModelGuid="8abb292c-9c5e-4152-92a9-01a66b6362da" />
+      <Models ModelGuid="2ce1b972-da3d-4ad5-b073-0aa472248921" />
+      <Models ModelGuid="2f7c24c1-e78b-4bfc-b7a1-a16fc46110a3" />
+      <Models ModelGuid="f4a1ad27-b948-41ba-a627-dd18c2fd7a96" />
+    </Dynamo.Models.AnnotationModel>
+    <Dynamo.Models.AnnotationModel guid="d838a99e-9701-4dc9-a9d6-872a8f736b0e" annotationText="2. Создание эскизов развертки" left="803.723940860606" top="355.815519212426" width="637.139850886324" height="249.520385197751" fontSize="14" InitialTop="385.815519212426" InitialHeight="249.52038519775" TextblockHeight="20" backgrouund="#FFFF7BAC">
+      <Models ModelGuid="5c0c0ad9-f3a4-4a51-a284-584a0c253f9b" />
+      <Models ModelGuid="325046db-70cd-431a-8515-d30188b208a1" />
+      <Models ModelGuid="61f8dd3d-5d6d-432c-b98e-d55167a1c9d3" />
+      <Models ModelGuid="8aa30827-4534-4cc5-b320-f0c1effe8a4b" />
+    </Dynamo.Models.AnnotationModel>
+    <Dynamo.Models.AnnotationModel guid="4de4bd75-b40d-4c27-b33d-42a00fc59698" annotationText="3. Построение в Revit цветовых областей по эскизам развертки" left="1637.89156341436" top="315.790971614525" width="448.60231295868" height="242.196961147511" fontSize="14" InitialTop="345.790971614525" InitialHeight="242.196961147511" TextblockHeight="20" backgrouund="#FF48B9FF">
+      <Models ModelGuid="5cc58f95-303f-4657-a50b-bbcfd3b440d2" />
+      <Models ModelGuid="0ad66183-d159-4a07-b09f-73ad29fd6ea9" />
+      <Models ModelGuid="f82d4281-07ba-4302-9d98-5d532469addf" />
+    </Dynamo.Models.AnnotationModel>
+  </Annotations>
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="11803.849609375" eyeY="64124.7109375" eyeZ="-27411.166015625" lookX="-87.7654495239258" lookY="-64491.02734375" lookZ="26554.158203125" upX="0.00325488415546715" upY="-0.173648193478584" upZ="-0.98480236530304" />
+  </Cameras>
+</Workspace>

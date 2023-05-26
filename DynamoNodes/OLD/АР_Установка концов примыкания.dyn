@@ -1,0 +1,132 @@
+<Workspace Version="1.3.4.6666" X="407.31216055816" Y="-83.6134193754911" zoom="1.40082974511129" ScaleFactor="100" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="False">
+  <NamespaceResolutionMap />
+  <Elements>
+    <DSRevitNodesUI.FamilyTypes guid="c6851b5a-e47c-4a52-9cb1-59ce1743e95b" type="DSRevitNodesUI.FamilyTypes" nickname="Family Type " x="-445.522584511716" y="140.450977458293" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="true" index="24:TEST ПДЭП:ПДЭП 114х230(h)" />
+    <Dynamo.Graph.Nodes.ZeroTouch.DSFunction guid="28141dc9-cf03-44fa-ad78-0db59238d23b" type="Dynamo.Graph.Nodes.ZeroTouch.DSFunction" nickname="Element.GetLocation" x="247.071738066505" y="141.634547787629" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="true" assembly="RevitNodes.dll" function="Revit.Elements.Element.GetLocation">
+      <PortInfo index="0" default="False" />
+    </Dynamo.Graph.Nodes.ZeroTouch.DSFunction>
+    <PythonNodeModels.PythonNode guid="36f3850f-1133-438d-912d-777986e437dd" type="PythonNodeModels.PythonNode" nickname="Python Script" x="138.8597780871" y="365.818534743149" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="2">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <Script>import clr
+clr.AddReference("RevitAPI")
+clr.AddReference("ProtoGeometry")
+from Autodesk.DesignScript.Geometry import *
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.GeometryConversion)
+clr.AddReference("RevitServices")
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+
+import System
+from System.Collections.Generic import*
+
+import Autodesk
+from Autodesk.Revit.DB import *
+
+def tolist(input):
+	if isinstance(input,list) == False:
+		return [input]
+	else:
+		return input
+
+def flatten(x):
+    result = []
+    for el in x:
+        if hasattr(el, "__iter__") and not isinstance(el, basestring):
+            result.extend(flatten(el))
+        else:
+            result.append(el)
+    return result
+	
+def SetParameterValue(elems, value, prmname):
+	TransactionManager.Instance.EnsureInTransaction(doc)
+	for n,v in zip(prmname,value):
+		p = elems.LookupParameter(n)
+		if p.Definition.ParameterType:
+			p.Set(v)
+	TransactionManager.Instance.TransactionTaskDone()
+	return
+
+Items = UnwrapElement(flatten(IN[0]))
+reset = IN[1]
+PrmNameLINS = "Левый внутренний угол"
+PrmNameLOUT = "Левый наружный угол"
+PrmNameRINS = "Правый внутренний угол"
+PrmNameROUT = "Правый наружный угол"
+
+angel = []
+pt1 = []
+pt2 = []
+Curve = []
+for indx, i in enumerate(Items):
+	crv = i.Location.Curve
+	p1 = (crv.GetEndPoint(0))
+	p2 = (crv.GetEndPoint(1))
+	vector = (p2 - p1).Normalize()
+	degrees = round((vector.AngleTo(XYZ.BasisX))*180/3.1416)
+	angel.append(degrees)
+	pt1.append(p1)
+	pt2.append(p2)
+	Curve.append(crv)
+	#xyzList.append(crv.ComputeDerivatives(0, 1).BasisX.Normalize())
+
+LIntersect = []
+RIntersect = []
+for p1, p2, crv, item in zip (pt1, pt2, Curve, Items):
+	for c in Curve:
+		pc1 = c.GetEndPoint(0)
+		pc2 = c.GetEndPoint(1)
+		if p1.IsAlmostEqualTo(pc2) != False:
+			LIntersect.append(item)
+		elif p2.IsAlmostEqualTo(pc1) != False:
+			RIntersect.append(item)
+		else:	continue
+
+test = set(pt1).intersection(pt2)
+"""	
+#offsetcurves = [crv.Curve.ToProtoType() for crv in curves]
+"""
+OUT = angel</Script>
+    </PythonNodeModels.PythonNode>
+    <DSRevitNodesUI.ElementsOfFamilyType guid="c36c166d-0845-4716-8c7e-93b0d69d5472" type="DSRevitNodesUI.ElementsOfFamilyType" nickname="All Elements of Family Type" x="-71.3205285599851" y="140.284726116554" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </DSRevitNodesUI.ElementsOfFamilyType>
+    <Prorubim.DS.Common.ForceChildrensEval guid="549ef982-4d71-458f-839b-52896afab7f8" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-182.07348129933" y="392.624330357206" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </Prorubim.DS.Common.ForceChildrensEval>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="f680cceb-b2ee-4b93-8279-ce8c3297740f" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="Element.GetRotation" x="-217.171935892797" y="506.807649425171" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="True" />
+      <ID value="d8abf4a0-8a70-43b9-a881-6505b18fb8c2" />
+      <Name value="Element.GetRotation" />
+      <Description value="This node calculates rotation angle between selected element's vector and Y axis. Vector Z is used as rotation axis. Use resulting degree as an input to the FamilyInstance.SetRotation node." />
+      <Inputs>
+        <Input value="InputVector" />
+        <Input value="Rotate90" />
+      </Inputs>
+      <Outputs>
+        <Output value="Degree" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="c6851b5a-e47c-4a52-9cb1-59ce1743e95b" start_index="0" end="c36c166d-0845-4716-8c7e-93b0d69d5472" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="c36c166d-0845-4716-8c7e-93b0d69d5472" start_index="0" end="28141dc9-cf03-44fa-ad78-0db59238d23b" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="c36c166d-0845-4716-8c7e-93b0d69d5472" start_index="0" end="36f3850f-1133-438d-912d-777986e437dd" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="549ef982-4d71-458f-839b-52896afab7f8" start_index="0" end="36f3850f-1133-438d-912d-777986e437dd" end_index="1" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="8ace67c1-c908-4236-917d-977be0925f83" annotationText="Family INSERT" left="-455.522584511716" top="94.284726116554" width="941.594322578221" height="140.349821671075" fontSize="30" InitialTop="140.284726116554" InitialHeight="466.248799760137" TextblockHeight="36" backgrouund="#FFE8F7AD">
+      <Models ModelGuid="c6851b5a-e47c-4a52-9cb1-59ce1743e95b" />
+      <Models ModelGuid="28141dc9-cf03-44fa-ad78-0db59238d23b" />
+      <Models ModelGuid="c36c166d-0845-4716-8c7e-93b0d69d5472" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+  </Annotations>
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="-37.0460014343262" eyeY="40.133171081543" eyeZ="179.055679321289" lookX="37.0460014343262" lookY="-40.133171081543" lookZ="-179.055679321289" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>

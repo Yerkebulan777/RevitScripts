@@ -1,0 +1,495 @@
+{
+  "Uuid": "d48cba24-b879-41b9-8ee2-a6ae28340816",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Purge Current Document",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Orchid.Revit.Core.Document.Purge@var,bool",
+      "Id": "7dac39f75e7e4c19a7ee2f672bc5532a",
+      "Inputs": [
+        {
+          "Id": "a043eb9300ad4d62bd8cae6b3408c784",
+          "Name": "document",
+          "Description": "Autodesk.Revit.DB.Document\n\nvar\nDefault value : null",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "75bb0939e59941bf810fe12819d90e7c",
+          "Name": "completely",
+          "Description": "Includes purging materials and assets\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "65d5829a0f0b468c9addad9632e8aab4",
+          "Name": "void",
+          "Description": "void",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Purge document. Set \"completely\" to true for including materials and assets! Please note \"completely\" purges also materials and materials assets that are used in \"peripheral\" elements and settings. Among this is included materials/assets bound to imported model elements, and materials/assets in settings like \"Site\" etc.\n\nDocument.Purge (document: var = null, completely: bool = false): void"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "5b1e1f2aafec430197bfdc9da4a74e6b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "53745eb43113499d802636cd610e1746",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "ecce77dc-1290-438e-a056-970b256fd553",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "82ad1058ece24fe1a0e22ff013b4d85a",
+      "Inputs": [
+        {
+          "Id": "d57da9cfc25a4a0aa3350fe59db51c87",
+          "Name": "passThrough",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e41915a2ecc848d6b60bd7df8b63f2fe",
+          "Name": "waitFor",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1c2f9ebb57ff464f9b365c1b4f170577",
+          "Name": "passThrough",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Forces a sequential order of execution. The node wired into the output of the Passthrough node will be executed *after* the node wired into the waitFor input (e.g. important for some Revit operations). The value of the passThrough input will be passed on to the node wired into the output port of the Passthrough node."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Orchid.Revit.Core.Document.Close@var,bool",
+      "Id": "ac2a58ba130e4005b6d9c5c5b2473775",
+      "Inputs": [
+        {
+          "Id": "ef6fc9d642f0492ca91cf2d773e46cf0",
+          "Name": "document",
+          "Description": "Autodesk.Revit.DB.Document\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "599de320cbf44a89ab975bd8aa57dc0d",
+          "Name": "save",
+          "Description": "Save opened document?\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ff5b5b95474a47c79bb97f55f42b1088",
+          "Name": "watch",
+          "Description": "Add a watch node to verify the output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Close document\n\nDocument.Close (document: var, save: bool = false): string"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "f80d5c01be9f4644927d7d7898960260",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a00389eb2ac245ae8080077ae6b6f290",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Directory, CoreNodeModels",
+      "HintPath": "X:\\Revit\\_Families to Process\\mail box\\Parts",
+      "InputValue": "X:\\Revit\\_Families to Process\\mail box\\Parts",
+      "NodeType": "ExtensionNode",
+      "Id": "4484f76b87ab4cb89b00c9460ea926ce",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "50a3a4b3b83f487dab6e82a763813ce6",
+          "Name": "",
+          "Description": "Directory",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a directory on the system to get its path"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.IO.FileSystem.GetDirectoryContents@var,string,bool",
+      "Id": "af7bc3f10d7f4fefbfe23261f4d0f6e2",
+      "Inputs": [
+        {
+          "Id": "51832e0b65514e49af2fa71c279fb131",
+          "Name": "directory",
+          "Description": "var",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f5e3a55fb766411d98ac6ecb20735996",
+          "Name": "searchString",
+          "Description": "string\nDefault value : \"*.*\"",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f3597971b84c4bf7978f9d93d3061014",
+          "Name": "includeSubdirectories",
+          "Description": "bool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0c116d913cf14525923f5848f8460d93",
+          "Name": "files",
+          "Description": "var",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8ee72998dfd4458085ea0ae29d5aa8b0",
+          "Name": "directories",
+          "Description": "var",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "FileSystem.GetDirectoryContents (directory: var, searchString: string = \"*.*\", includeSubdirectories: bool = false): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DirectoryObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "06af2b82880d454a84cf39349818dba3",
+      "Inputs": [
+        {
+          "Id": "66a9d2548ae8449a9ae97cd98edb3b94",
+          "Name": "path",
+          "Description": "Path to the directory.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5f93f00cab694b0eb88ffc287eeed6a5",
+          "Name": "directory",
+          "Description": "Directory object.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a directory object from a path"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Rhythm.Revit.Application.Applications.OpenDocumentFile@string,bool,bool",
+      "Id": "4d6e9f8d60864f6093d0b55858a9afa6",
+      "Inputs": [
+        {
+          "Id": "9684f2fc9bca450293d3c40b334a9222",
+          "Name": "filePath",
+          "Description": "The file to obtain document from.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c3e71a884bf9493294959dfdf3099864",
+          "Name": "audit",
+          "Description": "Choose whether or not to audit the file upon opening. (Will run slower with this)\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e057a53b4956402082baa64ee0db397b",
+          "Name": "detachFromCentral",
+          "Description": "Choose whether or not to detach from central upon opening. Only for RVT files.\n\nbool\nDefault value : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4eecf6822ed145e1918186a7501ec4b7",
+          "Name": "document",
+          "Description": "The document.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "This node will open the given file in the background.\n\nApplications.OpenDocumentFile (filePath: string, audit: bool = false, detachFromCentral: bool = false): var"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "65d5829a0f0b468c9addad9632e8aab4",
+      "End": "e41915a2ecc848d6b60bd7df8b63f2fe",
+      "Id": "9cbb2b23ee3245158a5a19168a1a8136"
+    },
+    {
+      "Start": "53745eb43113499d802636cd610e1746",
+      "End": "75bb0939e59941bf810fe12819d90e7c",
+      "Id": "f223dfb43c7d4b419a486e8f79a6a99e"
+    },
+    {
+      "Start": "1c2f9ebb57ff464f9b365c1b4f170577",
+      "End": "ef6fc9d642f0492ca91cf2d773e46cf0",
+      "Id": "211c812857b349bf87884c9bc180a4df"
+    },
+    {
+      "Start": "a00389eb2ac245ae8080077ae6b6f290",
+      "End": "599de320cbf44a89ab975bd8aa57dc0d",
+      "Id": "ed138824ae94475ba92dbfc72ce74304"
+    },
+    {
+      "Start": "50a3a4b3b83f487dab6e82a763813ce6",
+      "End": "66a9d2548ae8449a9ae97cd98edb3b94",
+      "Id": "c7933e7a90954c14a8e4c60439bcee7e"
+    },
+    {
+      "Start": "0c116d913cf14525923f5848f8460d93",
+      "End": "9684f2fc9bca450293d3c40b334a9222",
+      "Id": "eeb58bd3c8e14a07900fc9ab52f5e742"
+    },
+    {
+      "Start": "5f93f00cab694b0eb88ffc287eeed6a5",
+      "End": "51832e0b65514e49af2fa71c279fb131",
+      "Id": "07909e57955b418b8b3c81735652cdf7"
+    },
+    {
+      "Start": "4eecf6822ed145e1918186a7501ec4b7",
+      "End": "a043eb9300ad4d62bd8cae6b3408c784",
+      "Id": "5ccf02983d184882a44f772f81c922c7"
+    },
+    {
+      "Start": "4eecf6822ed145e1918186a7501ec4b7",
+      "End": "d57da9cfc25a4a0aa3350fe59db51c87",
+      "Id": "6621ad106297459b8287c603ab749f92"
+    }
+  ],
+  "Dependencies": [
+    "ecce77dc-1290-438e-a056-970b256fd553"
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.2.6826",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Document.Purge",
+        "Id": "7dac39f75e7e4c19a7ee2f672bc5532a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1267.0,
+        "Y": 53.4840458624918
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "5b1e1f2aafec430197bfdc9da4a74e6b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 869.0,
+        "Y": 140.48404586249183
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Passthrough",
+        "Id": "82ad1058ece24fe1a0e22ff013b4d85a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1578.0,
+        "Y": 27.484045862491818
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Document.Close",
+        "Id": "ac2a58ba130e4005b6d9c5c5b2473775",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1955.0,
+        "Y": 81.484045862491811
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "f80d5c01be9f4644927d7d7898960260",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1578.0,
+        "Y": 161.48404586249183
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Directory Path",
+        "Id": "4484f76b87ab4cb89b00c9460ea926ce",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -160.0,
+        "Y": -20.515954137508174
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "FileSystem.GetDirectoryContents",
+        "Id": "af7bc3f10d7f4fefbfe23261f4d0f6e2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 453.0,
+        "Y": -20.515954137508174
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Directory From Path",
+        "Id": "06af2b82880d454a84cf39349818dba3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 207.0,
+        "Y": -20.515954137508174
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Applications.OpenDocumentFile",
+        "Id": "4d6e9f8d60864f6093d0b55858a9afa6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 869.0,
+        "Y": -20.515954137508174
+      }
+    ],
+    "Annotations": [],
+    "X": -313.47199100013472,
+    "Y": 309.88741748126341,
+    "Zoom": 0.78436932804482717
+  }
+}

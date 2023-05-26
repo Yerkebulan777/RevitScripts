@@ -1,0 +1,220 @@
+<Workspace Version="1.3.4.6666" X="523.39619677393" Y="407.092291225552" zoom="0.821232377422812" ScaleFactor="1" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="False">
+  <NamespaceResolutionMap />
+  <Elements>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="950b56d5-3ed3-4df4-a4af-30a552f70db5" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="Springs.Collector.CurrentSelection" x="-177.947832060196" y="-62.126498462881" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="True" />
+      <ID value="f153d48d-85dd-4a7e-8ba2-91b08d81e5e7" />
+      <Name value="Springs.Collector.CurrentSelection" />
+      <Description value="Gets the currently selected elements. Connect a boolean switch to refresh the selection." />
+      <Inputs>
+        <Input value="refresh" />
+      </Inputs>
+      <Outputs>
+        <Output value="element(s)" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Prorubim.DS.Common.ForceChildrensEval guid="90ea44a0-3bbe-4729-ba1c-084bc40f20d0" type="Prorubim.DS.Common.ForceChildrensEval" nickname="ForceChildrensEval" x="-421.48575353446" y="-61.92176090475" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </Prorubim.DS.Common.ForceChildrensEval>
+    <CoreNodeModels.Watch guid="2ef287a5-9cb2-45f7-8612-4363a6f04c07" type="CoreNodeModels.Watch" nickname="Watch" x="75.9124432728411" y="-62.938864707742" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+    </CoreNodeModels.Watch>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="0b89e092-1d4b-4f4f-83bb-df030d00eb5e" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="BoundingBox.Dimensions" x="632.315997158304" y="-209.371912006425" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="True" />
+      <ID value="830ea612-3e83-46cd-936e-9647ecc196ec" />
+      <Name value="BoundingBox.Dimensions" />
+      <Description value="Input Bounding Box element to get its dimensions (Width, Length, Height). Setting Boolean switch to True rounds output values." />
+      <Inputs>
+        <Input value="boundingBox" />
+        <Input value="roundValues" />
+      </Inputs>
+      <Outputs>
+        <Output value="Width" />
+        <Output value="Length" />
+        <Output value="Height" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="5c04fdd4-fc99-42f4-99ad-c255d256d411" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="BoundingBox.ByElements" x="300.221391098218" y="-63.9148052250158" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <ID value="ee78fb54-4615-4809-89cb-6d48c8aa968d" />
+      <Name value="BoundingBox.ByElements" />
+      <Description value="Retrieves a bounding box for a list of elements" />
+      <Inputs>
+        <Input value="elements" />
+      </Inputs>
+      <Outputs>
+        <Output value="BoundingBox" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="d15222cc-a226-4154-a079-127f3da9f18c" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="ZK.BoundingBox.CenterPoint" x="636.090497873977" y="-64.3164867968029" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <ID value="77f0f662-fb82-474c-9c43-ae3602643d56" />
+      <Name value="ZK.BoundingBox.CenterPoint" />
+      <Description value="Input Bounding Box element to get its center point. This node is little and lightweight, as it doesn't convert bounding box to geometry to get its centroid point." />
+      <Inputs>
+        <Input value="boundingBox" />
+      </Inputs>
+      <Outputs>
+        <Output value="Point" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <DSRevitNodesUI.FamilyTypes guid="f48d8e8f-fbb4-4205-8fbf-5fafc7593de0" type="DSRevitNodesUI.FamilyTypes" nickname="Family Types" x="480.598326715823" y="-338.328996996069" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false" index="-1" />
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="8e689d8e-9068-4ab6-b673-f1f2a436640c" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="Springs.ClosedCurve.Offset+" x="-423.558396116348" y="62.2140977742201" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <ID value="8342e5b0-fb37-4302-9941-964d3b67265c" />
+      <Name value="Springs.ClosedCurve.Offset+" />
+      <Description value="Offsets a curve both ways and correctly differenciates the external and internal offset. If an offset goes beyond the curve's bounds, the result will fail and a null value will be appended instead. Also works for convex curves like arcs." />
+      <Inputs>
+        <Input value="curve" />
+        <Input value="distance" />
+      </Inputs>
+      <Outputs>
+        <Output value="internal offset" />
+        <Output value="external offset" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="8ad90f7b-c39e-4c00-97ac-17209f8264b4" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="GetParameterAsValueString" x="299.649508082412" y="122.067837220168" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="True" />
+      <ID value="c5061f0e-d90f-4799-bbf1-5f466467cf26" />
+      <Name value="GetParameterAsValueString" />
+      <Description value="Returns the parameter values without conversion to the revit internal unit system. The suffix boolean toggles the project units on or off" />
+      <Inputs>
+        <Input value="Elements" />
+        <Input value="ParameterName" />
+        <Input value="Suffix" />
+      </Inputs>
+      <Outputs>
+        <Output value="Values" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Dynamo.Graph.Nodes.CodeBlockNodeModel guid="9fb0167a-e435-4d0d-9981-d6360dfa41e8" type="Dynamo.Graph.Nodes.CodeBlockNodeModel" nickname="Code Block" x="46.8529605210338" y="151.871984648101" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="false" CodeText="&quot;Смещение от уровня&quot;;" ShouldFocus="false" />
+    <PythonNodeModels.PythonNode guid="3f2e272f-8968-4101-8b77-bbbf667195b7" type="PythonNodeModels.PythonNode" nickname="Python Script" x="1097.15824241858" y="16.9926690672605" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="3">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
+      <Script>#Copyright(c) 2016, Dimitar Venkov
+# @5devene, dimitar.ven@gmail.com
+
+import clr
+
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+doc = DocumentManager.Instance.CurrentDBDocument
+
+clr.AddReference("RevitAPI")
+import Autodesk
+
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.Elements)
+clr.ImportExtensions(Revit.GeometryConversion)
+
+def tolist(obj1):
+	if hasattr(obj1,"__iter__"): return obj1
+	else: return [obj1]
+def output1(l1):
+	if len(l1) == 1: return l1[0]
+	else: return l1
+
+host = UnwrapElement(tolist(IN[0]))
+ftype = UnwrapElement(tolist(IN[1]))
+fpts = UnwrapElement(tolist(IN[2]))
+
+Rpts =[p.ToXyz(True) for p in fpts]
+
+nfl = []
+strt = Autodesk.Revit.DB.Structure.StructuralType.NonStructural
+ftp_len = len(ftype) == 1
+hst_len = len(host) == 1
+
+TransactionManager.Instance.EnsureInTransaction(doc)
+for i in xrange(len(Rpts) ):
+	j = 0 if ftp_len else i
+	k = 0 if hst_len else i
+	try:
+		if not ftype[j].IsActive : ftype[j].Activate()
+		level = doc.GetElement(host[k].LevelId)
+		nf = doc.Create.NewFamilyInstance(Rpts[i],ftype[j],host[k],level,strt)
+		nfl.append(nf.ToDSType(False))
+	except:
+		nfl.append(None)
+TransactionManager.Instance.TransactionTaskDone()
+
+OUT = output1(nfl)</Script>
+    </PythonNodeModels.PythonNode>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="17d36a2c-f7da-4034-a667-9f3ba04c41bb" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="Elements change Level" x="1595.47362118468" y="-93.4286444624379" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <ID value="4f35420e-9e02-445f-826f-afce5a6659d3" />
+      <Name value="Elements change Level" />
+      <Description value="Change the elements to the selected level without moving the elements. Only works for non-hosted (level-hosted) MEP elements." />
+      <Inputs>
+        <Input value="Elements" />
+        <Input value="Level" />
+      </Inputs>
+      <Outputs>
+        <Output value="Succeeded" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <Dynamo.Graph.Nodes.CustomNodes.Function guid="e2b6c4d5-6f16-42af-80d0-62df58bef17c" type="Dynamo.Graph.Nodes.CustomNodes.Function" nickname="Element.Level" x="301.661497136369" y="30.7668219949762" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false">
+      <PortInfo index="0" default="False" />
+      <ID value="23a94b80-4bd0-436f-a1b1-f77654b4428c" />
+      <Name value="Element.Level" />
+      <Description value="Gets an element's level" />
+      <Inputs>
+        <Input value="element" />
+      </Inputs>
+      <Outputs>
+        <Output value="level" />
+      </Outputs>
+    </Dynamo.Graph.Nodes.CustomNodes.Function>
+    <DSRevitNodesUI.Levels guid="4f86d992-4b37-4a9c-a119-da1e7d225a57" type="DSRevitNodesUI.Levels" nickname="Levels" x="1366.0187948861" y="23.1123028044792" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false" index="-1" />
+    <Dynamo.Graph.Nodes.ZeroTouch.DSFunction guid="62212bdd-4f91-403b-9ad7-89f27274fb78" type="Dynamo.Graph.Nodes.ZeroTouch.DSFunction" nickname="Element.SetLocation" x="1311.05362248336" y="-93.8681387803356" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false" assembly="RevitNodes.dll" function="Revit.Elements.Element.SetLocation@Autodesk.DesignScript.Geometry.Geometry">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+    </Dynamo.Graph.Nodes.ZeroTouch.DSFunction>
+    <Dynamo.Graph.Nodes.ZeroTouch.DSFunction guid="1e434419-c221-4c3a-8e86-3983c9db64fd" type="Dynamo.Graph.Nodes.ZeroTouch.DSFunction" nickname="FamilyInstances.ByLine" x="113.272620984568" y="-391.150863164153" isVisible="true" isUpstreamVisible="true" lacing="Shortest" isSelectedInput="False" IsFrozen="false" isPinned="false" assembly="C:\Users\user\AppData\Roaming\Dynamo\Dynamo Revit\1.3\packages\archi-lab.net\bin\archilab.dll" function="archilab.Revit.Elements.FamilyInstances.ByLine@Revit.Elements.FamilyType,Autodesk.DesignScript.Geometry.Line,Revit.Elements.Level">
+      <PortInfo index="0" default="False" />
+      <PortInfo index="1" default="False" />
+      <PortInfo index="2" default="False" />
+    </Dynamo.Graph.Nodes.ZeroTouch.DSFunction>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="950b56d5-3ed3-4df4-a4af-30a552f70db5" start_index="0" end="2ef287a5-9cb2-45f7-8612-4363a6f04c07" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="90ea44a0-3bbe-4729-ba1c-084bc40f20d0" start_index="0" end="950b56d5-3ed3-4df4-a4af-30a552f70db5" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="2ef287a5-9cb2-45f7-8612-4363a6f04c07" start_index="0" end="5c04fdd4-fc99-42f4-99ad-c255d256d411" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="2ef287a5-9cb2-45f7-8612-4363a6f04c07" start_index="0" end="8ad90f7b-c39e-4c00-97ac-17209f8264b4" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="2ef287a5-9cb2-45f7-8612-4363a6f04c07" start_index="0" end="e2b6c4d5-6f16-42af-80d0-62df58bef17c" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="5c04fdd4-fc99-42f4-99ad-c255d256d411" start_index="0" end="d15222cc-a226-4154-a079-127f3da9f18c" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="5c04fdd4-fc99-42f4-99ad-c255d256d411" start_index="0" end="0b89e092-1d4b-4f4f-83bb-df030d00eb5e" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="d15222cc-a226-4154-a079-127f3da9f18c" start_index="0" end="3f2e272f-8968-4101-8b77-bbbf667195b7" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="d15222cc-a226-4154-a079-127f3da9f18c" start_index="0" end="62212bdd-4f91-403b-9ad7-89f27274fb78" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="f48d8e8f-fbb4-4205-8fbf-5fafc7593de0" start_index="0" end="3f2e272f-8968-4101-8b77-bbbf667195b7" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="9fb0167a-e435-4d0d-9981-d6360dfa41e8" start_index="0" end="8ad90f7b-c39e-4c00-97ac-17209f8264b4" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="3f2e272f-8968-4101-8b77-bbbf667195b7" start_index="0" end="62212bdd-4f91-403b-9ad7-89f27274fb78" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="e2b6c4d5-6f16-42af-80d0-62df58bef17c" start_index="0" end="3f2e272f-8968-4101-8b77-bbbf667195b7" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="4f86d992-4b37-4a9c-a119-da1e7d225a57" start_index="0" end="17d36a2c-f7da-4034-a667-9f3ba04c41bb" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="62212bdd-4f91-403b-9ad7-89f27274fb78" start_index="0" end="17d36a2c-f7da-4034-a667-9f3ba04c41bb" end_index="0" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="18872268-21ed-44b0-840b-6ce7299e73ed" annotationText="Выделить элемент в Revit " left="-431.48575353446" top="-108.938864707742" width="595.398196807301" height="140.017103802992" fontSize="30" InitialTop="-62.938864707742" InitialHeight="123.204737558131" TextblockHeight="36" backgrouund="#FFFFC999">
+      <Models ModelGuid="950b56d5-3ed3-4df4-a4af-30a552f70db5" />
+      <Models ModelGuid="90ea44a0-3bbe-4729-ba1c-084bc40f20d0" />
+      <Models ModelGuid="2ef287a5-9cb2-45f7-8612-4363a6f04c07" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="8987d2f1-be5b-48e1-8f1b-788d28c85e3a" annotationText="Семейство " left="470.598326715823" top="-384.328996996069" width="204" height="139" fontSize="30" InitialTop="-338.328996996069" InitialHeight="123" TextblockHeight="36" backgrouund="#FFC1D676">
+      <Models ModelGuid="f48d8e8f-fbb4-4205-8fbf-5fafc7593de0" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+  </Annotations>
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="-17" eyeY="24" eyeZ="50" lookX="12" lookY="-13" lookZ="-58" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>

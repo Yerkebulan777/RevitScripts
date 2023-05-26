@@ -1,0 +1,50 @@
+import System
+import clr
+clr.AddReference('ProtoGeometry')
+from Autodesk.DesignScript.Geometry import *
+# Import DocumentManager and TransactionManager
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+from System.Collections.Generic import *
+# Import RevitAPI
+clr.AddReference("RevitAPI")
+import Autodesk
+from Autodesk.Revit.DB import *
+from Autodesk.Revit.DB.Analysis import *
+
+# Import ToDSType(bool) extension method
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.Elements)
+# Import geometry conversion extension methods
+clr.ImportExtensions(Revit.GeometryConversion)
+# Import DocumentManager and TransactionManager
+clr.AddReference("RevitServices")
+import RevitServices
+
+# Включение скрипта
+toggle = IN[0]
+list = []
+if toggle == True: 
+
+	# Выбор связи
+	opt = Options()
+	doc = DocumentManager.Instance.CurrentDBDocument
+	collector = Autodesk.Revit.DB.FilteredElementCollector(doc)
+	linkInstances = collector.OfClass(Autodesk.Revit.DB.RevitLinkInstance)
+
+	for i in linkInstances:
+		if IN[1].ToLower() in i.Name.ToLower():	
+			linkDoc = i.GetLinkDocument()
+
+	Category = IN[2]
+
+	BuiltIn = System.Enum.ToObject(BuiltInCategory, Category.Id)
+
+	collector = FilteredElementCollector(linkDoc)
+	filter = ElementCategoryFilter(BuiltIn)
+	list=collector.WherePasses(filter).WhereElementIsNotElementType().ToElements()
+
+OUT = list

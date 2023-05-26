@@ -1,0 +1,207 @@
+{
+  "Uuid": "04524def-523a-43c4-b324-06c3d3b6b063",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Group-2-Ungroup",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "cfe0d03d-c8ba-4cf7-9c4b-e5851d620ffb",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "6eaadbc63886462db0c49ec551b7f5da",
+      "Inputs": [
+        {
+          "Id": "35e2e190c1a14fd286167d9eddb9c1cd",
+          "Name": "group",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4886fdc084f94d9aa0ab6f7a96f0624d",
+          "Name": "ungroupedElements",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Ungroups a group and returns the ungrouped elements."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "3a7e54c2fa8540b1bdfc3dd06e588d48",
+      "Inputs": [
+        {
+          "Id": "ec9e915b895d4909990262c93722b271",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c658213de8d145a9b9db0de3206efa6f",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "e3d72832-1c0a-48c8-94bd-cb2882b152fc",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "4dc2deac201d467eb4e97c2efb5f95e6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ee175f74125a486a8bd3bf80655cc12d",
+          "Name": "Groups",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "73abec9bc4474f5caa3d1b92963e2618",
+          "Name": "Group Names",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "This node will retrieve all instances of Detail Groups in the model."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "4886fdc084f94d9aa0ab6f7a96f0624d",
+      "End": "ec9e915b895d4909990262c93722b271",
+      "Id": "6b95b04e60df440faa73c8030493c363"
+    },
+    {
+      "Start": "ee175f74125a486a8bd3bf80655cc12d",
+      "End": "35e2e190c1a14fd286167d9eddb9c1cd",
+      "Id": "49437e36643f4bf2b01c8497beb9c7ee"
+    }
+  ],
+  "Dependencies": [
+    "cfe0d03d-c8ba-4cf7-9c4b-e5851d620ffb",
+    "e3d72832-1c0a-48c8-94bd-cb2882b152fc"
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.2.6826",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Group.Ungroup",
+        "Id": "6eaadbc63886462db0c49ec551b7f5da",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 472.0,
+        "Y": 152.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "3a7e54c2fa8540b1bdfc3dd06e588d48",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 809.0,
+        "Y": 145.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Get All Detail Groups",
+        "Id": "4dc2deac201d467eb4e97c2efb5f95e6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 245.0,
+        "Y": 147.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "c25b94161fe543ee806e6f57a52a7c85",
+        "Title": "Clockword Package",
+        "Nodes": [],
+        "Left": 542.5,
+        "Top": 108.5,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "816e9ebdd61d434b91336a0b26e59350",
+        "Title": "ArchiLab Package",
+        "Nodes": [],
+        "Left": 256.5,
+        "Top": 99.5,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -50.0,
+    "Y": 58.0,
+    "Zoom": 1.0
+  }
+}

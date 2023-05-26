@@ -1,0 +1,85 @@
+{
+  "Uuid": "4396818b-85b8-4b26-bb69-4fd7f071cea8",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "0001TestPythonScript",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Structure import *\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n\r\n\r\nres = []\r\n\r\n#Preparing input from dynamo to revit\r\nelement = UnwrapElement(IN[0])\r\n\r\n#Do some action in a Transaction\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\n\r\n# Get all model lines in the current view\r\ncollector = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RoomSeparationLines)\r\nmodelLines = collector.WhereElementIsNotElementType().ToElements()\r\n\r\nview = uidoc.ActiveView\r\n# Filter the model lines by category to get RoomSeparationLines\r\nfor line in modelLines:\r\n\tline.SetVisibility(view)\r\n\tres.append(line.Category.Name)\r\n\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\nOUT = res",
+      "VariableInputPorts": true,
+      "Id": "1d3e2f01df3145539998978574a3066a",
+      "Inputs": [
+        {
+          "Id": "993f3c9837a94165b613879151d7fdaa",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c9f9e85decae42f2855f8e5a96d28a56",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "PyTestScript",
+        "Id": "1d3e2f01df3145539998978574a3066a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 654.02247850916513,
+        "Y": 556.67998571227918
+      }
+    ],
+    "Annotations": [],
+    "X": -883.93683928350174,
+    "Y": -646.91264535435494,
+    "Zoom": 1.6284534137505131
+  }
+}

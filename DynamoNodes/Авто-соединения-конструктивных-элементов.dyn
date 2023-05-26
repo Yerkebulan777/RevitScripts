@@ -1,0 +1,320 @@
+{
+  "Uuid": "1fa094b0-2673-4866-a2d5-46a9c687461c",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Struct.AutoJoinElems_Publish",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "503761d6f8a24563af80a3b423d0d102",
+      "Name": "Соединить Фундаменты",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Выбор между значениями true и false."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "edc267291dd743e4b4659eaf245fd067",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2e457a0c9a6d4725a30db5a1d4191729",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "3c57b73f619c473ea3da9f59387f57d2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1f968f5a2dbc4bac9d894042c5d28bf2",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "503761d6f8a24563af80a3b423d0d102",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1ab2b131e5034740b215237fbd6a0afa",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "7cb542e7c2d3430382fb91ddcf66028a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "994ecc0eb96d46acaf3273a4bc128d92",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "5770625ed1ff43ccacda2c08e3076c2f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6265d30170394362821ac9d4668e61bc",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nimport System\r\nfrom System.Collections.Generic import *\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n#Получение текущего документа\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n#Получение текущего интерфейса пользователья\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\ndef get_InterCollector(el):\r\n    gopt = Options()\r\n    el_geom = UnwrapElement(el).get_Geometry(gopt)\r\n    bb = el_geom.GetBoundingBox()\r\n    outline = Outline(bb.Min, bb.Max)\r\n    bb_filter = BoundingBoxIntersectsFilter(outline)\r\n    collector = FilteredElementCollector(doc)\r\n    el_intersect = collector.WherePasses(bb_filter).WhereElementIsNotElementType()#.ToElements()\r\n    return el_intersect\r\n\r\n\r\ndef get_bb_elems(el):\r\n    bb_elems = []\r\n    bb_elems.extend(get_InterCollector(el).OfCategory(BuiltInCategory.OST_Floors).ToElements())\r\n    bb_elems.extend(get_InterCollector(el).OfCategory(BuiltInCategory.OST_Walls).ToElements())\r\n    bb_elems.extend(get_InterCollector(el).OfCategory(BuiltInCategory.OST_StructuralFraming).ToElements())\r\n    bb_elems.extend(get_InterCollector(el).OfCategory(BuiltInCategory.OST_StructuralColumns).ToElements())\r\n    bb_elems.extend(get_InterCollector(el).OfCategory(BuiltInCategory.OST_StructuralFoundation).ToElements())\r\n    return bb_elems\r\n\r\ndef get_solid(el):\r\n    gopt = Options()\r\n    el_geom = UnwrapElement(el).get_Geometry(gopt)\r\n    geo = [i for i in el_geom]\r\n    sol = None\r\n    if len(geo) == 1 and geo[0].GetType() == Autodesk.Revit.DB.GeometryInstance:\r\n        geo = geo[0].GetInstanceGeometry()\r\n    for i in geo:\r\n        if i.GetType() == Autodesk.Revit.DB.Solid:\r\n            if i.Volume != 0:\r\n                sol = (i)\r\n    return sol\r\n\r\ndef check_intesectSolid(el_1, el_2):\r\n    el1_solid = get_solid(el_1)\r\n    el2_solid = get_solid(el_2)\r\n    if  el2_solid != None and BooleanOperationsUtils.ExecuteBooleanOperation(el1_solid, el2_solid, BooleanOperationsType.Intersect).Volume > 0:\r\n        return True\r\n    else:\r\n        return False\r\n\r\ndef joint_geom(el):\r\n    try:\r\n        for i in get_bb_elems(el):\r\n            try:\r\n                if el.Id != i.Id and check_intesectSolid(el, i) and not JoinGeometryUtils.AreElementsJoined(doc, el, i):\r\n                    try:\r\n                        JoinGeometryUtils.JoinGeometry(doc, el, i)\r\n                        success.append('Обединяем {0} id {2} и {1} id {3}'.format(el.Category.Name, i.Category.Name, el.Id.ToString(),i.Id.ToString()))\r\n                    except Exception as e: err.append('Ошибка в объединении {0} id {2} и {1} id {3}. Ошибка: {4}'.format(el.Category.Name, i.Category.Name, el.Id.ToString(),i.Id.ToString(), e))\r\n            except Exception as e: err.append('Ошибка в поиске солидов {0} id {2} и {1} id {3}. Ошибка: {4}'.format(el.Category.Name, i.Category.Name, el.Id.ToString(),i.Id.ToString(), e))\r\n    except Exception as e: err.append('Ошибка в получение прилегающих элементов {0} id {1} . Ошибка: {2}'.format(el.Category.Name, el.Id.ToString(),e))\r\n    return success, err\r\n\r\nsuccess = []\r\nerr = []\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\nif IN[0]:\r\n    walls = FilteredElementCollector(doc).OfClass(Wall).WhereElementIsNotElementType().ToElements()\r\n    [joint_geom(wall) for wall in walls if wall.CurtainGrid == None]\r\n\r\nif IN[1]:\r\n    floors =  FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Floors).WhereElementIsNotElementType().ToElements()\r\n    map(joint_geom, floors)\r\n\r\nif IN[2]:\r\n    foundation = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFoundation).WhereElementIsNotElementType().ToElements()\r\n    map(joint_geom, foundation)\r\n\r\nif IN[3]:\r\n    columns = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).WhereElementIsNotElementType().ToElements()\r\n    map(joint_geom, columns)\r\n\r\nif IN[4]:\r\n    beams = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming).WhereElementIsNotElementType().ToElements()\r\n    map(joint_geom, beams)\r\n\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\nOUT = success, err",
+      "VariableInputPorts": true,
+      "Id": "1e9dd758adf949fcb39245cdb8fd9e77",
+      "Inputs": [
+        {
+          "Id": "3e611ead8803438dbf6eb4e9cb9461dc",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "986e0376445c4da4b171bfcd0e11bda0",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "452374315fae43699cf2f7c599b6e6ed",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "91bbd21abc1742a9a109537edc7844e6",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ff8cf26c57934a48acbffd11519c7714",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "980265c54132461a81e23f16111b9953",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "2e457a0c9a6d4725a30db5a1d4191729",
+      "End": "3e611ead8803438dbf6eb4e9cb9461dc",
+      "Id": "ee87b586394c405894bca0e421a8a84b"
+    },
+    {
+      "Start": "1f968f5a2dbc4bac9d894042c5d28bf2",
+      "End": "986e0376445c4da4b171bfcd0e11bda0",
+      "Id": "2dd777e84d394b9782ca9946a129ee08"
+    },
+    {
+      "Start": "1ab2b131e5034740b215237fbd6a0afa",
+      "End": "452374315fae43699cf2f7c599b6e6ed",
+      "Id": "fe92bff373ac48ea8068898ccb123a00"
+    },
+    {
+      "Start": "994ecc0eb96d46acaf3273a4bc128d92",
+      "End": "91bbd21abc1742a9a109537edc7844e6",
+      "Id": "b615b18d2da5479f933a99d817a6c348"
+    },
+    {
+      "Start": "6265d30170394362821ac9d4668e61bc",
+      "End": "ff8cf26c57934a48acbffd11519c7714",
+      "Id": "95292a12213a4461a57ff495b2db778b"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.1.5055",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Соединить Стены",
+        "Id": "edc267291dd743e4b4659eaf245fd067",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 628.89861458714256,
+        "Y": 67.881217797985727
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Соединить Перекрытия",
+        "Id": "3c57b73f619c473ea3da9f59387f57d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 595.25635472124816,
+        "Y": 136.62751300389016
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Соединить Фундаменты",
+        "Id": "503761d6f8a24563af80a3b423d0d102",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 606.263431532375,
+        "Y": 196.81042155686652
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Соединить Колонны",
+        "Id": "7cb542e7c2d3430382fb91ddcf66028a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 625.49971980840019,
+        "Y": 263.37422838786142
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Соединить Балки",
+        "Id": "5770625ed1ff43ccacda2c08e3076c2f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 636.63563540560983,
+        "Y": 327.77300532074861
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "1e9dd758adf949fcb39245cdb8fd9e77",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 827.75322868218211,
+        "Y": 120.18871040362311
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "8ea5efafadbe465999fbbcafac61d339",
+        "Title": "Скрипт объединяет элементы включенной категории с пересекающимися элементами категорий Стена, Перекрытие, Фундменты, Несущие колонны, Каркас несущий.",
+        "Nodes": [],
+        "Left": 672.08488549980518,
+        "Top": -40.245546812006523,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -347.80017620093861,
+    "Y": 62.198620151653131,
+    "Zoom": 0.82001692952892569
+  }
+}

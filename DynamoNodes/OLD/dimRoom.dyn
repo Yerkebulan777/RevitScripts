@@ -1,0 +1,259 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "dimRoom",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "420a2064-cfef-4d50-88dd-c391aa6ce7dd-0003169b",
+        "420a2064-cfef-4d50-88dd-c391aa6ce7dd-0003169e"
+      ],
+      "Id": "28dbdbb719dd48e28e7e70be87befa05",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "871ccea1ee404d8690d277ef2f4a24c6",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Views, DSRevitNodesUI",
+      "SelectedIndex": 10,
+      "NodeType": "ExtensionNode",
+      "Id": "78990627ad0f4152a1e6965b21de0508",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8c2790139edb48b9ab19b2754a342db6",
+          "Name": "Views",
+          "Description": "The selected Views",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All views available in the current document."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference('RevitAPI')\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\n#The inputs to this node will be stored as a list in the IN variables.\nrooms = UnwrapElement(IN[0])\n\noutput = []\n\noptions = SpatialElementBoundaryOptions()\noptions.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish\n\nfor r in rooms:\n\tsegments = []\n\tloops = r.GetBoundarySegments(options)\n\tfor loop in loops:\n\t\tfor segment in loop:\n\t\t\tsegments.append(segment)\n\toutput.append(segments)\n\n#Assign your output to the OUT variable.\nOUT = output",
+      "VariableInputPorts": true,
+      "Id": "78317b3a162647b79b0090f003bdf231",
+      "Inputs": [
+        {
+          "Id": "040e7e6f328a494989906bdef8ca49fc",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "bd4b2c8edfb945a3a4a2247d1d4b01f7",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference('RevitAPI')\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\ndef isParallel(v1,v2):\n\treturn v1.CrossProduct(v2).IsAlmostEqualTo(XYZ(0,0,0))  \n  \ndef isCollinear(l0,l1):\n\ta = l0.GetEndPoint(0)\n\tb = l0.GetEndPoint(1)\n\tc = l1.GetEndPoint(0)\n\td = l1.GetEndPoint(1)\n\treturn (b-a).CrossProduct(c-a).IsAlmostEqualTo((b-a).CrossProduct(d-a)) and (b-a).CrossProduct(c-a).IsAlmostEqualTo(XYZ(0,0,0))\n\n#The inputs to this node will be stored as a list in the IN variables.\nroom_segments = UnwrapElement(IN[0])\n\nsets = []\n\n#group parallel segments together\nfor rs in room_segments:\n\tdirections = []\n\tsegment_groups = []\n\tfor segment in rs:\n\t\tl = segment.GetCurve()\n\t\td = l.GetEndPoint(1)-l.GetEndPoint(0)\n\t\tidx = -1\n\t\tfor i in range(len(directions)):\n\t\t\tif isParallel(d,directions[i]):\n\t\t\t\tidx = i\n\t\t\t\tbreak\n\t\t\n\t\tif idx!=-1:\n\t\t\tsegment_groups[idx].append(segment)\n\t\telse:\n\t\t\tdirections.append(d)\n\t\t\tnew_group = []\n\t\t\tnew_group.append(segment)\n\t\t\tsegment_groups.append(new_group)\n\t\t\t\n\tsets.append(segment_groups)\n\t\n\t\noutput = []\n\n#split groups into collinear sets\nfor rs in sets:\n\troom_output = []\n\tfor set in rs:\n\t\tcsets = []\n\t\tfor s in set:\n\t\t\tfor cs in csets:\n\t\t\t\tif len(cs)>0:\n\t\t\t\t\tl0 = s.GetCurve()\n\t\t\t\t\tl1=cs[0].GetCurve()\n\t\t\t\t\tif isCollinear(l0,l1):\n\t\t\t\t\t\tcs.append(s)\n\t\t\t\t\t\tbreak\n\t\t\telse:\n\t\t\t\tnew_set = [s]\n\t\t\t\tcsets.append(new_set)\n\t\troom_output.append(csets)\n\t\n\toutput.append(room_output)\t\t\t\t\n\n#Assign your output to the OUT variable.\nOUT = output",
+      "VariableInputPorts": true,
+      "Id": "a84d49fbd5ce4c719126e163d17662b2",
+      "Inputs": [
+        {
+          "Id": "b62a38f491e14a1ab45e5e01077e3acf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "38ce50aad62b4f64956ead6abb48d3f6",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference(\"RevitAPI\")\nfrom Autodesk.Revit.DB import *\n\nimport Autodesk\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Transactions import TransactionManager\nfrom RevitServices.Persistence import DocumentManager\n\ndef normal_line(s):\n\tl = s.GetCurve()\n\td = l.Direction\n\tn = XYZ(-d.Y,d.X,0)\n\tm = l.GetEndPoint(0) + (l.GetEndPoint(1)-l.GetEndPoint(0))/2\n\tnl = Line.CreateBound(m, m+n)\n\treturn nl\n\n\t\ndef segment_reference(s):\n\n\tse = doc.GetElement(s.ElementId)\n\t#if model line (room separator)\n\tif isinstance(se, Autodesk.Revit.DB.ModelLine):\n\t\treturn se.GeometryCurve.Reference\n\t#if wall\n\tif isinstance(se,Autodesk.Revit.DB.Wall):\n\t\trExt = HostObjectUtils.GetSideFaces(se,ShellLayerType.Exterior)[0]\n\t\trInt = HostObjectUtils.GetSideFaces(se,ShellLayerType.Interior)[0]\n\t\tfExt = doc.GetElement(rExt).GetGeometryObjectFromReference(rExt)\n\t\tfInt = doc.GetElement(rInt).GetGeometryObjectFromReference(rInt)\n\t\t\n\t\tif fExt.Intersect(s.GetCurve())==SetComparisonResult.Overlap or fExt.Intersect(s.GetCurve())==SetComparisonResult.Subset:\n\t\t\treturn rExt\n\t\tif fInt.Intersect(s.GetCurve())==SetComparisonResult.Overlap or fInt.Intersect(s.GetCurve())==SetComparisonResult.Subset:\n\t\t\treturn rInt\n\t\t\n\treturn None\n\t\ndoc = DocumentManager.Instance.CurrentDBDocument\n#The inputs to this node will be stored as a list in the IN variables.\nroom_sets = UnwrapElement(IN[0])\nview = UnwrapElement(IN[1])\n\ndims = []\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n\nfor rs in room_sets:\n\tfor dir in rs:\n\t\tfor set in dir:\n\t\t\tset=sorted(set, key=lambda x: x.GetCurve().Length, reverse = True)\n\n\t\tset_pairs = []\n\t\tfor s0 in dir:\n\t\t\tfor s1 in dir:\n\t\t\t\tif s0!=s1:\n\t\t\t\t\tc = s0[0].GetCurve()\n\t\t\t\t\tc.MakeUnbound()\n\t\t\t\t\td = c.Distance(s1[0].GetCurve().GetEndPoint(0))\n\t\t\t\t\tset_pairs.append([d,s0[0],s1[0]])\n\t\tsorted_by_distance = sorted(set_pairs, key = lambda x:x[0], reverse=True)\n\t\tfirst = sorted_by_distance[0][1]\n\t\tsecond = sorted_by_distance[0][2]\n\t\tnl = normal_line(first)\n\t\trefArray = ReferenceArray()\n\t\trefArray.Append(segment_reference(first))\n\t\trefArray.Append(segment_reference(second))\n\t\td = doc.Create.NewDimension(view, nl, refArray)\n\t\tdims.append(d)\n\t\t\nTransactionManager.Instance.TransactionTaskDone()\n\n#Assign your output to the OUT variable.\nOUT = dims",
+      "VariableInputPorts": true,
+      "Id": "b11f800b494747ceb1a878c1f78b7189",
+      "Inputs": [
+        {
+          "Id": "9282a6d828ee41e6baf70a5e64a9b5f1",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f85885b36fa448dd89f9b9cd85d7e0ad",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "89c443279c9f4107bc983860d1eb216c",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "871ccea1ee404d8690d277ef2f4a24c6",
+      "End": "040e7e6f328a494989906bdef8ca49fc",
+      "Id": "176fe583a5d847c79e437be67bc99ca0"
+    },
+    {
+      "Start": "8c2790139edb48b9ab19b2754a342db6",
+      "End": "f85885b36fa448dd89f9b9cd85d7e0ad",
+      "Id": "2a60f334380c421fae407760bdb3549c"
+    },
+    {
+      "Start": "bd4b2c8edfb945a3a4a2247d1d4b01f7",
+      "End": "b62a38f491e14a1ab45e5e01077e3acf",
+      "Id": "b985cde2730f49ffb957476227ec9730"
+    },
+    {
+      "Start": "38ce50aad62b4f64956ead6abb48d3f6",
+      "End": "9282a6d828ee41e6baf70a5e64a9b5f1",
+      "Id": "c6a494598dff4c73bb458ebb26f360e3"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.3.8810",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "28dbdbb719dd48e28e7e70be87befa05",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 308.5,
+        "Y": 174.5
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Views",
+        "Id": "78990627ad0f4152a1e6965b21de0508",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 402.078671077056,
+        "Y": 392.531168457341
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "getBoundaries",
+        "Id": "78317b3a162647b79b0090f003bdf231",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 608.9372855214682,
+        "Y": 156.49034182189632
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "groupByDirection",
+        "Id": "a84d49fbd5ce4c719126e163d17662b2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 791.9501206395114,
+        "Y": 103.37457104293645
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "dimensionDirections",
+        "Id": "b11f800b494747ceb1a878c1f78b7189",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 984.48159393974345,
+        "Y": 153.40751465169578
+      }
+    ],
+    "Annotations": [],
+    "X": -118.54893232399195,
+    "Y": 55.9757174147158,
+    "Zoom": 0.878530757378051
+  }
+}

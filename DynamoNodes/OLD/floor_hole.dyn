@@ -1,0 +1,539 @@
+{
+  "Uuid": "82e77cb9-37aa-44cd-bee3-d23dfe21d5c7",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "floor_hole",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316d5",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316d6",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316d7",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316d8"
+      ],
+      "Id": "b918b52d10974ca99e241cc90db26bdb",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c2e157cf6a344e45b4907e916d897aa8",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "485f5618-7364-4544-9e34-c1eaaae551c8-0003154e",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000315ad",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000315fb",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-00031620"
+      ],
+      "Id": "3896cdb643f54e719a7bba96182318e0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "91f15bdf81674b319fb776568a98054f",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316d9",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316da",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316db",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316dc"
+      ],
+      "Id": "7b01d6d956d0452c98f72fac9c191a11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c5a5c94b812645ec8138b3b4df21248e",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "485f5618-7364-4544-9e34-c1eaaae551c8-0003162e",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-00031656",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-0003166f",
+        "485f5618-7364-4544-9e34-c1eaaae551c8-000316b5"
+      ],
+      "Id": "ce4e41f861c84145b31ab71dc3dda194",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6d103e771ab3461e8dd6920cdd877cac",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "47ca9a492528485cb43348c64c0e2935",
+      "Inputs": [
+        {
+          "Id": "95aae64ccc764b8198d8ebc0ad0fafac",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "815a89695ea64e6b862576daedbb6ea0",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4d3c3fa3ff4c468bbaffa358974287b1",
+          "Name": "list",
+          "Description": "A list",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b7ec020263624628911279580fea97a1",
+      "Inputs": [
+        {
+          "Id": "16061fdc44494ebb95d607201fb62770",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a340e1a2d78844b1b2ebcfa93df1ec27",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2662bf0ffb034e548c5cf635ea727648",
+          "Name": "list",
+          "Description": "A list",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Enable Python support and load DesignScript library\r\nimport clr\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\n\r\nimport Autodesk\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nborders = UnwrapElement(IN[0])\r\nholes = UnwrapElement(IN[1])\r\n\r\noutput=[]\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\ntg=TransactionGroup(doc, 'Floors')\r\ntg.Start()\r\n\r\nfor b,h in zip(borders,holes):\r\n\tborder = CurveArray()\r\n\tfor c in b:\r\n\t\tborder.Append(c.ToRevitType())\r\n\t\t\r\n\tt0 = Transaction(doc, 'Floor border')\r\n\tt0.Start()\r\n\tfloor = doc.Create.NewFloor(border,False)\r\n\tt0.Commit()\r\n\t\r\n\thole = CurveArray()\r\n\tfor c in h:\r\n\t\thole.Append(c.ToRevitType())\r\n\t\t\r\n\tt1 = Transaction(doc, 'Floor hole')\r\n\tt1.Start()\r\n\topening = doc.Create.NewOpening(floor,hole,True)\r\n\tt1.Commit()\r\n\t\t\r\n\toutput.append([floor,opening])\r\n\r\ntg.Assimilate()\r\n# Assign your output to the OUT variable.\r\nOUT = output",
+      "VariableInputPorts": true,
+      "Id": "c73158e5c3484a9091bae4feebebe519",
+      "Inputs": [
+        {
+          "Id": "61501c535cd843caaea5022558e91acf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d45dfba9c4a14b53b467e6c7d3145b8a",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ce2dc04194b44f7091d4263a006473f2",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.CurveElement.Curve",
+      "Id": "6cdb45e2df4a4fe4a29ad8ba011fcf88",
+      "Inputs": [
+        {
+          "Id": "afcc90de6784436bbd88254e9d827e55",
+          "Name": "curveElement",
+          "Description": "Revit.Elements.CurveElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "43f1a8d89ca94cf68dad293f0d39bb46",
+          "Name": "Curve",
+          "Description": "Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Obtain the geometry curve for this geometry curve\n\nCurveElement.Curve: Curve"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.CurveElement.Curve",
+      "Id": "5a732417ab974cd1a7a7065deb63812e",
+      "Inputs": [
+        {
+          "Id": "f129f5948e844b09867feebd4861b6da",
+          "Name": "curveElement",
+          "Description": "Revit.Elements.CurveElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "32ae11c327e14b249bfc87eaf3f75a72",
+          "Name": "Curve",
+          "Description": "Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Obtain the geometry curve for this geometry curve\n\nCurveElement.Curve: Curve"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.CurveElement.Curve",
+      "Id": "2496464384f84e3aa6ee445983fb7f1c",
+      "Inputs": [
+        {
+          "Id": "58c57cc0653a43e1bd6b808976910707",
+          "Name": "curveElement",
+          "Description": "Revit.Elements.CurveElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "951f5686b4684fec9f5abd792b00957a",
+          "Name": "Curve",
+          "Description": "Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Obtain the geometry curve for this geometry curve\n\nCurveElement.Curve: Curve"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.CurveElement.Curve",
+      "Id": "474df40af38a425db27f3e88ad2104c3",
+      "Inputs": [
+        {
+          "Id": "4d97a255932f4d9f9f302089b4f1f986",
+          "Name": "curveElement",
+          "Description": "Revit.Elements.CurveElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4334d241a1a54d91a95e9b6891ccdb41",
+          "Name": "Curve",
+          "Description": "Curve",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Obtain the geometry curve for this geometry curve\n\nCurveElement.Curve: Curve"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c2e157cf6a344e45b4907e916d897aa8",
+      "End": "afcc90de6784436bbd88254e9d827e55",
+      "Id": "4e84b153b00e46dba7ce46d2dc6881ba"
+    },
+    {
+      "Start": "91f15bdf81674b319fb776568a98054f",
+      "End": "58c57cc0653a43e1bd6b808976910707",
+      "Id": "531b92831bd442d3ba8b3c7da9136d5b"
+    },
+    {
+      "Start": "c5a5c94b812645ec8138b3b4df21248e",
+      "End": "4d97a255932f4d9f9f302089b4f1f986",
+      "Id": "f734fae451014bf6ac9f0c23887ebb9f"
+    },
+    {
+      "Start": "6d103e771ab3461e8dd6920cdd877cac",
+      "End": "f129f5948e844b09867feebd4861b6da",
+      "Id": "beeb123ed19a448892c674365bcc06c7"
+    },
+    {
+      "Start": "4d3c3fa3ff4c468bbaffa358974287b1",
+      "End": "d45dfba9c4a14b53b467e6c7d3145b8a",
+      "Id": "93bd4b32b0c742d09cb19d8f848cf8c7"
+    },
+    {
+      "Start": "2662bf0ffb034e548c5cf635ea727648",
+      "End": "61501c535cd843caaea5022558e91acf",
+      "Id": "f076dea7c89346e1953defad0b673230"
+    },
+    {
+      "Start": "43f1a8d89ca94cf68dad293f0d39bb46",
+      "End": "16061fdc44494ebb95d607201fb62770",
+      "Id": "e6fde974167f425594289587f3c9f2a3"
+    },
+    {
+      "Start": "32ae11c327e14b249bfc87eaf3f75a72",
+      "End": "815a89695ea64e6b862576daedbb6ea0",
+      "Id": "741b64125449423aa344ad0aab682248"
+    },
+    {
+      "Start": "951f5686b4684fec9f5abd792b00957a",
+      "End": "a340e1a2d78844b1b2ebcfa93df1ec27",
+      "Id": "a36439d09a224a87aaa0e79357cb7df6"
+    },
+    {
+      "Start": "4334d241a1a54d91a95e9b6891ccdb41",
+      "End": "95aae64ccc764b8198d8ebc0ad0fafac",
+      "Id": "a25cf0b4afcb4b02b337175e36059012"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.3.8810",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "b918b52d10974ca99e241cc90db26bdb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 186.0,
+        "Y": 57.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "3896cdb643f54e719a7bba96182318e0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 195.80235188855977,
+        "Y": 196.07530517012196
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "7b01d6d956d0452c98f72fac9c191a11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 220.0,
+        "Y": 407.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "ce4e41f861c84145b31ab71dc3dda194",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 212.76232504683503,
+        "Y": 543.80235188855977
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List Create",
+        "Id": "47ca9a492528485cb43348c64c0e2935",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 948.83597788654174,
+        "Y": 518.50961412494246
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List Create",
+        "Id": "b7ec020263624628911279580fea97a1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 874.92032913686432,
+        "Y": 0.99814976018502932
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "c73158e5c3484a9091bae4feebebe519",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1340.7463999980214,
+        "Y": 301.42547592432618
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CurveElement.Curve",
+        "Id": "6cdb45e2df4a4fe4a29ad8ba011fcf88",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 487.45480030786746,
+        "Y": -42.298569718886512
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CurveElement.Curve",
+        "Id": "5a732417ab974cd1a7a7065deb63812e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 633.44664548924231,
+        "Y": 571.52818617833668
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CurveElement.Curve",
+        "Id": "2496464384f84e3aa6ee445983fb7f1c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 512.37677594435968,
+        "Y": 164.24451987217984
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CurveElement.Curve",
+        "Id": "474df40af38a425db27f3e88ad2104c3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 641.40961665348789,
+        "Y": 396.26082950943
+      }
+    ],
+    "Annotations": [],
+    "X": -57.85109371864371,
+    "Y": 72.2416958972353,
+    "Zoom": 0.74769281712332525
+  }
+}

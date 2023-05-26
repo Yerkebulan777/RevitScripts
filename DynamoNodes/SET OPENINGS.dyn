@@ -1,0 +1,374 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "SET OPENINGS",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "DSCore.List": {
+        "Key": "DSCore.List",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import sys\r\n#sys.path.append('C:\\Program Files\\IronPython 2.7\\Lib')\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport codecs\r\n\r\ntry:\r\n\tfilePath = IN[0]\r\n\twith codecs.open(filePath, 'rb', \"utf-8\") as inf:\r\n\t\tlines = inf.readlines()\r\n\tOUT = ''.join(lines)\r\nexcept:\r\n\tOUT = \"No file\"",
+      "VariableInputPorts": true,
+      "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+      "Inputs": [
+        {
+          "Id": "7463dc1e3f584086af4797b96e73b831",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c53d58ae70ab459dad42e87d420eb885",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\YandexDisk\\RevitExportConfig\\DynamoScripts\\SetCommunicationOpenings.py",
+      "InputValue": "..\\DynamoScripts\\SetCommunicationOpenings.py",
+      "NodeType": "ExtensionNode",
+      "Id": "298105726a5946948913e4a66b568d11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "161f783c2d9b4b71a27f039345b2e006",
+      "Inputs": [
+        {
+          "Id": "b8d1a49d36d842e494278b983368801a",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4914b330b24b453486dfc6d31b9d0383",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "Orchid.E.RevitProject.Common.RevitLinks, OrchidRE",
+      "SelectedIndex": 0,
+      "NodeType": "ExtensionNode",
+      "Id": "745e4e9a350c4f7b8defda532b0fd357",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6990acad131442a895add389ea558472",
+          "Name": "Link",
+          "Description": "Выбрано Link",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Dropdown for revit links in document"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "PointLocation",
+      "Id": "c49d4a0851f94d78862771b99d3f9dc5",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cb7cfda4edfd496da605b344e7990b0b",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "(отверстия) ВК",
+      "Id": "9a5d6dced5a7421a804da2f01bb83740",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d2cd00d4b3c949e6bb1e4660c752140b",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonStringNode, PythonNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b7f7a76146b04277a72d4d60d30d583d",
+      "Inputs": [
+        {
+          "Id": "9131d13452ac4b809468f55666545006",
+          "Name": "script",
+          "Description": "Сценарий Python для запуска.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c240132e03504b97ab58f845adaea504",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4c9fca2e5dde409e87203f3fc3b186fa",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "089873ad216442b8ba7364020ef53535",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c15b1665a53b472c84eac936eac98106",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение сценария IronPython из строки."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c53d58ae70ab459dad42e87d420eb885",
+      "End": "9131d13452ac4b809468f55666545006",
+      "Id": "c08dc57928ca455abd2a7a2382a5ff14"
+    },
+    {
+      "Start": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+      "End": "7463dc1e3f584086af4797b96e73b831",
+      "Id": "bf65a9a0ae2242b78da3e7cd91696f17"
+    },
+    {
+      "Start": "6990acad131442a895add389ea558472",
+      "End": "c240132e03504b97ab58f845adaea504",
+      "Id": "f3a35a5e0ca1498cabd5e1aa1dbe17e6"
+    },
+    {
+      "Start": "cb7cfda4edfd496da605b344e7990b0b",
+      "End": "4c9fca2e5dde409e87203f3fc3b186fa",
+      "Id": "9ccccbb9bd1c46d895e289238053be63"
+    },
+    {
+      "Start": "d2cd00d4b3c949e6bb1e4660c752140b",
+      "End": "089873ad216442b8ba7364020ef53535",
+      "Id": "f0eb9a69a80448afb6f03c1773a27177"
+    },
+    {
+      "Start": "c15b1665a53b472c84eac936eac98106",
+      "End": "b8d1a49d36d842e494278b983368801a",
+      "Id": "166a7df1f57d462da6cb8502bd379abc"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -157.72731384262468,
+      "EyeY": 36.274744365783476,
+      "EyeZ": 103.64937766801116,
+      "LookX": 157.72731384262468,
+      "LookY": -36.274744365783476,
+      "LookZ": -103.64937766801116,
+      "UpX": -0.021876219142742431,
+      "UpY": 0.99965732497562554,
+      "UpZ": 0.01437580115095095
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Find file and import it!",
+        "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1178.9760758333744,
+        "Y": 498.77174462390394
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к файлу Python:",
+        "Id": "298105726a5946948913e4a66b568d11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 840.13541480984861,
+        "Y": 499.25838300808022
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "161f783c2d9b4b71a27f039345b2e006",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1858.0095079195878,
+        "Y": 498.33726480523
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Выбрать Revit Link связь",
+        "Id": "745e4e9a350c4f7b8defda532b0fd357",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 841.592766636919,
+        "Y": 596.40959257229872
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Имя типа отверстия стен",
+        "Id": "c49d4a0851f94d78862771b99d3f9dc5",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 842.50888450863943,
+        "Y": 687.20263281461234
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Имя типа отверстия перекрытий",
+        "Id": "9a5d6dced5a7421a804da2f01bb83740",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 842.44820709405667,
+        "Y": 753.4214723623254
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script From String",
+        "Id": "b7f7a76146b04277a72d4d60d30d583d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1462.6693886079145,
+        "Y": 498.70522528061616
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "468a38177729493c8057a5e1744b9cf7",
+        "Title": "Установить пакет Orchid \r\nВыбрать в Revit Link необходимый связанный фаил\r\nНеобходимо соединить отделку и утеплитель к стенам с отверстиями\r\nМожно выделить необходимые конструкции если необходимо\r\nЕсли не находит пересечений то необходимо перегрузить Revit\r\n",
+        "Nodes": [
+          "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+          "298105726a5946948913e4a66b568d11",
+          "161f783c2d9b4b71a27f039345b2e006",
+          "c49d4a0851f94d78862771b99d3f9dc5",
+          "9a5d6dced5a7421a804da2f01bb83740",
+          "b7f7a76146b04277a72d4d60d30d583d"
+        ],
+        "Left": 830.13541480984861,
+        "Top": 315.33726480523,
+        "Width": 1115.8740931097391,
+        "Height": 506.0842075570954,
+        "FontSize": 24.0,
+        "InitialTop": 498.33726480523,
+        "InitialHeight": 400.0842075570954,
+        "TextblockHeight": 173.0,
+        "Background": "#FFD8D8D8"
+      }
+    ],
+    "X": -155.44753039542491,
+    "Y": -32.542411296093292,
+    "Zoom": 0.63703496365286094
+  }
+}

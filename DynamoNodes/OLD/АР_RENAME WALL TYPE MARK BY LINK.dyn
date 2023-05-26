@@ -1,0 +1,211 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "АР_RENAME WALL TYPE MARK BY LINK",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import System\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nfrom System.Collections.Generic import *\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Analysis import *\r\n\r\n# Import ToDSType(bool) extension method\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n# Import geometry conversion extension methods\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n\r\ndef NameParam(arg):\r\n\treturn arg.LookupParameter(\"Имя типа\").AsString()\r\n\t\r\n# Выбор связей\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nopt = Options()\r\ncollector = Autodesk.Revit.DB.FilteredElementCollector(doc)\r\nlinkInstances = collector.OfClass(Autodesk.Revit.DB.RevitLinkInstance)\r\n#настройка фильтра\r\nfilter = ElementCategoryFilter(BuiltInCategory.OST_Walls)\r\nWalls = FilteredElementCollector(doc).WherePasses(filter).WhereElementIsElementType().ToElements()\r\n\r\nfor i in linkInstances:\r\n\tif IN[0].ToLower() in i.Name.ToLower():\t\r\n\t\tlinkDoc = i.GetLinkDocument()\r\n\t\t# Выбор типов стен\r\n\t\tcollector = FilteredElementCollector(linkDoc)\r\n\t\tlinkWalls = collector.WherePasses(filter).WhereElementIsElementType().ToElements()\r\n\t\tLinkWallNames = [NameParam(lw) for lw in linkWalls]\r\na = []\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\nfor w in Walls:\r\n\tTypeName = NameParam(w)\r\n\tif TypeName in LinkWallNames:\r\n\t\tind = LinkWallNames.IndexOf(TypeName)\r\n\t\tLinkTypeMark = linkWalls[ind].LookupParameter(\"Маркировка типоразмера\").AsString()\r\n\t\ta.append(LinkTypeMark)\r\n\t\tif LinkTypeMark:\r\n\t\t\tw.LookupParameter(\"Маркировка типоразмера\").Set(LinkTypeMark)\r\n\telse:\r\n\t\tOUT = \"Совпадений типов не найдено\"\r\nb = []\r\nTransactionManager.Instance.TransactionTaskDone()\r\nfor w in Walls:\r\n\tTypeName = NameParam(w)\r\n\tif TypeName in LinkWallNames:\r\n\t\tind = LinkWallNames.IndexOf(TypeName)\r\n\t\tLinkTypeMark = linkWalls[ind].LookupParameter(\"Комментарии к типоразмеру\").AsString()\r\n\t\ta.append(LinkTypeMark)\r\n\t\tif LinkTypeMark:\r\n\t\t\tw.LookupParameter(\"Комментарии к типоразмеру\").Set(LinkTypeMark)\r\n\telse:\r\n\t\tOUT = \"Совпадений типов не найдено\"\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\nс = []\r\nTransactionManager.Instance.TransactionTaskDone()\r\nfor w in Walls:\r\n\tTypeName = NameParam(w)\r\n\tif TypeName in LinkWallNames:\r\n\t\tind = LinkWallNames.IndexOf(TypeName)\r\n\t\tLinkTypeMark = linkWalls[ind].LookupParameter(\"Группа модели\").AsString()\r\n\t\tс.append(LinkTypeMark)\r\n\t\tif LinkTypeMark:\r\n\t\t\tw.LookupParameter(\"Группа модели\").Set(LinkTypeMark)\r\n\telse:\r\n\t\tOUT = \"Совпадений типов не найдено\"\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\n\t\r\nOUT = a, b, c",
+      "VariableInputPorts": true,
+      "Id": "231d7703a2ac43ee832cbfcd352ed311",
+      "Inputs": [
+        {
+          "Id": "20359f4ff45344938404c3549d95d6ce",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "618d45bdf097436e83a81df8dc950d9f",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "BI TOWER_AR_B1_WIP_R18",
+      "Id": "178bedddec264be9b92f02ddcd9819ef",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dadfde5fff8d42308516f61a9dd45cc1",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import System\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nfrom System.Collections.Generic import *\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Analysis import *\r\n\r\n# Import ToDSType(bool) extension method\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n# Import geometry conversion extension methods\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n\r\n# Выбор связей\r\nopt = Options()\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\ncollector = Autodesk.Revit.DB.FilteredElementCollector(doc)\r\nlinkInstances = collector.OfClass(Autodesk.Revit.DB.RevitLinkInstance)\r\n\r\nfor i in linkInstances:\r\n\tif IN[0].ToLower() in i.Name.ToLower():\t\r\n\t\tlinkDoc = i.GetLinkDocument()\r\n\r\nCategory = IN[1]\r\n\r\nBuiltIn = System.Enum.ToObject(BuiltInCategory, Category.Id)\r\n\r\ncollector = FilteredElementCollector(linkDoc)\r\nfilter = ElementCategoryFilter(BuiltIn)\r\nlist=collector.WherePasses(filter).WhereElementIsNotElementType().ToElements()\r\n\r\nOUT = list",
+      "VariableInputPorts": true,
+      "Id": "6c519862352e421bb52f0a1deae6eb4b",
+      "Inputs": [
+        {
+          "Id": "aa49d16ec2b34b08be55f398a76db083",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5b7d77430f9640f09eb55fda6876ff39",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e34304c235714eadb1148cf29a4a0438",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Categories, DSRevitNodesUI",
+      "SelectedIndex": 438,
+      "NodeType": "ExtensionNode",
+      "Id": "99c6c0c2084c45829f3eac0ad6506fb6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8f60ce5362f54502916bae09123499ad",
+          "Name": "Category",
+          "Description": "Выбранная категория.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Все предопределенные категории."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "dadfde5fff8d42308516f61a9dd45cc1",
+      "End": "20359f4ff45344938404c3549d95d6ce",
+      "Id": "76bb7dfecaa04ec6a35547daa43c6bf1"
+    },
+    {
+      "Start": "dadfde5fff8d42308516f61a9dd45cc1",
+      "End": "aa49d16ec2b34b08be55f398a76db083",
+      "Id": "556a0c356eda48d9a504434d3a1ccaf6"
+    },
+    {
+      "Start": "8f60ce5362f54502916bae09123499ad",
+      "End": "5b7d77430f9640f09eb55fda6876ff39",
+      "Id": "4828e21045f844718e128ec4c7ac7f08"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.1.5055",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Перезапись марок и коментария",
+        "Id": "231d7703a2ac43ee832cbfcd352ed311",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 22.269788698533432,
+        "Y": 603.79750629225578
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Имя связанного файла",
+        "Id": "178bedddec264be9b92f02ddcd9819ef",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -237.21336900701488,
+        "Y": 603.33800211430969
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LinkElement.OfCategory",
+        "Id": "6c519862352e421bb52f0a1deae6eb4b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 23.49187104832663,
+        "Y": 683.64306967061248
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Categories",
+        "Id": "99c6c0c2084c45829f3eac0ad6506fb6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -217.64832302210073,
+        "Y": 710.62393957932147
+      }
+    ],
+    "Annotations": [],
+    "X": 380.4926882662507,
+    "Y": -633.931517385812,
+    "Zoom": 1.4023000137373967
+  }
+}

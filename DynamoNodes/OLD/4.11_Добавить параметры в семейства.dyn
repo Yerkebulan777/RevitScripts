@@ -1,0 +1,220 @@
+<Workspace Version="1.1.0.2094" X="-900.131387728512" Y="-667.764617377813" zoom="1.13141776384084" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+  <NamespaceResolutionMap />
+  <Elements>
+    <PythonNodeModels.PythonNode guid="07f21b2b-380a-4fd8-aeec-e8be60101280" type="PythonNodeModels.PythonNode" nickname="Python Script" x="1261.09602300256" y="826.562518683429" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="3">
+      <Script>import clr
+import sys
+pyt_path = r'C:\Program Files (x86)\IronPython 2.7\Lib'
+sys.path.append(pyt_path)
+import os
+import System
+clr.AddReference('ProtoGeometry')
+from Autodesk.DesignScript.Geometry import *
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+clr.AddReference("RevitAPI")
+import Autodesk
+from Autodesk.Revit.DB import *
+curdoc = DocumentManager.Instance.CurrentDBDocument
+uiapp = DocumentManager.Instance.CurrentUIApplication
+app = uiapp.Application
+from System.Collections.Generic import *
+clr.AddReference("RevitNodes")
+import sys
+import os
+import Revit
+clr.ImportExtensions(Revit.Elements)
+import System
+try:
+	fop = app.OpenSharedParameterFile()
+except:
+	message = "No Shared Parameter file found."
+	pass			
+def ParamBindingExists(_doc, _paramName, _paramType):
+	map = curdoc.ParameterBindings
+	iterator = map.ForwardIterator()
+	iterator.Reset()
+	while iterator.MoveNext():
+		if iterator.Key != None and iterator.Key.Name == _paramName and iterator.Key.ParameterType == _paramType:
+			paramExists = True
+			break
+		else:
+			paramExists = False
+	return paramExists
+
+def RemoveParamBinding(_doc, _paramName, _paramType):
+	map = curdoc.ParameterBindings
+	iterator = map.ForwardIterator()
+	iterator.Reset()
+	while iterator.MoveNext():
+		if iterator.Key != None and iterator.Key.Name == _paramName and iterator.Key.ParameterType == _paramType:
+			definition = iterator.Key
+			break
+	message = None
+	if definition != None:
+		map.Remove(definition)
+		message = "Success"
+	return message
+	
+def addParam(doc, _paramName, _visible, _instance, _groupName, _paramGroup,k):
+	message = None
+	if ParamBindingExists(doc, _paramName, _paramType):
+		if not RemoveParamBinding(doc, _paramName, _paramType) == "Success":
+			message = "Param Binding Not Removed Successfully"
+		else:
+			message = None	
+	group = fop.Groups.get_Item(_groupName)
+	cats = app.Create.NewCategorySet()
+	#c = doc.FamilyCategory
+	d = doc.Settings.Categories.get_Item(BuiltInCategory.OST_MechanicalEquipment)
+	cats.Insert(d)
+	if _instance=="1":
+		bind = app.Create.NewInstanceBinding(cats)
+	else:
+		bind = app.Create.NewTypeBinding(cats)
+	if group == None:
+		group = fop.Groups.Create(_groupName)
+	if group.Definitions.Contains(group.Definitions.Item[_paramName]):
+		_def = group.Definitions.Item[_paramName]
+	else:
+   		_def = group.Definitions.Create(opt)
+	return _def
+	
+_paramName = []
+_groupName = []
+_paramType = []
+_paramType2 = []
+_category = []
+_category2 = []
+_paramGroup = []
+_paramGroup2 = []
+_instance = []
+parameters = IN[2].split("\n")
+for parameter in parameters:
+	try:
+		if parameter is not None and parameter != "":
+			paramName = parameter[:parameter.find("(")]
+			_paramName.append(paramName)
+			attrib = parameter[parameter.find("(")+1:parameter.find(")")+1]
+			groupName = attrib[:attrib.find(",")]
+			attrib = attrib[attrib.find(",")+1:]
+			_groupName.append(groupName)
+			paramType = attrib[:attrib.find(",")]
+			attrib = attrib[attrib.find(",")+1:]
+			_paramType2.append(paramType)
+			paramGroup = attrib[:attrib.find(",")]
+			attrib = attrib[attrib.find(",")+1:]
+			_paramGroup2.append(paramGroup)
+			instance = attrib[:attrib.find(",")]
+			attrib = attrib[attrib.find(",")+1:]
+			_instance.append(int(float(instance)))
+	except:
+		a=0	
+types=System.Enum.GetValues(ParameterType)
+for i in _paramType2:
+	l=0
+	for type in types:
+		j = type.ToString()
+		if i==j:
+			_paramType.append(type)
+			l=l+1
+	if l==0:
+		for type in types:
+			j=type.ToString()
+			if j=="Text":
+				_paramType.append(type)	
+groups=System.Enum.GetValues(BuiltInParameterGroup)
+name=[]
+for i in _paramGroup2:
+	for group in groups:
+		j = group.ToString()
+		if j==i:
+			_paramGroup.append(group)					
+dir1 = IN[1]
+files = os.listdir(dir1)
+file=[]
+for f in files:
+	if ".rfa" in f and f[-9:-6]!='.00':
+		file.append(f)					
+
+mygroups = curdoc.Application.OpenSharedParameterFile().Groups
+comment1 = ""
+comment2 = []
+list=[]
+i=0
+while i&lt;file.Count:
+	doc = app.OpenDocumentFile(dir1+ "\\" +file[i])
+	a1 = dir(doc)
+	TransactionManager.Instance.EnsureInTransaction(doc)
+	j=0
+	a=0
+	b=0
+	while j&lt;_paramName.Count:
+		check=0
+		try:
+			pars = doc.FamilyManager.GetParameters()
+			for p in pars:
+				name = p.Definition.Name
+				if name == _paramName[j]:
+					par = p
+					check=1	
+		except:
+			0
+		if check == 0:	
+			a=a+1
+			comment1 = str(a)+" шт. параметров не было в Файле общих параметров, я их добавил :)"
+			opt = ExternalDefinitionCreationOptions(_paramName[j], _paramType[j])
+			opt.Visible = True
+			par = addParam(doc, _paramName[j],1, _instance[j], _groupName[j], _paramGroup[j],j)
+		try:
+			par1 = doc.FamilyManager.AddParameter(par,_paramGroup[j],_instance[j])
+			#if formula[j] is not None and formula[j]!='':
+				#t = doc.FamilyManager.SetFormula(par1,formula[j])
+		except:
+			b=b+1
+			#par1 = doc.FamilyManager.get_Parameter(par)
+			#if formula[j] is not None and formula[j]!='':
+				#t = doc.FamilyManager.SetFormula(par1,formula[j])	
+		j=j+1
+	comment2.append(str(b)+" шт. параметров присутствует в модели, я не смог их добавить :(")	
+	TransactionManager.Instance.ForceCloseTransaction()
+	doc.Close()
+	i=i+1
+OUT = comment1,comment2</Script>
+    </PythonNodeModels.PythonNode>
+    <CoreNodeModels.Input.BoolSelector guid="22e8da8f-e325-4c68-88b4-64f3b570c925" type="CoreNodeModels.Input.BoolSelector" nickname="Retry" x="946.320490932383" y="706.480626205258" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>True</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
+    <CoreNodeModels.Input.StringInput guid="eaaafd80-3109-456e-88e9-81c5138deec1" type="CoreNodeModels.Input.StringInput" nickname="Параметры" x="875.140455481563" y="886.35066573403" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.String>Тестовый параметр(16.Тестовая группа,Text,PG_DATA,0)
+Тестовый параметр2(16.Тестовая группа,Text,PG_TEXT,0)
+ПараметрППП(16.Тестовая группа,Text,PG_DATA,1)</System.String>
+      <System.String value="Тестовый параметр(16.Тестовая группа,Text,PG_DATA,0)&#xD;&#xA;Тестовый параметр2(16.Тестовая группа,Text,PG_TEXT,0)&#xD;&#xA;ПараметрППП(16.Тестовая группа,Text,PG_DATA,1)" />
+    </CoreNodeModels.Input.StringInput>
+    <CoreNodeModels.Input.StringInput guid="1a2c6cce-1a0c-47a1-b49a-b8af44170454" type="CoreNodeModels.Input.StringInput" nickname="Путь к семействам" x="874.365188794162" y="811.510642359227" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.String>C:\Users\Александр\Desktop\test rfa</System.String>
+      <System.String value="C:\Users\Александр\Desktop\test rfa" />
+    </CoreNodeModels.Input.StringInput>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="22e8da8f-e325-4c68-88b4-64f3b570c925" start_index="0" end="07f21b2b-380a-4fd8-aeec-e8be60101280" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="eaaafd80-3109-456e-88e9-81c5138deec1" start_index="0" end="07f21b2b-380a-4fd8-aeec-e8be60101280" end_index="2" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="1a2c6cce-1a0c-47a1-b49a-b8af44170454" start_index="0" end="07f21b2b-380a-4fd8-aeec-e8be60101280" end_index="1" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="e7b20029-8218-4b32-9f78-41c84c7b1685" annotationText="work" left="1251.09602300256" top="796.562518683429" width="142.4" height="173.8" fontSize="14" InitialTop="826.562518683429" InitialHeight="173.8" TextblockHeight="20" backgrouund="#FFB5B5B5">
+      <Models ModelGuid="07f21b2b-380a-4fd8-aeec-e8be60101280" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+    <Dynamo.Graph.Annotations.AnnotationModel guid="19cb4263-0af6-4297-bbdb-45a390d687f1" annotationText="Заполните параметры" left="864.365188794162" top="781.510642359227" width="241.575266687401" height="241.440023374803" fontSize="14" InitialTop="811.510642359227" InitialHeight="216.99885205518" TextblockHeight="20" backgrouund="#FFC1D676">
+      <Models ModelGuid="eaaafd80-3109-456e-88e9-81c5138deec1" />
+      <Models ModelGuid="1a2c6cce-1a0c-47a1-b49a-b8af44170454" />
+    </Dynamo.Graph.Annotations.AnnotationModel>
+  </Annotations>
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="-17" eyeY="24" eyeZ="50" lookX="12" lookY="-13" lookZ="-58" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>

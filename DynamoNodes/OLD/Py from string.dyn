@@ -1,0 +1,447 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Py from string",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "DSCore.List": {
+        "Key": "DSCore.List",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import sys\r\n#sys.path.append('C:\\Program Files\\IronPython 2.7\\Lib')\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport codecs\r\n\r\ntry:\r\n\tfilePath = IN[0]\r\n\twith codecs.open(filePath, 'rb', \"utf-8\") as inf:\r\n\t\tlines = inf.readlines()\r\n\tOUT = ''.join(lines)\r\nexcept:\r\n\tOUT = \"No file\"",
+      "VariableInputPorts": true,
+      "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+      "Inputs": [
+        {
+          "Id": "7463dc1e3f584086af4797b96e73b831",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c53d58ae70ab459dad42e87d420eb885",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonStringNode, PythonNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "b7f7a76146b04277a72d4d60d30d583d",
+      "Inputs": [
+        {
+          "Id": "cf981f8df02f4d07936f99eb0a24dae2",
+          "Name": "script",
+          "Description": "Сценарий Python для запуска.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9d45268872b94741b0006cb17d01452a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "eef3bf9a478443e59302ee11cd40a3ed",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение сценария IronPython из строки."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "D:\\EXTENSION FOR REVIT\\MyPythonScripts\\FloorReinforcing.py",
+      "InputValue": "..\\MyPythonScripts\\FloorReinforcing.py",
+      "NodeType": "ExtensionNode",
+      "Id": "298105726a5946948913e4a66b568d11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Позволяет выбрать файл в системе и получить его имя"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "161f783c2d9b4b71a27f039345b2e006",
+      "Inputs": [
+        {
+          "Id": "b8d1a49d36d842e494278b983368801a",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4914b330b24b453486dfc6d31b9d0383",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "f72ead097bf14b7494f46b06cdcb8d27",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d8b74f5cd0004be6a0cf7d71e5e02399",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "f6f2b04f-f1be-445e-bfda-5469b161ec90",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "91851c602d7d4e2f989f19b5b892abe0",
+      "Inputs": [
+        {
+          "Id": "df725bb81cb347c9a88747aa5970a461",
+          "Name": "points",
+          "Description": "Point[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c27cb92c2adf4d9194437cc58f79b9d4",
+          "Name": "plane",
+          "Description": "Plane\nЗначение по умолчанию : Autodesk.DesignScript.Geometry.Plane.XY()",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e5aac133e71246a2834c60b82e6bd8eb",
+          "Name": "points",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d58f76ffe9aa405d8369f0fba39e8faf",
+          "Name": "angles",
+          "Description": "возвращаемое значение",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Sort points azimuthally (like sorting numbers around a clock face) in a plane.  Points are ordered about the origin of the plane, proceeding from the positive x-axis of the plane in a counter-clockwise direction about the plane normal vector."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.LinkElement.ByRayBounce@Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Vector,Revit.Elements.Views.View3D,Revit.Elements.Category,bool",
+      "Id": "23c564eff1964c82b18e9fef5178372a",
+      "Inputs": [
+        {
+          "Id": "7aadcd7103fb43fabd2800f214181328",
+          "Name": "origin",
+          "Description": "The origin of the ray.\n\nPoint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "839611f5c7144e4d8f0b446262ca5699",
+          "Name": "direction",
+          "Description": "The direction of the ray. Normalized vectors can be input.\n\nVector",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3211dc944f334f62a762068552978c9d",
+          "Name": "view3D",
+          "Description": "Input a 3D view to define the context for the ray bounce.\n\nView3D",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c9c5b5447e8940638c80403b58d8c79e",
+          "Name": "Category",
+          "Description": "Input an optional category to filter the elements hit by the ray bounce. Leave unconnected to return all linkedElement category types hit by the ray bounce.\n\nCategory\nЗначение по умолчанию : null",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "06f870bab39846f9a83ab75a84c1329d",
+          "Name": "findNearest",
+          "Description": "An optional input to find only the nearest linked element hit by the ray point when set to true.\n\nbool\nЗначение по умолчанию : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9e710bb852e64c6e9104f27d3e87dc16",
+          "Name": "LinkElement[]",
+          "Description": "LinkElement[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "194e0b2568d1452ca2329c42660dde74",
+          "Name": "Point[]",
+          "Description": "Point[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Returns LinkElements and position hit by a ray bounce from the specified origin point and direction.\r\r LinkElements are optimised for use with BimorphNodes Element and BoundingBox nodes and are compatible with all nodes that accept Elements as inputs.\r\rVisit bimorph.com/bimorph-nodes for support\n\nLinkElement.ByRayBounce (origin: Point, direction: Vector, view3D: View3D, Category: Category = null, findNearest: bool = false): var[]..[]"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c53d58ae70ab459dad42e87d420eb885",
+      "End": "cf981f8df02f4d07936f99eb0a24dae2",
+      "Id": "c08dc57928ca455abd2a7a2382a5ff14"
+    },
+    {
+      "Start": "eef3bf9a478443e59302ee11cd40a3ed",
+      "End": "b8d1a49d36d842e494278b983368801a",
+      "Id": "166a7df1f57d462da6cb8502bd379abc"
+    },
+    {
+      "Start": "5cbbe3bbaa0a490f95a5f6b9dc6a5c37",
+      "End": "7463dc1e3f584086af4797b96e73b831",
+      "Id": "bf65a9a0ae2242b78da3e7cd91696f17"
+    },
+    {
+      "Start": "d8b74f5cd0004be6a0cf7d71e5e02399",
+      "End": "9d45268872b94741b0006cb17d01452a",
+      "Id": "5026042968954246acc79b2be3b615ca"
+    }
+  ],
+  "Dependencies": [
+    "f6f2b04f-f1be-445e-bfda-5469b161ec90"
+  ],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 100.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": 13529.833770205574,
+      "EyeY": 25246.110815120723,
+      "EyeZ": -26485.480664269358,
+      "LookX": -13516.620218372123,
+      "LookY": -26265.475463710849,
+      "LookZ": 19528.219277345375,
+      "UpX": -0.33049371403164657,
+      "UpY": 0.814115518356323,
+      "UpZ": 0.47748280362437612
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Find file and import it!",
+        "Id": "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1559.4283885361051,
+        "Y": 708.541288330857
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script From String",
+        "Id": "b7f7a76146b04277a72d4d60d30d583d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1816.0719079169319,
+        "Y": 706.7374758609011
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Путь к файлу Python:",
+        "Id": "298105726a5946948913e4a66b568d11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1252.9729624621816,
+        "Y": 708.55781719496031
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "161f783c2d9b4b71a27f039345b2e006",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2022.480376647246,
+        "Y": 708.46117785481488
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "f72ead097bf14b7494f46b06cdcb8d27",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1575.889903809406,
+        "Y": 797.28983920462224
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "[&] PointList.SortAzimuthally",
+        "Id": "91851c602d7d4e2f989f19b5b892abe0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1256.2216909956239,
+        "Y": 535.72643369783361
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "LinkElement.ByRayBounce",
+        "Id": "23c564eff1964c82b18e9fef5178372a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1484.6635587141366,
+        "Y": 464.19586402584309
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "468a38177729493c8057a5e1744b9cf7",
+        "Title": "",
+        "Nodes": [
+          "b7f7a76146b04277a72d4d60d30d583d",
+          "60ebcb04734a49a8a5a6b3ebf56dc2d2",
+          "298105726a5946948913e4a66b568d11",
+          "161f783c2d9b4b71a27f039345b2e006",
+          "f72ead097bf14b7494f46b06cdcb8d27"
+        ],
+        "Left": 1242.9729624621816,
+        "Top": 660.7374758609011,
+        "Width": 962.50741418506436,
+        "Height": 204.55236334372114,
+        "FontSize": 30.0,
+        "InitialTop": 706.7374758609011,
+        "InitialHeight": 235.55236334372114,
+        "TextblockHeight": 36.0,
+        "Background": "#FFD4B6DB"
+      },
+      {
+        "Id": "fba598c9a809432cba9a888b17bd3a1b",
+        "Title": "",
+        "Nodes": [
+          "91851c602d7d4e2f989f19b5b892abe0"
+        ],
+        "Left": 1246.2216909956239,
+        "Top": 482.72643369783361,
+        "Width": 216.0,
+        "Height": 172.0,
+        "FontSize": 36.0,
+        "InitialTop": 535.72643369783361,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -1336.5040942325361,
+    "Y": -439.87432003626736,
+    "Zoom": 1.2198072017254968
+  }
+}

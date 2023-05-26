@@ -1,0 +1,239 @@
+<Workspace Version="1.1.0.2094" X="-259.089077549655" Y="137.082032822271" zoom="0.809357182884197" Name="Home" Description="" RunType="Manual" RunPeriod="1000" HasRunWithoutCrash="True">
+  <NamespaceResolutionMap />
+  <Elements>
+    <PythonNodeModels.PythonNode guid="f9375d29-7106-486c-880d-ce14ae9df74a" type="PythonNodeModels.PythonNode" nickname="Python Script" x="877.167059210529" y="16.8289423774292" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="False" IsFrozen="false" isPinned="true" inputcount="3">
+      <Script>import sys
+pyt_path = r'C:\Program Files (x86)\IronPython 2.7\Lib'
+sys.path.append(pyt_path)
+import os
+import clr
+import System
+msoft = "c:\Program Files (x86)\Microsoft Office\Office15\DCF\Microsoft.Office.Interop.Excel.dll"
+try:
+	clr.AddReferenceToFileAndPath(msoft)
+except:
+	clr.AddReferenceToFileAndPath(IN[2].replace("%20"," "))
+import Microsoft
+clr.AddReference('DSCoreNodes')
+import DSCore
+from DSCore import *
+clr.AddReference('ProtoGeometry')
+from Autodesk.DesignScript.Geometry import *
+clr.AddReference("RevitServices")
+import RevitServices
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+clr.AddReference("RevitAPI")
+import Autodesk
+from Autodesk.Revit.DB import *
+doc = DocumentManager.Instance.CurrentDBDocument
+uiapp = DocumentManager.Instance.CurrentUIApplication
+app = uiapp.Application
+from System.Collections.Generic import *
+clr.AddReference("RevitNodes")
+import Revit
+clr.ImportExtensions(Revit.Elements)
+
+#------------------Поиск файлов---------------------------
+par = IN[0]
+paths = doc.ProjectInformation.LookupParameter(par).AsString()
+excelapp = Microsoft.Office.Interop.Excel.ApplicationClass()
+listfiles = []
+files = os.listdir(paths)
+for file in files:
+	if '~' not in file and '.xls' in file:
+		listfiles.append([paths+'\\'+file,file.replace('.xlsx','').replace('.xls','')])
+def pars(f):
+	newf = f[f.find('(')+1:f.rfind(')')]
+	newf = newf.split(',')
+	params=[]
+	for n in newf:
+		params.append(n.lstrip().rstrip())
+	return params
+
+def elsbytype(type1):
+	id = type1.Id
+	t = type1.GetType().Name
+	if t=='FamilySymbol':
+		filter = FamilyInstanceFilter(doc,id)
+		els = FilteredElementCollector(doc).OfClass(FamilyInstance).WherePasses(filter).ToElements()
+	elif t=='WallType':	
+		els = [wall for wall in FilteredElementCollector(doc).OfClass(Wall).WhereElementIsNotElementType().ToElements() if wall.WallType.Id == id]
+	elif t=='FloorType':
+		els = [floor for floor in FilteredElementCollector(doc).OfClass(Floor).WhereElementIsNotElementType().ToElements() if floor.FloorType.Id == id]
+	else:
+		els = []
+	return els		
+#-------------------Получение значений из файлов Excel------------
+def getexcel(listfiles,LookupTableName):
+	for file in listfiles:
+		if LookupTableName == file[1]:
+			wb = excelapp.Workbooks.Open(file[0])
+			ws = wb.Worksheets[1]
+			use = ws.UsedRange
+			r = use.Rows.Count
+			c = use.Columns.Count
+			all=use.Value2
+			all2 = all.GetEnumerator()
+			list=[]
+			i=0
+			while i&lt;all.Count:
+				all2.MoveNext()
+				list.append(all2.Current)
+				i=i+1
+			i=0
+			list2=[]
+			list3=[]	
+			for a in list:
+				if a is None:
+					a=""	
+				if i&lt;c:
+					list2.append(a.ToString())
+				else:
+					list3.append(list2)
+					list2=[]
+					list2.append(a.ToString())
+					i=0	
+				i=i+1
+			list3.append(list2)		
+			excel=DSCore.List.Transpose(list3)
+			wb.Close(0)
+	return excel
+def getparam(el,LookupValue):
+	p = el.LookupParameter(LookupValue)
+	ty = p.StorageType.ToString()
+	if ty == 'ValueString':
+		p = p.AsValueString()
+	elif ty == 'String':
+		p = p.AsString()
+	elif ty == 'Double':
+		p = p.AsDouble()
+	elif ty == 'Integer':
+		p = p.AsInteger()
+	elif ty == 'ElementId':
+		p = p.AsElementId()
+	return p
+def setparam(el,Parameter,Value):
+	p = el.LookupParameter(Parameter)
+	ty = p.StorageType.ToString()
+	if ty == "ValueString":
+		val = Value
+	elif ty == "String":
+		val = Value
+	elif ty == "Double":
+		val = 0
+		try:
+			unit = p.DisplayUnitType.ToString()
+			val = float(Value.replace(",","."))
+			if unit == "DUT_MILLIMETERS":
+				val = val/304.8
+			elif unit == "DUT_METERS":
+				val = val/0.3048
+			elif unit == "DUT_SQUARE_METERS":
+				val = val/0.3048/0.3048
+			elif unit == "DUT_CUBIC_METERS":
+				val = val/0.3048/0.3048/0.3048
+		except:	
+			val = float(Value)
+	elif ty == "Integer":
+		val = int(float(Value))
+	elif ty == "ElementId":
+		val = Value
+	p.Set(val)	
+	return val
+#-----------------Получение типов с формулами Lookup------------
+collector = FilteredElementCollector(doc)
+types = collector.WhereElementIsElementType()
+els = []
+test=[]
+for type1 in types:
+	try:
+		formula = type1.LookupParameter('LOOKUP').AsString()
+		if formula is not None:
+			els = elsbytype(type1)
+			flist = formula.split('\r')
+			for f in flist:
+				f = f.lstrip().rstrip()
+				params = pars(f)
+				LookupTableName = params[0]
+				excel = getexcel(listfiles,LookupTableName)
+				search = excel[1]
+				LookupColumn = int(float(params[1])+1)
+				DefaultIfNotFound = params[2]
+				LookupValue = params[3]
+				seek = 'type'
+				if LookupValue[0]=='[':
+					LookupValue=LookupValue.replace('[','').replace(']','')
+					list2=[]
+					for el in els:
+						t=getparam(el,LookupValue)
+						list2.append(t)
+					seek = 'inst'	
+				else:		
+					t = getparam(type1,LookupValue)
+				
+				if f[0]=='[':
+					parameter = f[f.find('[')+1:f.find(']')]
+					i1=0
+					for el in els:
+						if seek=='inst':
+							t=list2[i1]
+						i=0
+						check=0
+						for se in search:
+							if se==t:
+								val = excel[LookupColumn][i]
+								TransactionManager.Instance.EnsureInTransaction(doc)
+								v = setparam(el,parameter,val)
+								TransactionManager.Instance.TransactionTaskDone()
+								check=1
+							i=i+1	
+						if check==0:
+							TransactionManager.Instance.EnsureInTransaction(doc)
+							setparam(el,parameter,DefaultIfNotFound)
+							TransactionManager.Instance.TransactionTaskDone()
+						i1=i1+1	
+				else:
+					parameter = f[:f.find('(')]
+					i=0
+					check=0
+					for se in search:
+						if se==t:
+							val = excel[LookupColumn][i]
+							TransactionManager.Instance.EnsureInTransaction(doc)
+							v = setparam(type1,parameter,val)
+							TransactionManager.Instance.TransactionTaskDone()
+							check=1
+						i=i+1	
+					if check==0:
+						TransactionManager.Instance.EnsureInTransaction(doc)
+						setparam(type1,parameter,DefaultIfNotFound)
+						TransactionManager.Instance.TransactionTaskDone()
+					OUT="ОК"
+	except:
+		a=1</Script>
+    </PythonNodeModels.PythonNode>
+    <CoreNodeModels.Input.StringInput guid="27e93ca0-d042-4da2-96b6-6af49ce02bfb" type="CoreNodeModels.Input.StringInput" nickname="Параметр в Информации о проекте" x="589.952835800426" y="23.2081688280819" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.String>Папка справочников</System.String>
+      <System.String value="Папка справочников" />
+    </CoreNodeModels.Input.StringInput>
+    <CoreNodeModels.Input.BoolSelector guid="de6ae713-89db-4325-98f4-cb4f69b818ab" type="CoreNodeModels.Input.BoolSelector" nickname="Retry" x="691.505234772946" y="87.1406237978547" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.Boolean>False</System.Boolean>
+    </CoreNodeModels.Input.BoolSelector>
+    <CoreNodeModels.Input.Filename guid="985efe59-e407-4295-a0a0-58ebbf8c556a" type="CoreNodeModels.Input.Filename" nickname="C:\Program Files\Dynamo\Dynamo Core\1.1\Microsoft.Office.Interop.Excel.dll" x="333.529019015976" y="166.497337427043" isVisible="true" isUpstreamVisible="true" lacing="Disabled" isSelectedInput="True" IsFrozen="false" isPinned="false">
+      <System.String>..\..\..\..\..\..\Program%20Files\Dynamo\Dynamo%20Core\1.1\Microsoft.Office.Interop.Excel.dll</System.String>
+      <HintPath>C:\Program Files\Dynamo\Dynamo Core\1.1\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </CoreNodeModels.Input.Filename>
+  </Elements>
+  <Connectors>
+    <Dynamo.Graph.Connectors.ConnectorModel start="27e93ca0-d042-4da2-96b6-6af49ce02bfb" start_index="0" end="f9375d29-7106-486c-880d-ce14ae9df74a" end_index="0" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="de6ae713-89db-4325-98f4-cb4f69b818ab" start_index="0" end="f9375d29-7106-486c-880d-ce14ae9df74a" end_index="1" portType="0" />
+    <Dynamo.Graph.Connectors.ConnectorModel start="985efe59-e407-4295-a0a0-58ebbf8c556a" start_index="0" end="f9375d29-7106-486c-880d-ce14ae9df74a" end_index="2" portType="0" />
+  </Connectors>
+  <Notes />
+  <Annotations />
+  <Presets />
+  <Cameras>
+    <Camera Name="Фоновый просмотр" eyeX="-17" eyeY="24" eyeZ="50" lookX="12" lookY="-13" lookZ="-58" upX="0" upY="1" upZ="0" />
+  </Cameras>
+</Workspace>

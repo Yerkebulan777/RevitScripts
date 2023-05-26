@@ -1,0 +1,274 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "SetElevationMarks",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#!/usr/bin/python\r\n# -*- coding: UTF-8 -*-\r\n\r\nimport sys\r\nsys.path.append(r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\")\r\n\r\nimport clr\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import FilteredElementCollector, Transaction, SubTransaction\r\nfrom Autodesk.Revit.DB import SectionType, ViewType\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n\r\nTransactionManager.Instance.ForceCloseTransaction()\r\n\r\n\r\ndef tolist(obj1):\r\n    if hasattr(obj1, \"__iter__\"):\r\n        return obj1\r\n    else:\r\n        return [obj1]\r\n\r\n\r\nget_parameter = IN[1]\r\nset_parameter = IN[2]\r\n\r\nigroups = []\r\nschedule = doc.ActiveView\r\nif schedule.ViewType == ViewType.Schedule:\r\n    definition = schedule.Definition\r\n    table = schedule.GetTableData()\r\n    section = table.GetSectionData(SectionType.Body)\r\n    headings = [definition.GetField(id).GetName() for id in definition.GetFieldOrder()]\r\n    num_rows, num_columns = section.NumberOfRows, section.NumberOfColumns\r\n    element_ids = FilteredElementCollector(doc, schedule.Id).ToElementIds()\r\n    for row_analyse in range(num_rows):\r\n        with Transaction(doc, \"dummy\") as t:\r\n            t.Start()\r\n            with  SubTransaction(doc) as st:\r\n                st.Start()\r\n                if section.CanRemoveRow(row_analyse):\r\n                    section.RemoveRow(row_analyse)\r\n                    section.RefreshData()\r\n                st.Commit()\r\n            remaining = FilteredElementCollector(doc, schedule.Id).ToElementIds()\r\n            t.RollBack()\r\n        group = [doc.GetElement(id) for id in element_ids if id not in remaining]\r\n        if any(group): igroups.append(group)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\noutlist = []\r\n\r\nfor elements in tolist(igroups):\r\n    set_elevations = set()\r\n    str_elevations = []\r\n    revit_elements = []\r\n    elements = tolist(elements)\r\n    if not IN[0]: outlist.append(elements)\r\n    elif isinstance(elements, list):\r\n        for object in elements:\r\n            element = UnwrapElement(object)\r\n            val = element.LookupParameter(get_parameter).AsDouble()\r\n            if bool(val):\r\n                set_elevations.add(val)\r\n                revit_elements.append(element)\r\n\r\n        for value in sorted(set_elevations, reverse=True):\r\n            if value > 0:\r\n                string_value = \"+\" + str(format(value / 1000, '.3f'))\r\n            else:\r\n                string_value = str(format(value / 1000, '.3f'))\r\n            string_value = string_value.replace(\".\", \",\")\r\n            str_elevations.append(string_value)\r\n\r\n        result = \"; \".join([string_value for string_value in str_elevations])\r\n        set(e.LookupParameter(set_parameter).Set(result) for e in revit_elements)\r\n        outlist.append(result)\r\n\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\nOUT = outlist",
+      "VariableInputPorts": true,
+      "Id": "7044d0f872ed4d6b9a5f858871c4193e",
+      "Inputs": [
+        {
+          "Id": "98b8b82200bb43d5add6ffa7ed73616d",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f877207578644e1c92e363be3d96bc40",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a8a3e35e645b47c38c62b008c8672bff",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "19907fb7ea284fb2ada6d254927b361d",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "612711b3f29448a5be6210038ab3fb69",
+      "Inputs": [
+        {
+          "Id": "f042269e39014976aecc0a98cbe34ed6",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1324d0fa093040678eb88b7b430fd425",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Отметка\";",
+      "Id": "48b6f19f254c45e49593bd9931694ab6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c45b853baf844b7a8b5c26a40fb743d8",
+          "Name": "",
+          "Description": "Значение выражения в строке 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Обеспечивает возможность непосредственного авторства кода DesignScript"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"TMS_отметка\";",
+      "Id": "6809157de327429191d021a7068c195d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "811bf04a99e5469c9d58105b1ba6af5a",
+          "Name": "",
+          "Description": "Значение выражения в строке 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Обеспечивает возможность непосредственного авторства кода DesignScript"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "3309263b94ec48adaa394affe26cbc0c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e270729cd62e462da5bdce5fa222e9ac",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "19907fb7ea284fb2ada6d254927b361d",
+      "End": "f042269e39014976aecc0a98cbe34ed6",
+      "Id": "a19da804cde74c99bed0477bdc7a1711"
+    },
+    {
+      "Start": "c45b853baf844b7a8b5c26a40fb743d8",
+      "End": "a8a3e35e645b47c38c62b008c8672bff",
+      "Id": "9cd0b611f0894280a4c3399be62c37bf"
+    },
+    {
+      "Start": "811bf04a99e5469c9d58105b1ba6af5a",
+      "End": "f877207578644e1c92e363be3d96bc40",
+      "Id": "3ca52b19322b4c28b845bbde6071fc66"
+    },
+    {
+      "Start": "e270729cd62e462da5bdce5fa222e9ac",
+      "End": "98b8b82200bb43d5add6ffa7ed73616d",
+      "Id": "5a6313d7e084479c9329a70266e668e4"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "7044d0f872ed4d6b9a5f858871c4193e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1156.5172299662713,
+        "Y": 2330.9085584415388
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "612711b3f29448a5be6210038ab3fb69",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -981.21436393735019,
+        "Y": 2331.4121030205215
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "--- SET BY PARAMETER ---",
+        "Id": "48b6f19f254c45e49593bd9931694ab6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1394.1837275021289,
+        "Y": 2494.29993780634
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "--- GET BY PARAMETER ---",
+        "Id": "6809157de327429191d021a7068c195d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1394.9954841434098,
+        "Y": 2402.2323370385438
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "set parameters",
+        "Id": "3309263b94ec48adaa394affe26cbc0c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1393.0073830552772,
+        "Y": 2330.933682822309
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "219461a2125642328fcfc5cf0ebee2a8",
+        "Title": "Откройте спецификацию\r\n",
+        "Nodes": [
+          "7044d0f872ed4d6b9a5f858871c4193e",
+          "612711b3f29448a5be6210038ab3fb69",
+          "48b6f19f254c45e49593bd9931694ab6",
+          "6809157de327429191d021a7068c195d",
+          "3309263b94ec48adaa394affe26cbc0c"
+        ],
+        "Left": -1404.9954841434098,
+        "Top": 2286.9085584415388,
+        "Width": 511.78112020605965,
+        "Height": 300.3913793648012,
+        "FontSize": 14.0,
+        "InitialTop": 2330.9085584415388,
+        "InitialHeight": 308.3913793648012,
+        "TextblockHeight": 34.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 2333.187734443628,
+    "Y": -3147.1057386416674,
+    "Zoom": 1.4238745505425412
+  }
+}

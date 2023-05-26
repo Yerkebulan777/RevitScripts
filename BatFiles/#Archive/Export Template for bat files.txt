@@ -1,0 +1,28 @@
+@echo off
+setlocal enabledelayedexpansion
+SET mypath=%~dp0
+echo %mypath:~0,-1%
+echo *******
+echo.
+
+break>"D:\RevitExportSettings\revit_file_list.txt"
+Set "out=D:\RevitExportSettings\"
+
+for /R %%f in (*.rvt) do (
+	
+	for /f "delims=#" %%a in ("%%f") do (
+		if "%%a"=="%%f" (
+			echo %%f >> "%out%\revit_file_list.txt"
+		) else (
+			echo It contains #
+			echo %%f
+			echo -------
+		)
+	)
+
+	
+)
+
+rem %LOCALAPPDATA%\RevitBatchProcessor\BatchRvt.exe --settings_file "D:\RevitExportSettings\ExportToNavisworksSettings.json"
+
+endlocal
