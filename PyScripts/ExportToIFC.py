@@ -131,7 +131,7 @@ def create_3dView(doc):
         if view3D.CanModifyViewDiscipline():
             view3D.get_Parameter(BuiltInParameter.VIEW_DISCIPLINE).Set(4095)
         if view3D.CanModifyDetailLevel():
-            view3D.get_Parameter(BuiltInParameter.VIEW_DETAIL_LEVEL).Set(1)
+            view3D.get_Parameter(BuiltInParameter.VIEW_DETAIL_LEVEL).Set(3)
         if view3D.CanModifyDisplayStyle():
             view3D.get_Parameter(BuiltInParameter.MODEL_GRAPHICS_STYLE).Set(3)
         Output("\nSet View3D Orientation")
