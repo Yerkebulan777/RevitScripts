@@ -236,8 +236,8 @@ def adjusting_category_visibility(doc, view):
             Output("\n{}: {} ".format(msg, ex.message))
         else:
             Output("\nHide RoomSeparation lines")
-            Output("\nHide MassForm bic")
-            Output("\nUnHide Level bic")
+            Output("\nHide MassForm category")
+            Output("\nUnHide Level category")
     return view
 
 
@@ -297,6 +297,7 @@ def hide_pipes_by_diameter(doc, view, dimValue=30 / 304.8):
         pipeIds = collector.ToElementIds()
         if (pipeIds and view.IsValidObject):
             trx.Start()
+            Output("\nHide pipes")
             view.HideElements(pipeIds)
             trx.Commit()
 
@@ -310,6 +311,7 @@ def hide_conduits_by_diameter(doc, view, dimValue=30 / 304.8):
         conduitIds = collector.ToElementIds()
         if (conduitIds and view.IsValidObject):
             trx.Start()
+            Output("\nHide conduits")
             view.HideElements(conduitIds)
             trx.Commit()
 
@@ -333,13 +335,13 @@ def get_option_to_export(linkBool, view3D):
 def export_to_NWC(doc, option, directory, filename):
     Output("\n")
     start = time.clock()
-    Output(" <<>> * <<>> " * 10)
+    Output("\n" + "> * <" * 10 + "\n")
     Output("Start export: " + filename)
     doc.Export(directory, filename, option)
     Output("NWC export directory: " + directory)
     elapsed = time.strftime('%H:%M:%S', time.gmtime(time.clock() - start))
     Output("Successfully execution time: {0}".format(elapsed))
-    Output(" <<>> * <<>> " * 10)
+    Output("\n" + "> * <" * 10 + "\n")
     os.startfile(directory)
     time.sleep(3)
     Output("\n")
@@ -350,7 +352,7 @@ export_directory = determine_folder_structure(revitpath, "05_NWC")
 export_file_path = os.path.join(export_directory, "{0}.nwc".format(filename))
 #################################################################################
 
-Output("\n" + " <<>> * <<>> " * 10 + "\n")
+Output("\n" + "> * <" * 10 + "\n")
 if isUpdatedVersion(export_file_path) == False:
     Output("Start preparation for: {0}".format(filename))
     Output("Export directory: {0}".format(export_directory))
