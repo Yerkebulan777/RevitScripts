@@ -186,18 +186,16 @@ def set_worksets_visibility(view):
 
 
 def hide_workset(doc, name):
-    with Transaction(doc, "Hide workset") as trans:
-        defaultVisibility = WorksetDefaultVisibilitySettings.GetWorksetDefaultVisibilitySettings(doc)
+    defaultVisibility = WorksetDefaultVisibilitySettings.GetWorksetDefaultVisibilitySettings(doc)
+    with Transaction(doc, "Workset Visible modify") as trans:
+        trans.Start()
         for workset in FilteredWorksetCollector(doc).OfKind(WorksetKind.UserWorkset).ToWorksets():
             if not workset.IsValidObject: continue
             wid = WorksetId(workset.Id.IntegerValue)
-            if defaultVisibility.IsWorksetVisible(wid):
-                if (name in workset.Name or name == workset.Name):
-                    trans.Start()
-                    defaultVisibility.SetWorksetVisibility(wid, False)
-                    Output("\nHide workset {0}".format(name))
-                    trans.Commit()
-                    return
+            if defaultVisibility.IsWorksetVisible(wid) and name in workset.Name:
+                defaultVisibility.SetWorksetVisibility(wid, False)
+                Output("\nHide workset {0}".format(name))
+        trans.Commit()
 
 
 def set_model_category_visibility(doc, view):
@@ -341,7 +339,6 @@ if isUpdatedVersion(export_file_path) == False:
     view3D = set_viewFilter(view3D, "KG-filter", "KG")
     view3D = set_viewFilter(view3D, "VK-filter", "VK")
     view3D = set_viewFilter(view3D, "OV-filter", "OV")
-    hide_workset(doc, "Задание на отверстие")
     with Transaction(doc, "HideElements") as trans:
         excludeIds = GetLintelIdsInWindowsAndDoors(doc)
         if any(excludeIds):
@@ -355,5 +352,5 @@ if isUpdatedVersion(export_file_path) == False:
     ###############################################################################
     boolExportLink = adjust_export_links(doc, filename)
     option = get_option_to_export(boolExportLink, view3D)
-    export_to_NWC(doc, option, export_directory, filename)
-    ###############################################################################
+    export_to_NWC(doc, option, export_directory,
+                  filename)  ###############################################################################
