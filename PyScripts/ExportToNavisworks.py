@@ -355,7 +355,6 @@ if isUpdatedVersion(export_file_path) == False:
     Output("Start preparation for: {0}".format(filename))
     Output("Export directory: {0}".format(export_directory))
     with Transaction(doc, "Defined") as trx:
-
         trx.Start()
         delete_imported_DWG(doc)
         deleted_families_by_name(doc, "Задание")
