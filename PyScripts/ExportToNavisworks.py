@@ -28,7 +28,10 @@ from Autodesk.Revit.DB import FilterRule, ParameterFilterUtilities, ParameterFil
 from Autodesk.Revit.DB import WorksetDefaultVisibilitySettings, RevitLinkType, ImportInstance, CategoryType
 from Autodesk.Revit.DB import ElementParameterFilter, FilteredWorksetCollector, WorksetKind
 from Autodesk.Revit.DB import View3D, ViewFamily, ViewFamilyType, ElementCategoryFilter
+from Autodesk.Revit.DB import ParameterValueProvider, FilterNumericLess, FilterDoubleRule
 from Autodesk.Revit.DB import FamilySymbol, FamilyInstance
+from Autodesk.Revit.DB.Electrical import Conduit
+from Autodesk.Revit.DB.Plumbing import Pipe
 ########################################################################################################################
 ########################################################################################################################
 
@@ -248,8 +251,8 @@ def set_viewFilter(view, filter_name, line):
     for workset in FilteredWorksetCollector(doc).OfKind(WorksetKind.UserWorkset).ToWorksets():
         if line in workset.Name.upper():
             Output("\nHide " + workset.Name + " workset by view filter")
-            with Transaction(doc, "ViewFilter") as trans:
-                trans.Start()
+            with Transaction(doc, "ViewFilter") as trx:
+                trx.Start()
                 with SubTransaction(doc) as sut:
                     sut.Start()
                     rules.Add(ParameterFilterRuleFactory.CreateContainsRule(wsparamId, line, False))
@@ -266,7 +269,7 @@ def set_viewFilter(view, filter_name, line):
                     sut.Start()
                     view.SetFilterVisibility(filter.Id, False)
                     sut.Commit()
-                trans.Commit()
+                trx.Commit()
             break
     return view
 
@@ -286,6 +289,32 @@ def GetLintelIdsInWindowsAndDoors(doc):
                     lintelIds.Add(subCompId)
 
     return lintelIds
+
+
+def hide_pipes_by_diameter(doc, view, dimValue=30 / 304.8):
+    with Transaction(doc, "ViewFilter") as trx:
+        collector = FilteredElementCollector(doc).OfClass(Pipe)
+        pvp = ParameterValueProvider(ElementId(BuiltInParameter.RBS_PIPE_DIAMETER_PARAM))
+        fRule = FilterDoubleRule(pvp, FilterNumericLess(), dimValue, 1E-3)
+        collector = collector.WherePasses(ElementParameterFilter(fRule))
+        pipeIds = collector.ToElementIds()
+        if (pipeIds and view.IsValidObject):
+            trx.Start()
+            view.HideElements(pipeIds)
+            trx.Commit()
+
+
+def hide_conduits_by_diameter(doc, view, dimValue=30 / 304.8):
+    with Transaction(doc, "ViewFilter") as trx:
+        collector = FilteredElementCollector(doc).OfClass(Conduit)
+        pvp = ParameterValueProvider(ElementId(BuiltInParameter.RBS_CONDUIT_DIAMETER_PARAM))
+        fRule = FilterDoubleRule(pvp, FilterNumericLess(), dimValue, 1E-3)
+        collector = collector.WherePasses(ElementParameterFilter(fRule))
+        conduitIds = collector.ToElementIds()
+        if (conduitIds and view.IsValidObject):
+            trx.Start()
+            view.HideElements(conduitIds)
+            trx.Commit()
 
 
 def get_option_to_export(linkBool, view3D):
@@ -349,6 +378,8 @@ if isUpdatedVersion(export_file_path) == False:
     view3D = set_viewFilter(view3D, "KG-filter", "KG")
     view3D = set_viewFilter(view3D, "VK-filter", "VK")
     view3D = set_viewFilter(view3D, "OV-filter", "OV")
+    hide_conduits_by_diameter(doc, view3D)
+    hide_pipes_by_diameter(doc, view3D)
     ###############################################################################
     hide_workset(doc, "Задание")
     hide_workset(doc, "Задание на отверстие")
