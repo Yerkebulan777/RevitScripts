@@ -185,17 +185,18 @@ def set_worksets_visibility(view):
     return view
 
 
-def hide_workset(doc, name):
+def hide_workset(doc, pattern):
     with Transaction(doc, "Hide workset") as trans:
         defaultVisibility = WorksetDefaultVisibilitySettings.GetWorksetDefaultVisibilitySettings(doc)
-        for workset in FilteredWorksetCollector(doc).OfKind(WorksetKind.UserWorkset).ToWorksets():
+        worksets = FilteredWorksetCollector(doc).OfKind(WorksetKind.UserWorkset).ToWorksets()
+        for workset in worksets:
             if not workset.IsValidObject: continue
             wid = WorksetId(workset.Id.IntegerValue)
             if defaultVisibility.IsWorksetVisible(wid):
-                if (name in workset.Name or name == workset.Name):
+                if bool(re.search(pattern, workset.Name, re.IGNORECASE)):
                     trans.Start()
+                    Output("\nHide workset {0}".format(pattern))
                     defaultVisibility.SetWorksetVisibility(wid, False)
-                    Output("\nHide workset {0}".format(name))
                     trans.Commit()
                     return
 
@@ -222,13 +223,16 @@ def adjusting_category_visibility(doc, view):
     with Transaction(doc, "AdjustingVisibility") as trx:
         try:
             trx.Start()
-            view.SetCategoryHidden(ElementId(-2000066), False)
+            view.SetCategoryHidden(ElementId(-2008132), False)
+            view.SetCategoryHidden(ElementId(-2000051), False)
             view.SetCategoryHidden(ElementId(-2003400), False)
             view.SetCategoryHidden(ElementId(-2000240), True)
             trx.Commit()
-        except Exception as exc:
-            Output("\nError: " + exc.message)
+        except Exception as ex:
+            msg = "Error adjusting category visibility"
+            Output("\n{}: {} ".format(msg, ex.message))
         else:
+            Output("\nHide Conduit category")
             Output("\nHide RoomSeparationLines")
             Output("\nHide MassForm bic")
             Output("\nUnHide Level bic")
@@ -341,17 +345,10 @@ if isUpdatedVersion(export_file_path) == False:
     view3D = set_viewFilter(view3D, "KG-filter", "KG")
     view3D = set_viewFilter(view3D, "VK-filter", "VK")
     view3D = set_viewFilter(view3D, "OV-filter", "OV")
+    ###############################################################################
+    hide_workset(doc, "Задание")
     hide_workset(doc, "Задание на отверстие")
-    with Transaction(doc, "HideElements") as trans:
-        excludeIds = GetLintelIdsInWindowsAndDoors(doc)
-        if any(excludeIds):
-            trans.Start()
-            try:
-                view3D.HideElements(excludeIds)
-            except Exception as exc:
-                Output(exc.message)
-            trans.Commit()
-
+    hide_workset(doc, "Отверстие")
     ###############################################################################
     boolExportLink = adjust_export_links(doc, filename)
     option = get_option_to_export(boolExportLink, view3D)
