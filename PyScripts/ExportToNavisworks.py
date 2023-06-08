@@ -227,7 +227,6 @@ def adjusting_category_visibility(doc, view):
     with Transaction(doc, "AdjustingVisibility") as trx:
         try:
             trx.Start()
-            view.SetCategoryHidden(ElementId(-2008132), False)
             view.SetCategoryHidden(ElementId(-2000051), False)
             view.SetCategoryHidden(ElementId(-2003400), False)
             view.SetCategoryHidden(ElementId(-2000240), True)
@@ -236,8 +235,7 @@ def adjusting_category_visibility(doc, view):
             msg = "Error adjusting category visibility"
             Output("\n{}: {} ".format(msg, ex.message))
         else:
-            Output("\nHide RoomSeparationLines")
-            Output("\nHide Conduit category")
+            Output("\nHide RoomSeparation lines")
             Output("\nHide MassForm bic")
             Output("\nUnHide Level bic")
     return view
