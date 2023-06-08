@@ -232,8 +232,8 @@ def adjusting_category_visibility(doc, view):
             msg = "Error adjusting category visibility"
             Output("\n{}: {} ".format(msg, ex.message))
         else:
-            Output("\nHide Conduit category")
             Output("\nHide RoomSeparationLines")
+            Output("\nHide Conduit category")
             Output("\nHide MassForm bic")
             Output("\nUnHide Level bic")
     return view
@@ -322,6 +322,7 @@ def export_to_NWC(doc, option, directory, filename):
 export_directory = determine_folder_structure(revitpath, "05_NWC")
 export_file_path = os.path.join(export_directory, "{0}.nwc".format(filename))
 #################################################################################
+
 Output("\n" + " <<>> * <<>> " * 10 + "\n")
 if isUpdatedVersion(export_file_path) == False:
     Output("Start preparation for: {0}".format(filename))
@@ -330,7 +331,9 @@ if isUpdatedVersion(export_file_path) == False:
         trans.Start()
         delete_imported_DWG(doc)
         deleted_families_by_name(doc, "Задание")
+        deleted_families_by_name(doc, "Приточный")
         deleted_families_by_name(doc, "BIM-Конфликт")
+        deleted_families_by_name(doc, "Приточный_клапан")
         deleted_families_by_name(doc, "BIM1-Clash Sphere")
         deleted_families_by_name(doc, "Задание на отверстие")
         trans.Commit()
