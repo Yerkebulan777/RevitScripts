@@ -212,12 +212,12 @@ for wallId, curve in zip(wallIds, curves):
 #     rooms = get_rooms_by_level(level)
 #     if rooms and len(rooms):
 #         message += "\nLevel: {}\n".format(level.Name)
-#         with Transaction(doc, message.strip()) as trans:
-#             trans.Start()
+#         with Transaction(doc, message.strip()) as trx:
+#             trx.Start()
 #             for room in rooms:
 #                 if room.IsValidObject:
 #                     pass
-#             trans.Commit()
+#             trx.Commit()
 
 select_elements(output)
 

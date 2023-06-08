@@ -4,6 +4,6 @@ def GetIntersection(self, line1, line2):
 	if result != SetComparisonResult.Overlap:
 		raise InvalidOperationException("Input lines did not intersect.")
 	if results == None or results.Size != 1:
-		raise InvalidOperationException("Could not extract line intersection point.")
+		raise InvalidOperationException("Could not extract workset_name intersection point.")
 	iResult = results.get_Item(0)
 	return iResult.XYZPoint

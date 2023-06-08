@@ -150,7 +150,7 @@ for group in explodedCurves:
 	count +=1
 TransactionManager.Instance.TransactionTaskDone()
 
-#Change the height of the walls to meet requirements, change Location line to Finish Face Exterior and turn off Room Bounding
+#Change the height of the walls to meet requirements, change Location workset_name to Finish Face Exterior and turn off Room Bounding
 count = 0
 for w in walls:
 	w.SetParameterByName("Неприсоединенная высота", wHeightsList[count])

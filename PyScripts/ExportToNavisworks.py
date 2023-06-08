@@ -243,19 +243,18 @@ def adjusting_category_visibility(doc, view):
     return view
 
 
-def set_viewFilter(view, filter_name, line):
-    line = line.upper()
+def set_viewFilter(view, filter_name, pattern):
     rules = List[FilterRule]()
     wsparamId = ElementId(BuiltInParameter.ELEM_PARTITION_PARAM)
     categories = ParameterFilterUtilities.GetAllFilterableCategories()
     for workset in FilteredWorksetCollector(doc).OfKind(WorksetKind.UserWorkset).ToWorksets():
-        if line in workset.Name.upper():
+        if bool(re.search(pattern, workset.Name, re.IGNORECASE)):
             Output("\nHide " + workset.Name + " workset by view filter")
             with Transaction(doc, "ViewFilter") as trx:
                 trx.Start()
                 with SubTransaction(doc) as sut:
                     sut.Start()
-                    rules.Add(ParameterFilterRuleFactory.CreateContainsRule(wsparamId, line, False))
+                    rules.Add(ParameterFilterRuleFactory.CreateContainsRule(wsparamId, workset.Name, False))
                     sut.Commit()
                 with SubTransaction(doc) as sut:
                     sut.Start()
@@ -357,35 +356,43 @@ Output("\n" + " <<>> * <<>> " * 10 + "\n")
 if isUpdatedVersion(export_file_path) == False:
     Output("Start preparation for: {0}".format(filename))
     Output("Export directory: {0}".format(export_directory))
-    with Transaction(doc, "Defined") as trans:
-        trans.Start()
+    with Transaction(doc, "Defined") as trx:
+
+        trx.Start()
         delete_imported_DWG(doc)
         deleted_families_by_name(doc, "Задание")
         deleted_families_by_name(doc, "Приточный")
         deleted_families_by_name(doc, "BIM-Конфликт")
         deleted_families_by_name(doc, "Приточный_клапан")
-        deleted_families_by_name(doc, "BIM1-Clash Sphere")
         deleted_families_by_name(doc, "Задание на отверстие")
-        trans.Commit()
+        trx.Commit()
 
     ###############################################################################
+
     view3D = create_3dView(doc)
     view3D = set_worksets_visibility(view3D)
     view3D = set_model_category_visibility(doc, view3D)
     view3D = adjusting_category_visibility(doc, view3D)
+
     view3D = set_viewFilter(view3D, "KR-filter", "KR")
     view3D = set_viewFilter(view3D, "AR-filter", "AR")
     view3D = set_viewFilter(view3D, "KG-filter", "KG")
     view3D = set_viewFilter(view3D, "VK-filter", "VK")
     view3D = set_viewFilter(view3D, "OV-filter", "OV")
+
     hide_conduits_by_diameter(doc, view3D)
     hide_pipes_by_diameter(doc, view3D)
+
     ###############################################################################
+
     hide_workset(doc, "Задание")
     hide_workset(doc, "Задание на отверстие")
     hide_workset(doc, "Отверстие")
+
     ###############################################################################
+
     boolExportLink = adjust_export_links(doc, filename)
     option = get_option_to_export(boolExportLink, view3D)
     export_to_NWC(doc, option, export_directory, filename)
+
     ###############################################################################

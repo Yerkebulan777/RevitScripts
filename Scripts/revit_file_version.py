@@ -165,7 +165,7 @@ def ExtractRevitVersionInfoFromText(revitVersionInfoText):
         revitBuildLine = indexedLines.SingleOrDefault(lambda l: l[1].StartsWith(REVIT_BUILD_PROPERTY))
         revitBuildLineText = str.Empty
         if revitBuildLine is None:
-            # In rare cases the Revit Build *value* is on the next line for some reason!
+            # In rare cases the Revit Build *value* is on the next workset_name for some reason!
             # In this scenario it seems to always be followed immediately (no spaces) by the 'Last Save Path:' property specifier
             revitBuildLine = indexedLines.SingleOrDefault(lambda l: l[1].Contains(REVIT_BUILD_PROPERTY))
             if revitBuildLine is not None:

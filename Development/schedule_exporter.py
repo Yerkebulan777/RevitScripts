@@ -124,7 +124,7 @@ class ScheduleExporter(object):
         # ================================End of the creation of the header of the table excel======================
         # =================================Create a list with parameters that are read-only=========================
         readonlyParameters = RevitUtilities.GetListReadOnlyParamater(parametersSettings)
-        # =============================================Get each element line========================================
+        # =============================================Get each element workset_name========================================
         iRow = iStartRow
         enumerator = collector.GetEnumerator()
         while enumerator.MoveNext():
@@ -135,7 +135,7 @@ class ScheduleExporter(object):
             data = dt.NewRow()
             data["ID"] = element.UniqueId
             # =========================We will look for the type and family and note its position in the dictionary==========================
-            # For ElementsType, only the values written on the last line of a type and family member used for the update. We then note the last line of each family type and we will lock the other cells to avoid errors
+            # For ElementsType, only the values written on the last workset_name of a type and family member used for the update. We then note the last workset_name of each family type and we will lock the other cells to avoid errors
             parameter_temp = element.get_Parameter((-1002052))
             if parameter_temp != None:
                 elementType = doc.GetElement(parameter_temp.AsElementId())
@@ -166,7 +166,7 @@ class ScheduleExporter(object):
             iRow += 1
             # ===================End of the recovery each of the values for the fields===========================
             dt.Rows.Add(data)
-        # ========================================End of the Recovery of each element line==========================
+        # ========================================End of the Recovery of each element workset_name==========================
         # =========================================Creation of sort and filter string===================================
         sStringSort = RevitUtilities.GetStringSort(schedule, doc, fieldsList)
         sStringFilter = RevitUtilities.GetStringFilter(schedule, doc)
@@ -332,7 +332,7 @@ class ScheduleExporter(object):
                         iTotalRows += 1
                     groupFirstRow = rowIndex
                 if iTotalRows == rowIndex and (
-                        scheduleSortGroupField.ShowFooter or not schedule.Definition.IsItemized):  # When we reach the last line, we create a foot
+                        scheduleSortGroupField.ShowFooter or not schedule.Definition.IsItemized):  # When we reach the last workset_name, we create a foot
                     self.AddFooter(worksheet, rowIndex + 1, colIndex, groupFirstRow, fieldsList, dt, level, iLevelMax,
                                    dGroupFieldId)
                 worksheet.Row(
@@ -340,7 +340,7 @@ class ScheduleExporter(object):
                 if not schedule.Definition.IsItemized:
                     worksheet.Row(rowIndex).Collapsed = True
                 rowIndex += 1
-        # ===============================Creating the total line and formatting the header==============================
+        # ===============================Creating the total workset_name and formatting the header==============================
         if level > 0:
             iFirstRow = 3
             iLastRow = worksheet.Dimension.Rows
@@ -360,9 +360,9 @@ class ScheduleExporter(object):
                                                                                worksheet.Cells[iFirstRow][columnIndex][
                                                                                    iLastRow][columnIndex].Address)
                 index += 1
-            # Format for the total line
+            # Format for the total workset_name
             RevitUtilities.FormatingTotalRow(worksheet, iNewRow)
-        # Format for the header line
+        # Format for the header workset_name
         iHeaderRow = 2
         # Adding the custom header and the type of value that the column must contain
         worksheet.InsertRow(3, 2)
@@ -404,7 +404,7 @@ class ScheduleExporter(object):
         RevitUtilities.FormattingTheHeaderTypeField(worksheet, iHeaderRow + 2)
         RevitUtilities.LockRow(worksheet, iHeaderRow)
         RevitUtilities.FreezeRow(worksheet, iHeaderRow + 3)
-        # =====================================End of the creation of the total line and formatting of the header====================================================
+        # =====================================End of the creation of the total workset_name and formatting of the header====================================================
         # Finalize the Excel table
         worksheet.OutLineApplyStyle = True
         worksheet.ApplyDefaultProtection()

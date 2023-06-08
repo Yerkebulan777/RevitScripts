@@ -496,8 +496,8 @@ def calculation(rebar_host, diameter, boundary_lines, grids, direction, top):
                             lines = get_overlap_lines(points, cross_direction, diameter, step_count)
                             result_lines.extend(lines)
     # if visible:
-    #     for line in result_lines:
-    #         doc.Create.NewDetailCurve(view, line)
+    #     for workset_name in result_lines:
+    #         doc.Create.NewDetailCurve(view, workset_name)
     return result_lines
 
 

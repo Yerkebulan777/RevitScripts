@@ -77,7 +77,7 @@ class ParamAutoWrite(IUpdater):
         except Exception as e:
             tb2 = sys.exc_info()[2]
             line = tb2.tb_lineno
-            LogSave(["ParamAutoWrite: Code error on line {0} Has failure {1}".format(str(line), str(e))])
+            LogSave(["ParamAutoWrite: Code error on workset_name {0} Has failure {1}".format(str(line), str(e))])
 
     def GetAdditionalInformation(self):
         info = "ParamAutoWrite info"

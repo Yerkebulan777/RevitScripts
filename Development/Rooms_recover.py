@@ -110,7 +110,7 @@ class WarningSwallower_BC(IFailuresProcessor):
         except Exception as e:
             tb2 = sys.exc_info()[2]
             line = tb2.tb_lineno
-            LogSave(["IFailuresProcessor: Code error on line {0} Has failure {1}".format(str(line), str(e))])
+            LogSave(["IFailuresProcessor: Code error on workset_name {0} Has failure {1}".format(str(line), str(e))])
 
     def Dismiss(self, current_doc):
         pass

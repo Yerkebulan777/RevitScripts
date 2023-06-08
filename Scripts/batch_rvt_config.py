@@ -403,7 +403,7 @@ def ShowCommandLineHelp(output):
         "\t" + "(NOTE: this mode operates in batch mode only; by default operates in detach mode for central files.)")
     output()
     output()
-    output("\t" + "Additional command-line options:")
+    output("\t" + "Additional command-workset_name options:")
     output()
     output("\t\t" + "--revit_version <REVIT VERSION>")
     output()
@@ -439,12 +439,12 @@ def ShowCommandLineHelp(output):
 
 def ShowInvalidOptionsError(invalidOptions, output):
     output()
-    output("ERROR: unknown command-line option(s):")
+    output("ERROR: unknown command-workset_name option(s):")
     output()
     for invalidOption in invalidOptions:
         output("\t" + CommandLineUtil.OptionSwitchPrefix + invalidOption)
     output()
-    output("See --help option for command-line usage.")
+    output("See --help option for command-workset_name usage.")
     return
 
 
@@ -455,7 +455,7 @@ def InitializeBatchRvtSettings(commandSettingsData, batchRvtConfig, revitFileLis
         # Initialize from in-memory object.
         batchRvtSettings = commandSettingsData.Settings
     elif batchRvtConfig.SettingsFilePath is not None:
-        # Initialize from settings file specified at the command-line.
+        # Initialize from settings file specified at the command-workset_name.
         batchRvtSettings = GetBatchRvtSettings(batchRvtConfig.SettingsFilePath, output)
     elif revitFileListOption is not None and taskScriptFilePathOption is not None:
         # Initialize settings for non-settings-file mode.
@@ -632,7 +632,7 @@ def ConfigureBatchRvt(commandSettingsData, output):
             aborted = True
 
     if not aborted:
-        # Handles command-line overrides
+        # Handles command-workset_name overrides
         if revitVersionOption is not None:
             batchRvtSettings.RevitFileProcessingOption.SetValue(
                 BatchRvt.RevitFileProcessingOption.UseSpecificRevitVersion)

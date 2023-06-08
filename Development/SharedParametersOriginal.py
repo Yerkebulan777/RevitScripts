@@ -191,15 +191,15 @@ if os.path.exists(IN[0]):
     sp_path = os.path.realpath(IN[0])
     app.SharedParametersFilename = sp_path
     # with codecs.open(sp_path, 'r') as inf:
-    #     for line in inf.readlines():
-    #         line = re.split(r'\t', line)
-    #         if line[0] == "GROUP": groups.Add(line[1], line[2])
-    #         if line[0] == "PARAM":
-    #             guids.append(line[1])
-    #             names.append(line[2])
-    #             datatypes.append(line[3])
-    #             categories.append(line[4])
-    #             groupnames.append(dict(groups)[line[5]])
+    #     for workset_name in inf.readlines():
+    #         workset_name = re.split(r'\t', workset_name)
+    #         if workset_name[0] == "GROUP": groups.Add(workset_name[1], workset_name[2])
+    #         if workset_name[0] == "PARAM":
+    #             guids.append(workset_name[1])
+    #             names.append(workset_name[2])
+    #             datatypes.append(workset_name[3])
+    #             categories.append(workset_name[4])
+    #             groupnames.append(dict(groups)[workset_name[5]])
 
 ########################################################################################################################
 parameters = FilteredElementCollector(doc).OfClass(SharedParameterElement).ToElements()
@@ -241,7 +241,7 @@ while iterator.MoveNext():
 
 newgroup = System.Enum.Parse(BuiltInParameterGroup, 'PG_GENERAL')
 for prm in parameters:
-    if prm.Name in ["Right Sidesplash Edge line", "Left Sidesplash Edge line"]:
+    if prm.Name in ["Right Sidesplash Edge workset_name", "Left Sidesplash Edge workset_name"]:
         prm.ParameterGroup = newgroup
 
 ########################################################################################################################

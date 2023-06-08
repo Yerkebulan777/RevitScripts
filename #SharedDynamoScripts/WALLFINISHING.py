@@ -221,7 +221,7 @@ def wallfinish_generator(room, walltypes, defaultype, elevation):
         delta = half_value * crossvector
         if room.IsPointInRoom(center - delta): curve = Line.CreateBound(qoint - delta, point - delta)
         if room.IsPointInRoom(center + delta): curve = Line.CreateBound(point + delta, qoint + delta)
-        yield Dictionary[str, object]({'line': curve, 'type': finishtype, 'element0': element})
+        yield Dictionary[str, object]({'workset_name': curve, 'type': finishtype, 'element0': element})
 
 
 def group_closed_borderlines(boundiclist, tolerance=0.5):
@@ -234,18 +234,18 @@ def group_closed_borderlines(boundiclist, tolerance=0.5):
             count = len(boundiclist)
             current = queue.pop()
             group.append(current)
-            endpt = current['line'].GetEndPoint(1)
+            endpt = current['workset_name'].GetEndPoint(1)
             for idx, dictionary in enumerate(boundiclist):
-                curve = dictionary['line']
+                curve = dictionary['workset_name']
                 if tolerance > curve.GetEndPoint(0).DistanceTo(endpt):
                     curve = Line.CreateBound(curve.GetEndPoint(0), curve.GetEndPoint(1))
-                    dictionary['line'] = curve
+                    dictionary['workset_name'] = curve
                     queue.add(dictionary)
                     count = idx
                     break
                 if tolerance > curve.GetEndPoint(1).DistanceTo(endpt):
                     curve = Line.CreateBound(curve.GetEndPoint(1), curve.GetEndPoint(0))
-                    dictionary['line'] = curve
+                    dictionary['workset_name'] = curve
                     queue.add(dictionary)
                     count = idx
                     break
@@ -346,14 +346,14 @@ if actiview.ViewType == ViewType.FloorPlan:
                         if isinstance(element, DB.Wall):
                             if (element.WallType.Kind == DB.WallKind.Curtain): lengthen = False
                         if lengthen and previous['type'].Id.IntegerValue == sequence['type'].Id.IntegerValue:
-                            v1 = previous['line'].Direction.Normalize()
-                            v2 = sequence['line'].Direction.Normalize()
+                            v1 = previous['workset_name'].Direction.Normalize()
+                            v2 = sequence['workset_name'].Direction.Normalize()
                             if v1.CrossProduct(v2).IsAlmostEqualTo(XYZ.Zero, 0.005): continue
 
-                        point, qoint = previous['line'].GetEndPoint(0), previous['line'].GetEndPoint(1)
-                        delta = 0.5 * previous['line'].Direction.Normalize()
+                        point, qoint = previous['workset_name'].GetEndPoint(0), previous['workset_name'].GetEndPoint(1)
+                        delta = 0.5 * previous['workset_name'].Direction.Normalize()
                         line = Line.CreateBound(qoint - delta, qoint + delta)
-                        intersection = line.Project(sequence['line'].GetEndPoint(0)).XYZPoint
+                        intersection = line.Project(sequence['workset_name'].GetEndPoint(0)).XYZPoint
                         points.append(intersection)
 
                     for idx, qoint in enumerate(points):
@@ -361,12 +361,12 @@ if actiview.ViewType == ViewType.FloorPlan:
                         point = points[idx - 1]
                         line = reduce_line(point, qoint, view3d, check)
                         if line is None: continue
-                        # newline = doc.Create.NewDetailCurve(doc.ActiveView, line)
+                        # newline = doc.Create.NewDetailCurve(doc.ActiveView, workset_name)
                         # newline.LineStyle.GraphicsStyleCategory.LineColor = DB.Color(50, 125, 0)
                         group = [sequence for sequence in group if sequence is not None]
                         if any(group): group.reverse()
                         for sequence in group:
-                            curve = sequence['line']
+                            curve = sequence['workset_name']
                             center = curve.Evaluate(0.5, True)
                             if line.Project(center).Distance < 0.05:
                                 fintype = sequence['type']

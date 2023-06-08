@@ -266,7 +266,7 @@ def wallfinish_generator(room, walltypes, defaultype, elevation):
             elif room.IsPointInRoom(center + 0.5 * crossvector):
                 curve = Line.CreateBound(point + delta, qoint + delta)
 
-        yield Dictionary[str, object]({'line': curve, 'type': finishtype, 'element0': element})
+        yield Dictionary[str, object]({'workset_name': curve, 'type': finishtype, 'element0': element})
 
 
 def group_closed_borderlines(boundiclist, tolerance=0.5):
@@ -279,18 +279,18 @@ def group_closed_borderlines(boundiclist, tolerance=0.5):
             count = len(boundiclist)
             current = queue.pop()
             group.append(current)
-            endpt = current['line'].GetEndPoint(1)
+            endpt = current['workset_name'].GetEndPoint(1)
             for idx, boundictionary in enumerate(boundiclist):
-                curve = boundictionary['line']
+                curve = boundictionary['workset_name']
                 if tolerance > curve.GetEndPoint(0).DistanceTo(endpt):
                     curve = Line.CreateBound(curve.GetEndPoint(0), curve.GetEndPoint(1))
-                    boundictionary['line'] = curve
+                    boundictionary['workset_name'] = curve
                     queue.add(boundictionary)
                     count = idx
                     break
                 if tolerance > curve.GetEndPoint(1).DistanceTo(endpt):
                     curve = Line.CreateBound(curve.GetEndPoint(1), curve.GetEndPoint(0))
-                    boundictionary['line'] = curve
+                    boundictionary['workset_name'] = curve
                     queue.add(boundictionary)
                     count = idx
                     break
@@ -303,29 +303,29 @@ def reduced_closed_borderlines(boundiclist):
     for idx, current in enumerate(boundiclist):
         if current is None: continue
         previous = group[idx - 1]
-        v1 = previous['line'].Direction.Normalize()
-        v2 = current['line'].Direction.Normalize()
+        v1 = previous['workset_name'].Direction.Normalize()
+        v2 = current['workset_name'].Direction.Normalize()
         crossProduct = v1.CrossProduct(v2).Normalize()
         if crossProduct.IsAlmostEqualTo(XYZ.Zero, 0.005):
             previous_element, current_element = previous['element0'], current['element0']
             if previous_element.Category.Id.ToString() == "-2000011" == current_element.Category.Id.ToString():
                 if current_element.WallType.Kind == DB.WallKind.Curtain: continue
                 if previous['type'].Id.IntegerValue == current['type'].Id.IntegerValue:
-                    point, qoint = previous['line'].GetEndPoint(0), current['line'].GetEndPoint(1)
+                    point, qoint = previous['workset_name'].GetEndPoint(0), current['workset_name'].GetEndPoint(1)
                     count, dictionary, pydict = 0, Dictionary[str, object](), dict(previous)
                     for key in pydict.iterkeys():
                         if 'element' in key:
                             dictionary[key] = pydict.get(key)
                             count += 1
-                    dictionary.Add('line', Line.CreateBound(point, qoint))
+                    dictionary.Add('workset_name', Line.CreateBound(point, qoint))
                     dictionary.Add('element' + str(count), current_element)
                     dictionary.Add('type', current['type'])
                     group[idx], group[idx - 1] = dictionary, None
         elif crossProduct.IsAlmostEqualTo(XYZ.BasisZ, 0.05):
-            point = get_intersection(previous['line'], current['line'])
-            p1, q2 = previous['line'].GetEndPoint(0), current['line'].GetEndPoint(1)
-            if p1.DistanceTo(point) > 0.5: previous['line'] = Line.CreateBound(p1, point)
-            if q2.DistanceTo(point) > 0.5: current['line'] = Line.CreateBound(point, q2)
+            point = get_intersection(previous['workset_name'], current['workset_name'])
+            p1, q2 = previous['workset_name'].GetEndPoint(0), current['workset_name'].GetEndPoint(1)
+            if p1.DistanceTo(point) > 0.5: previous['workset_name'] = Line.CreateBound(p1, point)
+            if q2.DistanceTo(point) > 0.5: current['workset_name'] = Line.CreateBound(point, q2)
 
     return [current for current in boundiclist if current is not None]
 
@@ -385,7 +385,7 @@ if actiview.ViewType == ViewType.FloorPlan:
                 boundictionaries = list(dic for dic in boundgenerator if dic is not None)
                 for group in group_closed_borderlines(boundictionaries):
                     for boundic in reduced_closed_borderlines(group):
-                        curve, element = boundic['line'], boundic['element0']
+                        curve, element = boundic['workset_name'], boundic['element0']
                         catname = element.Category.Id.ToString()
                         if catname == "-2000066": continue
                         if catname == "-2000011" and (element.WallType.Kind == DB.WallKind.Curtain): continue

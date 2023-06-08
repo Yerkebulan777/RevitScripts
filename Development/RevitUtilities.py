@@ -953,7 +953,7 @@
 #
 # def LockRow(worksheet, iRow):
 #     """ <summary>
-#          Method to lock a line
+#          Method to lock a workset_name
 #      </summary>
 #      <param name="worksheet"></param>
 #      <param name="iRow"></param>
@@ -1004,7 +1004,7 @@
 #
 # def FormattingTheHeaderTypeField(worksheet, iRow):
 #     """ <summary>
-#          Formats the line that contains the value types
+#          Formats the workset_name that contains the value types
 #      </summary>
 #      <param name="worksheet"></param>
 #      <param name="iRow"></param>
@@ -1036,7 +1036,7 @@
 #
 # def FormatingLevel1(worksheet, iRow):
 #     """ <summary>
-#          Formats a line of subtotal level 1
+#          Formats a workset_name of subtotal level 1
 #      </summary>
 #      <param name="worksheet"></param>
 #      <param name="iRow"></param>
@@ -1064,7 +1064,7 @@
 #
 # def FormatingLevel2(worksheet, iRow):
 #     """ <summary>
-#          Formats a line of subtotal level 2
+#          Formats a workset_name of subtotal level 2
 #      </summary>
 #      <param name="worksheet"></param>
 #      <param name="iRow"></param>
@@ -1092,7 +1092,7 @@
 #
 # def FormatingTotalRow(worksheet, iRow):
 #     """ <summary>
-#          Formats a line of total
+#          Formats a workset_name of total
 #      </summary>
 #      <param name="worksheet"></param>
 #      <param name="iRow"></param>

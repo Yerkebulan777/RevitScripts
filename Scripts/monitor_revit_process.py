@@ -64,6 +64,6 @@ def MonitorHostRevitProcess(hostRevitProcess, monitoringAction, output):
     output()
     output("Revit process (PID: " + str(hostRevitProcess.Id) + ") has exited!")
 
-    # TODO: do something with last pending read line task if it exists?
+    # TODO: do something with last pending read workset_name task if it exists?
 
     return

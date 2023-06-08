@@ -494,8 +494,8 @@ def calculation(rebar_host, diameter, boundary_lines, grids, direction, top):
                             lines = get_overlap_lines(points, cross_direction, diameter, step_count)
                             result_lines.extend(lines)
     # if actiview.ViewType == ViewType.FloorPlan or actiview.ViewType == ViewType.EngineeringPlan:
-    #     for line in result_lines:
-    #         doc.Create.NewDetailCurve(actiview, line)
+    #     for workset_name in result_lines:
+    #         doc.Create.NewDetailCurve(actiview, workset_name)
     return result_lines
 
 
