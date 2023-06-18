@@ -42,7 +42,6 @@ def FindLinkedFilePath(projectPath, linkName, tolerance=0.75, result=None):
             suffix = filename[filename.find("_", int(len(filename) * 0.35)):]
             matchValue = difflib.SequenceMatcher(None, search, suffix).ratio()
             if matchValue > tolerance:
-                Output("Was found: {}".format(filename))
                 tolerance = matchValue
                 result = filepath
 
@@ -80,6 +79,7 @@ Output("Project directory path: {}".format(projectPath))
 for link in FilteredElementCollector(doc).OfClass(RevitLinkType).ToElements():
     linkName = link.get_Parameter(BuiltInParameter.RVT_LINK_FILE_NAME_WITHOUT_EXT).AsString()
     linkPath = FindLinkedFilePath(projectPath, linkName)
+    Output("Was found: {}".format(linkPath))
     if linkName in unique:
         link.Unload(None)
     elif link and RevitLinkType.IsLoaded(doc, link.Id):
