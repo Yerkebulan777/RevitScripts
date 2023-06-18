@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # This section is common to all Python task scripts.
-
+import difflib
 import os
 import sys
 from glob import glob
@@ -30,18 +30,23 @@ revitFilePath = revit_script_util.GetRevitFilePath()
 
 ########################################################################################################################
 
-def FindLinkedFilePath(projectPath, linkName):
+def FindLinkedFilePath(projectPath, linkName, tolerance=0.75, result=None):
     Output("\nStarting link search: " + linkName)
+    search = linkName[linkName.find("_", int(len(linkName) * 0.35)):]
     for dir in os.listdir(projectPath):
         if "#" in dir: continue
         section = os.path.join(projectPath, dir)
         if os.path.isfile(section): continue
         for filepath in glob(os.path.join(section, "01_RVT", "*.rvt")):
-            name, ext = os.path.splitext(os.path.basename(filepath))
-            if name == linkName:
-                Output("Was found: {}".format(name))
-                return filepath
-    return None
+            filename, ext = os.path.splitext(os.path.basename(filepath))
+            suffix = filename[filename.find("_", int(len(filename) * 0.35)):]
+            matchValue = difflib.SequenceMatcher(None, search, suffix).ratio()
+            if matchValue > tolerance:
+                Output("Was found: {}".format(filename))
+                tolerance = matchValue
+                result = filepath
+
+    return result
 
 
 def ReSaveRevitFile(doc, directory, filepath):
