@@ -30,7 +30,7 @@ revitFilePath = revit_script_util.GetRevitFilePath()
 
 ########################################################################################################################
 
-def FindLinkedFilePath(projectPath, linkName, tolerance=0.75, result=None):
+def FindLinkedFilePath(projectPath, linkName, tolerance=0.7, result=None):
     Output("\nStarting link search: " + linkName)
     search = linkName[linkName.find("_", int(len(linkName) * 0.35)):]
     for dir in os.listdir(projectPath):
