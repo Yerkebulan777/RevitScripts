@@ -379,9 +379,6 @@ if isUpdatedVersion(export_file_path) == False:
     view3D = set_viewFilter(view3D, "VK-filter", "VK")
     view3D = set_viewFilter(view3D, "OV-filter", "OV")
 
-    hide_conduits_by_diameter(doc, view3D)
-    hide_pipes_by_diameter(doc, view3D)
-
     ###############################################################################
 
     hide_workset(doc, "Задание")
