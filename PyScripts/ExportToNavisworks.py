@@ -79,7 +79,7 @@ def isUpdatedVersion(filepath, days=40, hours=0, minutes=0):
         span_modified_time = (datetime.now() - timedelta(days, hours, minutes))
         source_modified_time = datetime.fromtimestamp(os.path.getmtime(revitpath))
         export_modified_time = datetime.fromtimestamp(os.path.getmtime(filepath))
-        source_modified_time = (source_modified_time + timedelta(1, 6, 30))
+        source_modified_time = (source_modified_time + timedelta(hours=3, minutes=30))
         Output("Minimum span delta date: " + str(format(span_modified_time, '%Y-%m-%d')))
         Output("RVT file last modified date: " + str(format(source_modified_time, '%Y-%m-%d')))
         Output("NWC file last modified date: " + str(format(export_modified_time, '%Y-%m-%d')))
@@ -378,9 +378,6 @@ if isUpdatedVersion(export_file_path) == False:
     view3D = set_viewFilter(view3D, "KG-filter", "KG")
     view3D = set_viewFilter(view3D, "VK-filter", "VK")
     view3D = set_viewFilter(view3D, "OV-filter", "OV")
-
-    hide_conduits_by_diameter(doc, view3D)
-    hide_pipes_by_diameter(doc, view3D)
 
     ###############################################################################
 
