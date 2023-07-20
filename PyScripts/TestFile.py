@@ -73,16 +73,6 @@ def retrieveArchModelPath(filepath, tolerance=0.75, result=None):
     return result
 
 
-
-# extension = '.pdf'
-# path = r"I:\112_AKBULAK_URBAN\01_PROJECT\III_6-1_SS\03_PDF\2023-04-14\AKB-RVS_SS_URBN_villa_XL_6.3"
-# paths = glob.glob(path + '/*' + extension)
-# paths.extend(glob.glob(path + '/**/*' + extension))
-# paths.extend(glob.glob(path + '/***/**/*' + extension))
-# for current in paths:
-#     getSheetNumber(current)
-
-
 word = "MANGILIK_PARK_01_01_S1_AR01_01_M3"
 suffix = word[word.find("_", int(len(word) * 0.35)):]
 
