@@ -1,0 +1,148 @@
+{
+  "Uuid": "22d536c8-10d4-49c2-bec5-cfe4dbad8afd",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "CurvedElementsTotalLength",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import LocationCurve\r\nfrom System.Windows import Clipboard\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n\r\n# Get selected elements\r\nelements = [doc.GetElement(e) for e in uidoc.Selection.GetElementIds()]\r\n\r\n# Check if elements are valid\r\nif all(e.IsValidObject for e in elements):\r\n    # Calculate total length of curved elements\r\n    totalLength = sum(\r\n        location.Curve.Length\r\n        for element in elements\r\n        if isinstance((location := element.Location), LocationCurve)\r\n    )\r\n\r\n    # Convert total length to millimeters and round to nearest integer\r\n    totalLengthInMM = int(round(totalLength * 304.8))\r\n\r\n    # Copy result to clipboard\r\n    Clipboard.SetText(str(totalLengthInMM))\r\n\r\n    # Output result\r\n    OUT = totalLengthInMM\r\nelse:\r\n    # Output error message if elements are not valid\r\n    OUT = \"Error: Invalid input elements provided\"",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "780bb336a93e4fcf90b9be60059be2d8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b2f2f4fbbcec42c093cf966424b8aecb",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария Python."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "7110f080df994bb6830c6a91a9861ad3",
+      "Inputs": [
+        {
+          "Id": "1363a9468b2d4830b6718c5e1c20ac34",
+          "Name": "",
+          "Description": "Узел для отображения выходных данных",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "70c054ddaf49414895fab8fb22f3be47",
+          "Name": "",
+          "Description": "Выходные данные узла",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация выходных данных узла"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "b2f2f4fbbcec42c093cf966424b8aecb",
+      "End": "1363a9468b2d4830b6718c5e1c20ac34",
+      "Id": "95a4fe8a5f6f4b4bbf25421370635511",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Свойства",
+      "Version": "2.16",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "3.0",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "Нет",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.16.1.2727",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "780bb336a93e4fcf90b9be60059be2d8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 938.71266502144408,
+        "Y": 415.6561803675396
+      },
+      {
+        "Id": "7110f080df994bb6830c6a91a9861ad3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1173.3983761274937,
+        "Y": 415.45394153853061
+      }
+    ],
+    "Annotations": [],
+    "X": -1595.0222335839362,
+    "Y": -505.3155078354838,
+    "Zoom": 1.90316478907876
+  }
+}
