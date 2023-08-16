@@ -9,8 +9,8 @@ import clr
 
 clr.AddReference('RevitAPI')
 
-from Autodesk.Revit.DB import FilteredElementCollector, SpatialElement, RoomFilter, Transform, BuiltInParameter
-from Autodesk.Revit.DB import LogicalAndFilter, ElementIntersectsSolidFilter
+from Autodesk.Revit.DB import FilteredElementCollector, SpatialElement, RoomFilter, Transform
+from Autodesk.Revit.DB import BuiltInParameter, LogicalAndFilter, ElementIntersectsSolidFilter
 from Autodesk.Revit.DB import Element, Solid, SolidUtils, Wall, Floor, Ceiling
 from Autodesk.Revit.DB import ElementMulticategoryFilter, BuiltInCategory
 from Autodesk.Revit.DB.Architecture import Room
