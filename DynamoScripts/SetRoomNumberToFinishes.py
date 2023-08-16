@@ -17,7 +17,7 @@ from Autodesk.Revit.DB.Architecture import Room
 
 clr.AddReference("System")
 clr.AddReference("System.Core")
-from System.Collections.Generic import SortedDictionary
+from collections import OrderedDict
 from System.Collections.Generic import List
 from System.IO import Path
 
@@ -51,7 +51,7 @@ roomNumberParamName = IN[1]
 transform = Transform.Identity
 ########################################################################################################################
 
-levelRoomsDict = SortedDictionary[str, List[Room]]()
+levelRoomsDict = OrderedDict()
 
 builtInCats = [BuiltInCategory.OST_Walls, BuiltInCategory.OST_Floors, BuiltInCategory.OST_Ceilings]
 multiCatFilter = ElementMulticategoryFilter(builtInCats)
@@ -59,15 +59,15 @@ multiCatFilter = ElementMulticategoryFilter(builtInCats)
 collector = FilteredElementCollector(doc).OfClass(SpatialElement).WherePasses(RoomFilter())
 for room in collector.ToElements():
     if isinstance(room, Room) and room.Area > 0:
-        levelName = room.Level.Name.Trim()
-        if not levelRoomsDict.ContainsKey(levelName):
-            levelRoomsDict[levelName] = List[Room]()
-        levelRoomsDict[levelName].Add(room)
+        levelName = room.Level.Name.strip()
+        if levelName not in levelRoomsDict:
+            levelRoomsDict[levelName] = []
+        levelRoomsDict[levelName].append(room)
 
 # Start a transaction
 TransactionManager.Instance.EnsureInTransaction(doc)
 
-for dataItem in levelRoomsDict:
+for levelName, roomList in levelRoomsDict.items():
 
     wallFinishingData = {}
     floorFinishingData = {}
@@ -75,7 +75,7 @@ for dataItem in levelRoomsDict:
 
     levelFinishing = List[Element]()
 
-    for room in sorted(dataItem.Value, key=lambda r: r.Number):
+    for room in sorted(roomList, key=lambda r: r.Number):
         geo = room.ClosedShell[0]
         roomNumber = room.Number.Trim()
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_WALL).Set('')
@@ -123,15 +123,15 @@ for dataItem in levelRoomsDict:
         if isinstance(element, Wall):
             roomNumbers = wallFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
-            assert isValidSet, f"Value has not been set to {element.Name} Level: {dataItem.Key}"
+            assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
         elif isinstance(element, Floor):
             roomNumbers = floorFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
-            assert isValidSet, f"Value has not been set to {element.Name} Level: {dataItem.Key}"
+            assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
         elif isinstance(element, Ceiling):
             roomNumbers = ceilingFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
-            assert isValidSet, f"Value has not been set to {element.Name} Level: {dataItem.Key}"
+            assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
 
 # Commit the transaction
 TransactionManager.Instance.TransactionTaskDone()
