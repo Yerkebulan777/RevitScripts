@@ -194,11 +194,11 @@
     {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
-      "Code": "//имеет дополнительное смещение\nMath.Ceiling(a/5)*5+250+delta;",
+      "Code": "Math.Ceiling((a + 50) / 50) * 50 + delta;",
       "Id": "40577698ee8843c9b8d7e10d0b84404c",
       "Inputs": [
         {
-          "Id": "ca5c031d93e54149989c6258d7e7d035",
+          "Id": "3d26ec7c38d24941923c61949e281dfe",
           "Name": "a",
           "Description": "a",
           "UsingDefaultValue": false,
@@ -207,7 +207,7 @@
           "KeepListStructure": false
         },
         {
-          "Id": "deddb8ccc3f640ebb7f7a0f5a69695e2",
+          "Id": "c01faf0f01b841a1b9f5da4fea316337",
           "Name": "delta",
           "Description": "delta",
           "UsingDefaultValue": false,
@@ -218,9 +218,9 @@
       ],
       "Outputs": [
         {
-          "Id": "fe08f4368fe247348e1170451b7d2245",
+          "Id": "3f2f29966d69421da9e6a3c80b9165a9",
           "Name": "",
-          "Description": "Значение выражения в строке 2",
+          "Description": "Значение выражения в строке 1",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -419,7 +419,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "elementElevations = IN[0]\r\n\r\nlvlNumList = IN[1]\r\nlvlElevList = IN[2]\r\n\r\noutput = []\r\n\r\nfor value in elementElevations:\r\n\r\n    if value < 0:\r\n        output.append(-1)\r\n        continue\r\n\r\n    for lvlElevation, lvlNumber in zip(lvlElevList, lvlNumList):\r\n\r\n        if value > lvlElevation:\r\n            output.append(lvlNumber)\r\n            break\r\n\r\nOUT = output",
+      "Code": "import clr\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\n\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nelements = IN[0]\r\nelevations = IN[1]\r\nlvlNumList = IN[2]\r\nlvlElevList = IN[3]\r\n\r\noutput = []\r\n\r\n\r\noffsetCategories = [\"Перекрытия\", \"Каркас несущий\"]\r\n\r\nfor value, element in zip(elevations, elements):\r\n    categoryName = UnwrapElement(element).Category.Name\r\n    value = value + 200 if categoryName in offsetCategories else value\r\n\r\n    if value < 0:\r\n        output.append(-1)\r\n        continue\r\n\r\n    for lvlElevation, lvlNumber in zip(lvlElevList, lvlNumList):\r\n\r\n        if value > lvlElevation:\r\n            output.append(lvlNumber)\r\n            break\r\n\r\n\r\nOUT = output",
       "VariableInputPorts": true,
       "Id": "96fcf17bd43147048d790d040fc20fcb",
       "Inputs": [
@@ -445,6 +445,15 @@
           "Id": "ebf9f9c634ce450ebd130ed2c5f32ef4",
           "Name": "IN[2]",
           "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3d11f7357a9c4fdabb0a1d3e4ac036ef",
+          "Name": "IN[3]",
+          "Description": "Input #3",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -895,95 +904,6 @@
     {
       "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
       "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Elements.Coordinates.BasePoint",
-      "Id": "507235cea12348f3ad98f369bf348d72",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "25c89ea38af54a88919fd015c2c468f2",
-          "Name": "Point",
-          "Description": "Базовая точка проекта",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Получение базовой точки проекта\n\nCoordinates.BasePoint ( ): Point"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Autodesk.DesignScript.Geometry.Point.Z",
-      "Id": "1275a8971efe4bf391386d545a316d23",
-      "Inputs": [
-        {
-          "Id": "72ec5cc353fa4153b81e85fcf800b3ad",
-          "Name": "point",
-          "Description": "Autodesk.DesignScript.Geometry.Point",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "e83444b4a62747aea4aa52f6f1b98e8f",
-          "Name": "double",
-          "Description": "double",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Получение координаты точки по оси Z\n\nPoint.Z: double"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "-@var[]..[],var[]..[]",
-      "Id": "361a070e975a42ccb9e0612a8d39e98d",
-      "Inputs": [
-        {
-          "Id": "c35ec554c427402190148d01b9bdec89",
-          "Name": "x",
-          "Description": "Значение X.\n\nvar[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "46d073850a884988b942d30114d698b9",
-          "Name": "y",
-          "Description": "Значение Y.\n\nvar[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "0729f68f1a174237805324e5855db3a1",
-          "Name": "var[]..[]",
-          "Description": "var[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Вычесть Y из X.\n\n- (x: var[]..[], y: var[]..[]): var[]..[]"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
       "FunctionSignature": "Revit.Elements.Level.Name",
       "Id": "b469bc363cbe4e3f8229f2404b017548",
       "Inputs": [
@@ -1371,7 +1291,7 @@
         }
       ],
       "Replication": "Disabled",
-      "Description": "Выполнение встроенного сценария IronPython."
+      "Description": "Выполнение встроенного сценария Python."
     },
     {
       "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
@@ -1432,6 +1352,274 @@
       ],
       "Replication": "Auto",
       "Description": "Создание нового списка, содержащего элементы из заданного списка, перечисленные в обратном порядке.\n\nList.Reverse (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "x;",
+      "Id": "a071da87d08a48e3b39186fb004b4472",
+      "Inputs": [
+        {
+          "Id": "8043bc6b42b8465a9f252060ba42b96c",
+          "Name": "x",
+          "Description": "x",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "70667fbfb5704262bf0fee1991089bf9",
+          "Name": "",
+          "Description": "Значение выражения в строке 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Обеспечивает возможность непосредственного авторства кода DesignScript"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Coordinates.BasePoint",
+      "Id": "f7b4230da179435abde49050851d7c14",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "08c18001ffb9421eae2113a22678c6b7",
+          "Name": "Point",
+          "Description": "Базовая точка проекта",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение базовой точки проекта\n\nCoordinates.BasePoint ( ): Point"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Point.Z",
+      "Id": "665ba2b53c674d6e881fd532fce9ad51",
+      "Inputs": [
+        {
+          "Id": "6d0dac5e54ed4b73ba3445d7e69e8144",
+          "Name": "point",
+          "Description": "Autodesk.DesignScript.Geometry.Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e8c4077d95434bb982bc63b54f1c973d",
+          "Name": "double",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение координаты точки по оси Z\n\nPoint.Z: double"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "levelElevations = IN[0]\r\nbasePointOffset = IN[1]\r\n\r\nOUT = [int(round(val - basePointOffset)) for val in levelElevations]",
+      "VariableInputPorts": true,
+      "Id": "adba9b6126ad413b94dc6d6c066d476b",
+      "Inputs": [
+        {
+          "Id": "ac842e874e7446ddb85a9981efa564b5",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "401719d156bb44c48545e0b0d3f032da",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b834094f2bc947fcbd23bde4a40dea4b",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "e1e9540484814703badd1a6f22d53ddf",
+      "Inputs": [
+        {
+          "Id": "7379e29176844a87bc5f5d191c32af0d",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6a6f73ed421142a09f653473177c58f3",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Point.Z",
+      "Id": "bc1bbdd15bcf4f57b5c23325fd837496",
+      "Inputs": [
+        {
+          "Id": "aae1295875744ad4be88c509d36c43e0",
+          "Name": "point",
+          "Description": "Autodesk.DesignScript.Geometry.Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "96da86e17bcf46bcbdfee1152d55e4d5",
+          "Name": "double",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение координаты точки по оси Z\n\nPoint.Z: double"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Coordinates.BasePoint",
+      "Id": "3a06c17cd12b4731992055363920b132",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "95692cbefa3f48d9924b0333bfd0e48c",
+          "Name": "Point",
+          "Description": "Базовая точка проекта",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение базовой точки проекта\n\nCoordinates.BasePoint ( ): Point"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "levelElevations = IN[0]\r\nbasePointOffset = IN[1]\r\n\r\nOUT = [int(round(val - basePointOffset)) for val in levelElevations]",
+      "VariableInputPorts": true,
+      "Id": "a3e570b58d4844f186a49670ecc115ce",
+      "Inputs": [
+        {
+          "Id": "63a8606e0fc747d19f9eae55e6e5c4a0",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6549519bf1e1423e8a2df69d3ccdb68b",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "076f05dad12f4b419cbda91504f6d55c",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "5f8573dd21304a93a36fec9a3fd0afde",
+      "Inputs": [
+        {
+          "Id": "170ec3272ce9441e9d17d6e1fd2700e7",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dba901757260461bb8f831e3a179d9c2",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
     }
   ],
   "Connectors": [
@@ -1467,13 +1655,13 @@
     },
     {
       "Start": "625581cbdfde40f790435f6f69e7629b",
-      "End": "c35ec554c427402190148d01b9bdec89",
-      "Id": "862ba3a0ced040dbb2a91412b8e7eab7"
+      "End": "63a8606e0fc747d19f9eae55e6e5c4a0",
+      "Id": "44bbe4dc8975403a9580efc6677969d3"
     },
     {
-      "Start": "fe08f4368fe247348e1170451b7d2245",
-      "End": "5dc716a83c4d491e95a4fc6d11889e48",
-      "Id": "db1bd7aeff89413abb26d37f3c65ac98"
+      "Start": "3f2f29966d69421da9e6a3c80b9165a9",
+      "End": "613373fc4300408da1c7b9196011de31",
+      "Id": "61dcbee47fa143a88ebb0389e9e12c85"
     },
     {
       "Start": "6585010e20664e90aa25759806a05ba8",
@@ -1511,9 +1699,19 @@
       "Id": "21e34d68737841948311eaa8b686856d"
     },
     {
+      "Start": "028c604fc83c44eea80ada6d8905d874",
+      "End": "170ec3272ce9441e9d17d6e1fd2700e7",
+      "Id": "3e76cc43563f4723bc40e8bda61cdf54"
+    },
+    {
       "Start": "4b34e09b1a46403fa95244bef42ad1d5",
       "End": "fddd67ec342b4d80961a2996512f88c0",
       "Id": "e6091c3a9318403c9115280f5b353a97"
+    },
+    {
+      "Start": "4b34e09b1a46403fa95244bef42ad1d5",
+      "End": "7379e29176844a87bc5f5d191c32af0d",
+      "Id": "f1dcd401ba8346f7b475dc805d87db20"
     },
     {
       "Start": "0a73c570b2874cf08e3ce3d7fa70fe39",
@@ -1568,7 +1766,7 @@
     {
       "Start": "fa333f1f941344708274bf56015fcbd5",
       "End": "db7b9696d2ed46e5bcd067986d1c6d23",
-      "Id": "f7d0990ea82b4b9eb750339473009788"
+      "Id": "f3893539068c4b91aab5d6f42a08cb65"
     },
     {
       "Start": "da3c1c77186741e78a67514cc4212287",
@@ -1592,23 +1790,8 @@
     },
     {
       "Start": "758b4c9bc95f4a1eb1b0667d3ff91ffd",
-      "End": "deddb8ccc3f640ebb7f7a0f5a69695e2",
-      "Id": "71b867146d5048b8b668d51364b4acf0"
-    },
-    {
-      "Start": "25c89ea38af54a88919fd015c2c468f2",
-      "End": "72ec5cc353fa4153b81e85fcf800b3ad",
-      "Id": "2d2959ad34c34dd1b14ab3b33aa0daf3"
-    },
-    {
-      "Start": "e83444b4a62747aea4aa52f6f1b98e8f",
-      "End": "46d073850a884988b942d30114d698b9",
-      "Id": "ee02fb93ccbe4b28ba30251100574c9b"
-    },
-    {
-      "Start": "0729f68f1a174237805324e5855db3a1",
-      "End": "ca5c031d93e54149989c6258d7e7d035",
-      "Id": "5428d6f625db4441b67a118075797003"
+      "End": "c01faf0f01b841a1b9f5da4fea316337",
+      "Id": "094d8c61b3f84545bc309161c89c77ce"
     },
     {
       "Start": "cf1c1afed8054f94bed98034949a76c2",
@@ -1632,8 +1815,8 @@
     },
     {
       "Start": "b29d3bbe418d426491f4f4060d8243b2",
-      "End": "e8ea585402df4574becdb476bb4f25de",
-      "Id": "74fcde5198ab4aeb9795e5e4ca032174"
+      "End": "8043bc6b42b8465a9f252060ba42b96c",
+      "Id": "4265ff215cb64ce2808a69a45a6a70df"
     },
     {
       "Start": "f495de21b10b46e0974697bfef557a0b",
@@ -1667,8 +1850,8 @@
     },
     {
       "Start": "a00faa0ecf45434ca2080d4e2b85aaff",
-      "End": "12dcb2d5b8a342279f4d50a0b288cfdb",
-      "Id": "c79274b37b6d4e7e93db57dd6dc2633a"
+      "End": "ac842e874e7446ddb85a9981efa564b5",
+      "Id": "f74f0d3342184c86b510d11813eb5c7a"
     },
     {
       "Start": "865f21f6ef894457a9b9da1e059756ab",
@@ -1682,13 +1865,53 @@
     },
     {
       "Start": "21af3629f5b64f45be1d15354fb18d03",
-      "End": "613373fc4300408da1c7b9196011de31",
-      "Id": "a309faefcbed4621b0c7c93107cbc80d"
+      "End": "ebf9f9c634ce450ebd130ed2c5f32ef4",
+      "Id": "26ac4f4d8c2b4d17b7816f1655cbfe0e"
     },
     {
       "Start": "c61a84e5bc014a578161570f8a30ee80",
-      "End": "ebf9f9c634ce450ebd130ed2c5f32ef4",
-      "Id": "a4644cc689bf4aed8677d8022dee5a10"
+      "End": "3d11f7357a9c4fdabb0a1d3e4ac036ef",
+      "Id": "ea10c4cd6ceb45b7a16aeee83fef52f9"
+    },
+    {
+      "Start": "70667fbfb5704262bf0fee1991089bf9",
+      "End": "e8ea585402df4574becdb476bb4f25de",
+      "Id": "a50ddd0c2f6646e79c0b85acdc9c4b13"
+    },
+    {
+      "Start": "70667fbfb5704262bf0fee1991089bf9",
+      "End": "5dc716a83c4d491e95a4fc6d11889e48",
+      "Id": "04d7bd3bd65c43ac8c2259d899e60b91"
+    },
+    {
+      "Start": "08c18001ffb9421eae2113a22678c6b7",
+      "End": "6d0dac5e54ed4b73ba3445d7e69e8144",
+      "Id": "f88ca38041874816adeb6c021800239c"
+    },
+    {
+      "Start": "e8c4077d95434bb982bc63b54f1c973d",
+      "End": "401719d156bb44c48545e0b0d3f032da",
+      "Id": "892849022b5e4de0a6de7523c002baab"
+    },
+    {
+      "Start": "b834094f2bc947fcbd23bde4a40dea4b",
+      "End": "12dcb2d5b8a342279f4d50a0b288cfdb",
+      "Id": "87c8ace551c146378eef72b7775bd09d"
+    },
+    {
+      "Start": "96da86e17bcf46bcbdfee1152d55e4d5",
+      "End": "6549519bf1e1423e8a2df69d3ccdb68b",
+      "Id": "bba48fee705d4f8da251e0737be36b4a"
+    },
+    {
+      "Start": "95692cbefa3f48d9924b0333bfd0e48c",
+      "End": "aae1295875744ad4be88c509d36c43e0",
+      "Id": "2c3a7ab46b2a41b098bfb5816a54d2aa"
+    },
+    {
+      "Start": "076f05dad12f4b419cbda91504f6d55c",
+      "End": "3d26ec7c38d24941923c61949e281dfe",
+      "Id": "65060a3665f94d1db21b50bd3854a9b1"
     }
   ],
   "Dependencies": [],
@@ -1722,8 +1945,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 6169.9607987782711,
-        "Y": 2342.0919391937568
+        "X": 6582.4319352422535,
+        "Y": 2353.1002323309222
       },
       {
         "ShowGeometry": true,
@@ -1772,8 +1995,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5332.6931883217039,
-        "Y": 2801.7352441277371
+        "X": 5499.3940241343,
+        "Y": 2805.8199345364887
       },
       {
         "ShowGeometry": true,
@@ -1802,8 +2025,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3139.8747921797562,
-        "Y": 3097.1976768188133
+        "X": 3193.139430261419,
+        "Y": 3030.3911815977444
       },
       {
         "ShowGeometry": true,
@@ -1822,8 +2045,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5184.6082505489112,
-        "Y": 3020.3001438510455
+        "X": 5638.4267500993146,
+        "Y": 3020.7991138563684
       },
       {
         "ShowGeometry": true,
@@ -1832,8 +2055,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5836.6972920135668,
-        "Y": 2815.61759333018
+        "X": 6175.32077317533,
+        "Y": 2777.2427276157723
       },
       {
         "ShowGeometry": true,
@@ -1852,8 +2075,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3428.95190690587,
-        "Y": 2443.37878524863
+        "X": 3408.2736582172097,
+        "Y": 2438.2092230764647
       },
       {
         "ShowGeometry": true,
@@ -1872,8 +2095,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2478.73858014796,
-        "Y": 2430.94870300954
+        "X": 2515.5817518054546,
+        "Y": 2438.7639212399176
       },
       {
         "ShowGeometry": true,
@@ -1882,7 +2105,7 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2043.1119672318073,
+        "X": 1952.9173430799688,
         "Y": 2642.82363194803
       },
       {
@@ -1902,7 +2125,7 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1774.4060457119494,
+        "X": 1684.2114215601109,
         "Y": 2643.2806751345806
       },
       {
@@ -1912,8 +2135,8 @@
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1063.6172448278433,
-        "Y": 2211.368451407971
+        "X": 990.79159227907712,
+        "Y": 2225.7850920857554
       },
       {
         "ShowGeometry": true,
@@ -1922,8 +2145,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1162.40177413094,
-        "Y": 2536.34014735583
+        "X": 1197.682683796322,
+        "Y": 2537.3497614733551
       },
       {
         "ShowGeometry": true,
@@ -1932,8 +2155,8 @@
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 719.42040893458068,
-        "Y": 2536.6146104592576
+        "X": 754.70131859996252,
+        "Y": 2537.6242245767826
       },
       {
         "ShowGeometry": true,
@@ -1942,8 +2165,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 915.39158285197891,
-        "Y": 2536.2535374352374
+        "X": 950.67249251736075,
+        "Y": 2537.2631515527623
       },
       {
         "ShowGeometry": true,
@@ -1952,8 +2175,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1451.2584079085054,
-        "Y": 2536.5911473245515
+        "X": 1440.7288578039536,
+        "Y": 2537.4410819522177
       },
       {
         "ShowGeometry": true,
@@ -1962,38 +2185,8 @@
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1243.3085499786716,
-        "Y": 2791.3157388626078
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Coordinates.BasePoint",
-        "Id": "507235cea12348f3ad98f369bf348d72",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 4570.6034963060574,
-        "Y": 2740.3780126173756
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Point.Z",
-        "Id": "1275a8971efe4bf391386d545a316d23",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 4860.36062105317,
-        "Y": 2740.3610776840565
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "-",
-        "Id": "361a070e975a42ccb9e0612a8d39e98d",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 5112.8011828900335,
-        "Y": 2631.408614018043
+        "X": 1046.2351815306406,
+        "Y": 2806.2126840564933
       },
       {
         "ShowGeometry": true,
@@ -2042,8 +2235,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2184.49617589211,
-        "Y": 3236.4415552873338
+        "X": 2249.5573280662175,
+        "Y": 3255.5626633321826
       },
       {
         "ShowGeometry": true,
@@ -2052,8 +2245,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2497.0407839287564,
-        "Y": 3236.7002431539386
+        "X": 2509.1646342243293,
+        "Y": 3255.4116656470478
       },
       {
         "ShowGeometry": true,
@@ -2062,8 +2255,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1963.073822471832,
-        "Y": 3240.3166336746294
+        "X": 2073.2892144043276,
+        "Y": 3260.1660359091297
       },
       {
         "ShowGeometry": true,
@@ -2092,8 +2285,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4866.0574573075764,
-        "Y": 3235.8681590789033
+        "X": 4866.05745730758,
+        "Y": 3235.8681590789
       },
       {
         "ShowGeometry": true,
@@ -2112,8 +2305,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5466.7520968326189,
-        "Y": 2997.489209694264
+        "X": 5906.8019058549944,
+        "Y": 2982.6949616816373
       },
       {
         "ShowGeometry": true,
@@ -2122,11 +2315,117 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5466.8156895377424,
-        "Y": 3082.19029872154
+        "X": 5906.8654985601179,
+        "Y": 3065.2038894345055
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "elements",
+        "Id": "a071da87d08a48e3b39186fb004b4472",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5895.140840869577,
+        "Y": 2501.2541457348339
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Coordinates.BasePoint",
+        "Id": "f7b4230da179435abde49050851d7c14",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4644.5154669139274,
+        "Y": 3362.5852548229404
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Point.Z",
+        "Id": "665ba2b53c674d6e881fd532fce9ad51",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4867.6936893020074,
+        "Y": 3362.7211530824634
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Convert To System Elevation PyScript",
+        "Id": "adba9b6126ad413b94dc6d6c066d476b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5138.5982361075266,
+        "Y": 3268.7130221672
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "e1e9540484814703badd1a6f22d53ddf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 6037.3049419721538,
+        "Y": 3166.5076171220185
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Point.Z",
+        "Id": "bc1bbdd15bcf4f57b5c23325fd837496",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4861.0682844377552,
+        "Y": 2721.3819622228511
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Coordinates.BasePoint",
+        "Id": "3a06c17cd12b4731992055363920b132",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4582.2366611899561,
+        "Y": 2721.2460639633309
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Convert To System Elevation PyScript",
+        "Id": "a3e570b58d4844f186a49670ecc115ce",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5133.2979122161232,
+        "Y": 2653.8754507645995
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "5f8573dd21304a93a36fec9a3fd0afde",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5905.4159318588218,
+        "Y": 3166.3948107063143
       }
     ],
     "Annotations": [
+      {
+        "Id": "3c78a49690284174a5e006bab728d98e",
+        "Title": "",
+        "Nodes": [
+          "3cdbd6f3a1f942f3a0a24af93d52359c"
+        ],
+        "Left": 1036.2351815306406,
+        "Top": 2753.2126840564933,
+        "Width": 319.0,
+        "Height": 121.0,
+        "FontSize": 36.0,
+        "InitialTop": 2806.2126840564933,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 43.0,
+        "Background": "#FFE8F7AD"
+      },
       {
         "Id": "022d9a13ef2f439a96ff4818528dbeae",
         "Title": "Фильтрация по наличию параметра этажа",
@@ -2184,8 +2483,8 @@
         "Background": "#FFC1D676"
       }
     ],
-    "X": -165.30670512509619,
-    "Y": -309.57386919056694,
-    "Zoom": 0.27147784897336152
+    "X": -162.21104070863845,
+    "Y": -282.653335030357,
+    "Zoom": 0.25468491437805724
   }
 }
