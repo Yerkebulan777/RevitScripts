@@ -75,9 +75,11 @@ for levelName, roomList in levelRoomsDict.items():
 
     levelFinishing = List[Element]()
 
-    for room in sorted(roomList, key=lambda r: r.Number):
+    roomList = sorted(roomList, key=lambda r: r.Number)
+
+    for room in roomList:
         geo = room.ClosedShell[0]
-        roomNumber = room.Number.Trim()
+        roomNumber = room.Number.strip()
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_WALL).Set('')
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_FLOOR).Set('')
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_CEILING).Set('')
