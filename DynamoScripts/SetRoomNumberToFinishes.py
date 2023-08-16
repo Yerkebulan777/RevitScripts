@@ -45,7 +45,8 @@ revit_file_name = revit_file_name.split("_detached")[0].split("_отсоедин
 revit_file_name = revit_file_name.encode('cp1251', 'ignore').decode('cp1251').strip()
 TransactionManager.Instance.ForceCloseTransaction()
 
-groupParamValue = IN[0]
+counter = int(0)
+groupFinishName = IN[0]
 roomNumberParamName = IN[1]
 
 transform = Transform.Identity
@@ -93,7 +94,7 @@ for levelName, roomList in levelRoomsDict.items():
                 if isinstance(element, Wall):
                     wallType = element.WallType
                     group = wallType.get_Parameter(BuiltInParameter.ALL_MODEL_MODEL).AsString()
-                    if group and groupParamValue.Equals(group):
+                    if group and groupFinishName.Equals(group):
                         levelFinishing.Add(element)
                         wallName = element.Name
                         if room.get_Parameter(BuiltInParameter.ROOM_FINISH_WALL).Set(wallName):
@@ -104,7 +105,7 @@ for levelName, roomList in levelRoomsDict.items():
                 elif isinstance(element, Floor):
                     floorType = element.FloorType
                     group = floorType.get_Parameter(BuiltInParameter.ALL_MODEL_MODEL).AsString()
-                    if group and groupParamValue.Equals(group):
+                    if group and groupFinishName.Equals(group):
                         levelFinishing.Add(element)
                         floorName = element.Name
                         if room.get_Parameter(BuiltInParameter.ROOM_FINISH_FLOOR).Set(floorName):
@@ -126,14 +127,24 @@ for levelName, roomList in levelRoomsDict.items():
             roomNumbers = wallFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
             assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
-        elif isinstance(element, Floor):
+            counter += 1
+            continue
+
+        if isinstance(element, Floor):
             roomNumbers = floorFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
             assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
-        elif isinstance(element, Ceiling):
+            counter += 1
+            continue
+
+        if isinstance(element, Ceiling):
             roomNumbers = ceilingFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
             assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
+            counter += 1
+            continue
 
 # Commit the transaction
 TransactionManager.Instance.TransactionTaskDone()
+
+OUT = counter
