@@ -9,11 +9,11 @@ import clr
 
 clr.AddReference('RevitAPI')
 
-from Autodesk.Revit.DB import FilteredElementCollector, SpatialElement, RoomFilter, Transform
+from Autodesk.Revit.DB import FilteredElementCollector, SpatialElement, Transform
 from Autodesk.Revit.DB import BuiltInParameter, LogicalAndFilter, ElementIntersectsSolidFilter
 from Autodesk.Revit.DB import Element, Solid, SolidUtils, Wall, Floor, Ceiling
 from Autodesk.Revit.DB import ElementMulticategoryFilter, BuiltInCategory
-from Autodesk.Revit.DB.Architecture import Room
+from Autodesk.Revit.DB.Architecture import Room, RoomFilter
 
 clr.AddReference("System")
 clr.AddReference("System.Core")
@@ -50,12 +50,20 @@ groupFinishName = IN[0]
 roomNumberParamName = IN[1]
 
 transform = Transform.Identity
+
+
+def getRoomSolid(room):
+    for geometry in room.ClosedShell:
+        if isinstance(geometry, Solid):
+            return geometry
+
+
 ########################################################################################################################
 
 levelRoomsDict = OrderedDict()
 
 builtInCats = [BuiltInCategory.OST_Walls, BuiltInCategory.OST_Floors, BuiltInCategory.OST_Ceilings]
-multiCatFilter = ElementMulticategoryFilter(builtInCats)
+multiCatFilter = ElementMulticategoryFilter(List[BuiltInCategory](builtInCats))
 
 collector = FilteredElementCollector(doc).OfClass(SpatialElement).WherePasses(RoomFilter())
 for room in collector.ToElements():
@@ -79,13 +87,13 @@ for levelName, roomList in levelRoomsDict.items():
     roomList = sorted(roomList, key=lambda r: r.Number)
 
     for room in roomList:
-        geo = room.ClosedShell[0]
+        solid = getRoomSolid(room)
         roomNumber = room.Number.strip()
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_WALL).Set('')
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_FLOOR).Set('')
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_CEILING).Set('')
-        if roomNumber and isinstance(geo, Solid):
-            roomSolid = SolidUtils.CreateTransformed(geo, transform)
+        if roomNumber and isinstance(solid, Solid):
+            roomSolid = SolidUtils.CreateTransformed(solid, transform)
             logicFilter = LogicalAndFilter(ElementIntersectsSolidFilter(roomSolid), multiCatFilter)
             intersections = FilteredElementCollector(doc).WherePasses(logicFilter).ToElements()
 
@@ -126,21 +134,18 @@ for levelName, roomList in levelRoomsDict.items():
         if isinstance(element, Wall):
             roomNumbers = wallFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
-            assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
             counter += 1
             continue
 
         if isinstance(element, Floor):
             roomNumbers = floorFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
-            assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
             counter += 1
             continue
 
         if isinstance(element, Ceiling):
             roomNumbers = ceilingFinishingData.get(elementName)
             isValidSet = element.LookupParameter(roomNumberParamName).Set(", ".join(roomNumbers))
-            assert isValidSet, f"Value has not been set to {element.Name} Level: {levelName}"
             counter += 1
             continue
 
