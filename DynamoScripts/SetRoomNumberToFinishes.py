@@ -108,11 +108,10 @@ for elevationInt, roomList in levelRoomsData.items():
 
     levelFinishing = List[Element]()
 
-    roomList = sorted(roomList, key=lambda r: r.Number)
-
-    for room in roomList:
+    for room in sorted(roomList, key=lambda r: r.Number):
 
         roomNumber = room.Number.strip()
+
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_WALL).Set('')
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_FLOOR).Set('')
         room.get_Parameter(BuiltInParameter.ROOM_FINISH_CEILING).Set('')
