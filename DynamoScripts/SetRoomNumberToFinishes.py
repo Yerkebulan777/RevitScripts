@@ -9,9 +9,9 @@ import clr
 
 clr.AddReference('RevitAPI')
 
-from Autodesk.Revit.DB import SpatialElement
 from Autodesk.Revit.DB import FilteredElementCollector, ElementId
 from Autodesk.Revit.DB import XYZ, Element, Wall, Floor, Ceiling, ViewType
+from Autodesk.Revit.DB import SpatialElement, SpatialElementGeometryCalculator
 from Autodesk.Revit.DB import SpatialElementBoundaryOptions, SpatialElementBoundaryLocation
 from Autodesk.Revit.DB import BuiltInParameter, LogicalAndFilter
 from Autodesk.Revit.DB import ParameterValueProvider, FilterStringRule
@@ -48,6 +48,11 @@ revit_file_name = revit_file_name.split("_detached")[0].split("_отсоедин
 revit_file_name = revit_file_name.encode('cp1251', 'ignore').decode('cp1251').strip()
 TransactionManager.Instance.ForceCloseTransaction()
 
+sebOptions = SpatialElementBoundaryOptions()
+sebOptions.StoreFreeBoundaryFaces = True
+sebOptions.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish
+calculator = SpatialElementGeometryCalculator(doc, sebOptions)
+
 
 def get_rooms_by_view(doc):
     output = list()
@@ -63,28 +68,22 @@ def get_rooms_by_view(doc):
 
 def get_finished_by_room(doc, room, model_group_name):
     output = []
-    bbox = room.get_BoundingBox(None)
-    min_bbox = bbox.Transform.OfPoint(bbox.Min)
-    max_bbox = bbox.Transform.OfPoint(bbox.Max)
-    box_filter = BoundingBoxIntersectsFilter(Outline(min_bbox, max_bbox))
-    provider = ParameterValueProvider(ElementId(BuiltInParameter.ALL_MODEL_MODEL))
-    rule = FilterStringRule(provider, FilterStringContains(), model_group_name, False)
-    logic_filter = LogicalAndFilter(box_filter, ElementParameterFilter(rule))
-    collector = FilteredElementCollector(doc).WherePasses(logic_filter).WhereElementIsNotElementType()
-    output.extend(collector.ToElements())
+    # bbox = room.get_BoundingBox(None)
+    # min_bbox = bbox.Transform.OfPoint(bbox.Min)
+    # max_bbox = bbox.Transform.OfPoint(bbox.Max)
+    # box_filter = BoundingBoxIntersectsFilter(Outline(min_bbox, max_bbox))
+    # provider = ParameterValueProvider(ElementId(BuiltInParameter.ALL_MODEL_MODEL))
+    # rule = FilterStringRule(provider, FilterStringContains(), model_group_name, False)
+    # logic_filter = LogicalAndFilter(box_filter, ElementParameterFilter(rule))
+    # collector = FilteredElementCollector(doc).WherePasses(logic_filter).WhereElementIsNotElementType()
+    # output.extend(collector.ToElements())
 
-    # for face in solid.Faces:
-    #     for subface in results.GetBoundaryFaceInfo(face):
-    #         face = subface.GetSubface()
-    #         box = face.GetBoundingBox()
-    #         center = (box.Max + box.Min) * 0.5
-    #         point = get_center_point_of_face(face)
-    #         normal = face.ComputeNormal(center).Normalize()
-    #         point = point + normal * offset
-    #         if isinstance(point, XYZ):
-    #             pnt_filter = BoundingBoxContainsPointFilter(point, offset * 3)
-    #             element = FilteredElementCollector(doc).WherePasses(pnt_filter).WherePasses(logic_filter).FirstElement()
-    #             if element: output.append(element)
+    results = calculator.CalculateSpatialElementGeometry(room)
+    roomSolid = results.GetGeometry()
+    for face in roomSolid.Faces:
+        for subface in results.GetBoundaryFaceInfo(face):
+            element = doc.GetElement(subface.SpatialBoundaryElement.HostElementId)
+            if element: output.append(element)
 
     return output
 
