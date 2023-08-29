@@ -67,25 +67,17 @@ def get_rooms_by_view(doc):
 
 
 def get_finished_by_room(doc, room, model_group_name):
-    output = []
-    # bbox = room.get_BoundingBox(None)
-    # min_bbox = bbox.Transform.OfPoint(bbox.Min)
-    # max_bbox = bbox.Transform.OfPoint(bbox.Max)
-    # box_filter = BoundingBoxIntersectsFilter(Outline(min_bbox, max_bbox))
-    # provider = ParameterValueProvider(ElementId(BuiltInParameter.ALL_MODEL_MODEL))
-    # rule = FilterStringRule(provider, FilterStringContains(), model_group_name, False)
-    # logic_filter = LogicalAndFilter(box_filter, ElementParameterFilter(rule))
-    # collector = FilteredElementCollector(doc).WherePasses(logic_filter).WhereElementIsNotElementType()
-    # output.extend(collector.ToElements())
-
+    provider = ParameterValueProvider(ElementId(BuiltInParameter.ALL_MODEL_MODEL))
+    group = ElementParameterFilter(FilterStringRule(provider, FilterStringContains(), model_group_name, False))
     results = calculator.CalculateSpatialElementGeometry(room)
     roomSolid = results.GetGeometry()
+    elemIds = List[ElementId]()
     for face in roomSolid.Faces:
         for subface in results.GetBoundaryFaceInfo(face):
-            element = doc.GetElement(subface.SpatialBoundaryElement.HostElementId)
-            if element: output.append(element)
+            elemId = subface.SpatialBoundaryElement.HostElementId
+            if isinstance(elemId, ElementId): elemIds.Add(elemId)
 
-    return output
+    return FilteredElementCollector(doc, elemIds).WherePasses(group).ToElements()
 
 
 def get_center_point_of_face(face):
