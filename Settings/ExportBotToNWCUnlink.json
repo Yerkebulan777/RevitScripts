@@ -17,7 +17,7 @@
   "revitSessionOption": "UseSeparateSessionPerFile",
   "revitProcessingOption": "BatchRevitFileProcessing",
   "singleRevitTaskRevitVersion": "Revit2019",
-  "revitFileProcessingOption": "UseSpecificRevitVersion",
+  "revitFileProcessingOption": "UseFileRevitVersionIfAvailable",
   "ifNotAvailableUseMinimumAvailableRevitVersion": true,
   "batchRevitTaskRevitVersion": "Revit2019",
   "openInUI": false,
