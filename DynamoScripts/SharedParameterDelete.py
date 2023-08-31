@@ -78,4 +78,7 @@ def remove_similar_shared_parameters(doc, sharedParamName):
     return message
 
 
-OUT = remove_similar_shared_parameters(doc, sharedParamName)
+if (sharedParamName and isinstance(sharedParamName, str)):
+    OUT = remove_similar_shared_parameters(doc, sharedParamName)
+else:
+    "Not defined parameter name"
