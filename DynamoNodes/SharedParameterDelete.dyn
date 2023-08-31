@@ -19,155 +19,6 @@
   "Outputs": [],
   "Nodes": [
     {
-      "ConcreteType": "Orchid.E.RevitProject.Common.SharedParameter, OrchidRE",
-      "SelectedIndex": 179,
-      "NodeType": "ExtensionNode",
-      "Id": "e00402ae4025485cbbe27eb508c53ea6",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "f59e31ef3ab94fb7bee9f810ee288699",
-          "Name": "Parameter",
-          "Description": "Выбрано Parameter",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Dropdown for shared parameters in the document"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Orchid.RevitProject.Elements.Element.Delete@Revit.Elements.Element",
-      "Id": "1d3f3877276945c08610c69c859fa121",
-      "Inputs": [
-        {
-          "Id": "986bac57f66c44dfa299e6c2c9fca6a9",
-          "Name": "element",
-          "Description": "Element as Dynamo type.\n\nElement",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "d252d662ba2e40fbbf760771693aa85f",
-          "Name": "boolean",
-          "Description": "Boolean value if element is deleted (if element existed).",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Delete elements. Note: If a wall element is a member of a stacked wall, will this element lead to the entire stacked wall will be deleted. The other stacked wall members will return false.\n\nElement.Delete (element: Element): bool"
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
-      "NodeType": "ExtensionNode",
-      "Id": "1c6d48c47636450988ea61584a9743bb",
-      "Inputs": [
-        {
-          "Id": "5233ad546da44dba8e06d0eb8b81867b",
-          "Name": "",
-          "Description": "Узел для оценки.",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "2ae58e6305104b868ad74d2c14a4089e",
-          "Name": "",
-          "Description": "Просмотр содержимого.",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Визуализация входного элемента узла."
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Application.Document.Current",
-      "Id": "7b8a7132a5694d9fba4703adacabf459",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "662eba171c1d47a09ce643866b934baf",
-          "Name": "Document",
-          "Description": "Document",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Получение текущего документа\n\nDocument.Current: Document"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Elements.Parameter.IsShared",
-      "Id": "480e709450e846b1aeb506353b8f0750",
-      "Inputs": [
-        {
-          "Id": "f706f51bfcff41e8aff9546b267fca5f",
-          "Name": "parameter",
-          "Description": "Revit.Elements.Parameter",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "d16d62f94fd54a2f855b8670ea4773db",
-          "Name": "bool",
-          "Description": "bool",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Установите флажок, если параметр является общим\n\nParameter.IsShared: bool"
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
-      "NodeType": "BooleanInputNode",
-      "InputValue": true,
-      "Id": "e662e4e1147146719447dbb9d6061865",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "22879142b87e41a482284301b6caaa24",
-          "Name": "",
-          "Description": "Boolean",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Выбор между значениями true и false."
-    },
-    {
       "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
       "NodeType": "ExtensionNode",
       "Id": "806e90cb1bf34c45bc6efc9b7e93af33",
@@ -195,18 +46,69 @@
       ],
       "Replication": "Disabled",
       "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# -*- coding: utf-8 -*-\r\n# !/usr/bin/python\r\n\r\nimport sys\r\n\r\nsys.path.append(r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\")\r\n\r\nimport clr\r\nimport difflib\r\nimport System\r\n\r\nclr.AddReference(\"System\")\r\nclr.AddReference(\"System.Core\")\r\nclr.AddReference(\"System.Drawing\")\r\nclr.AddReference(\"System.Management\")\r\nclr.ImportExtensions(System.Linq)\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.DB import FilteredElementCollector\r\nfrom Autodesk.Revit.DB import Transaction\r\nfrom Autodesk.Revit.DB import SharedParameterElement\r\n\r\n########################################################################################################################\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\n\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nTransactionManager.Instance.ForceCloseTransaction()\r\n########################################################################################################################\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\nuidoc = uiapp.ActiveUIDocument\r\n\r\nsharedParamName = IN[0]\r\n\r\n\r\ndef get_external_definition(doc, parameter_name):\r\n    defile = doc.Application.OpenSharedParameterFile()\r\n    if defile and defile.Groups.Size > 0:\r\n        for group in defile.Groups:\r\n            if group.Definitions.Contains(group.Definitions.Item[parameter_name]):\r\n                definition = group.Definitions.Item[parameter_name]\r\n                return definition\r\n\r\n\r\ndef remove_parameter(doc, definition):\r\n    with Transaction(doc) as trans:\r\n        try:\r\n            trans.Start(\"Remove Parameter\")\r\n            parameter_name = definition.Name\r\n            message = \"\\n\\t{}: deleted successfully\".format(parameter_name)\r\n            if not doc.ParameterBindings.Remove(definition):\r\n                if definition: doc.Delete(definition.Id)\r\n            trans.Commit()\r\n        except Exception as e:\r\n            trans.RollBack()\r\n            message = \"\\n\\t{}: failed delete {}\".format(parameter_name, e)\r\n        return message\r\n\r\n\r\ndef remove_similar_shared_parameters(doc, sharedParamName):\r\n    message, tolerance = '', 0.85\r\n    definition = get_external_definition(doc, sharedParamName)\r\n    parameters = FilteredElementCollector(doc).OfClass(SharedParameterElement).ToElements()\r\n    for param in sorted(parameters, key=lambda param: param.Name):\r\n        weight = difflib.SequenceMatcher(None, sharedParamName, param.Name).ratio()\r\n        if bool(weight > tolerance):\r\n            if definition and definition.GUID == param.GuidValue: continue\r\n            message += remove_parameter(doc, param.GetDefinition())\r\n    return message\r\n\r\n\r\nif (sharedParamName and isinstance(sharedParamName, str)):\r\n    OUT = remove_similar_shared_parameters(doc, sharedParamName)\r\nelse:\r\n    \"Not defined parameter name\"\r\n",
+      "VariableInputPorts": true,
+      "Id": "97f6517a04a1456ab5c941d492368001",
+      "Inputs": [
+        {
+          "Id": "f3b9f90b92fb45508058c67a482ff94c",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dd7d0508c9184a249b4af7afd993e74a",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "BI_этаж",
+      "Id": "04b76c4ff70748a5a703fbd5bfe1b67d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1e53872af97d4de3acab4670d9eb3c72",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
     }
   ],
   "Connectors": [
     {
-      "Start": "f59e31ef3ab94fb7bee9f810ee288699",
-      "End": "986bac57f66c44dfa299e6c2c9fca6a9",
-      "Id": "d4589a93ce894a3098124bed2bac8734"
+      "Start": "dd7d0508c9184a249b4af7afd993e74a",
+      "End": "fca9c72c1ccd48fa801740786ace104e",
+      "Id": "e1fdc22c145346099216795844596d7c"
     },
     {
-      "Start": "d252d662ba2e40fbbf760771693aa85f",
-      "End": "5233ad546da44dba8e06d0eb8b81867b",
-      "Id": "6882601ecfa84b3f8900360d564f99af"
+      "Start": "1e53872af97d4de3acab4670d9eb3c72",
+      "End": "f3b9f90b92fb45508058c67a482ff94c",
+      "Id": "e1ee2940f0e74c588b5bf1d13fc4c6c5"
     }
   ],
   "Dependencies": [],
@@ -235,97 +137,38 @@
     "NodeViews": [
       {
         "ShowGeometry": true,
-        "Name": "Shared Parameters",
-        "Id": "e00402ae4025485cbbe27eb508c53ea6",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 1395.111841924745,
-        "Y": 623.49275867914241
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Element.Delete",
-        "Id": "1d3f3877276945c08610c69c859fa121",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 1672.5604949422454,
-        "Y": 621.82560794073811
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Watch",
-        "Id": "1c6d48c47636450988ea61584a9743bb",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 1955.0797938244755,
-        "Y": 622.277077121481
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Document.Current",
-        "Id": "7b8a7132a5694d9fba4703adacabf459",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 1166.8582974224407,
-        "Y": 923.99804431599671
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Parameter.IsShared",
-        "Id": "480e709450e846b1aeb506353b8f0750",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 1957.1545004070517,
-        "Y": 794.18204391035965
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Boolean",
-        "Id": "e662e4e1147146719447dbb9d6061865",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 1162.4308067669276,
-        "Y": 868.87157376255072
-      },
-      {
-        "ShowGeometry": true,
         "Name": "Watch",
         "Id": "806e90cb1bf34c45bc6efc9b7e93af33",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1904.7995718387401,
-        "Y": 915.32240661687354
-      }
-    ],
-    "Annotations": [
+        "X": 1533.2268044680823,
+        "Y": 988.30652824575384
+      },
       {
-        "Id": "4c3b10fcb9b741c0b315c30045b15d12",
-        "Title": "Shared parameter Delete",
-        "Nodes": [
-          "e00402ae4025485cbbe27eb508c53ea6",
-          "1d3f3877276945c08610c69c859fa121",
-          "1c6d48c47636450988ea61584a9743bb"
-        ],
-        "Left": 1385.111841924745,
-        "Top": 568.82560794073811,
-        "Width": 657.96795189973045,
-        "Height": 184.0,
-        "FontSize": 36.0,
-        "InitialTop": 621.82560794073811,
-        "InitialHeight": 146.6671507384043,
-        "TextblockHeight": 43.0,
-        "Background": "#FFC1D676"
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "97f6517a04a1456ab5c941d492368001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1345.0854453127922,
+        "Y": 987.1927140414366
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Shared parameter name",
+        "Id": "04b76c4ff70748a5a703fbd5bfe1b67d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1122.6617890870878,
+        "Y": 987.19271404143694
       }
     ],
-    "X": -1177.3734780103368,
-    "Y": -932.785354760181,
-    "Zoom": 1.1840476611579565
+    "Annotations": [],
+    "X": -1908.1114546012441,
+    "Y": -1459.7596119528025,
+    "Zoom": 1.7956316163402248
   }
 }

@@ -67,7 +67,7 @@ def remove_parameter(doc, definition):
 
 
 def remove_similar_shared_parameters(doc, sharedParamName):
-    message, tolerance = '', 0.95
+    message, tolerance = '', 0.85
     definition = get_external_definition(doc, sharedParamName)
     parameters = FilteredElementCollector(doc).OfClass(SharedParameterElement).ToElements()
     for param in sorted(parameters, key=lambda param: param.Name):
