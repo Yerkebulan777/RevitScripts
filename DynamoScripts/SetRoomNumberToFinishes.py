@@ -13,10 +13,9 @@ from Autodesk.Revit.DB import FilteredElementCollector, ElementId
 from Autodesk.Revit.DB import XYZ, Element, Wall, Floor, Ceiling, ViewType
 from Autodesk.Revit.DB import SpatialElement, SpatialElementGeometryCalculator
 from Autodesk.Revit.DB import SpatialElementBoundaryOptions, SpatialElementBoundaryLocation
-from Autodesk.Revit.DB import BuiltInParameter, LogicalAndFilter
+from Autodesk.Revit.DB import BuiltInParameter
 from Autodesk.Revit.DB import ParameterValueProvider, FilterStringRule
 from Autodesk.Revit.DB import ElementParameterFilter, FilterStringContains
-from Autodesk.Revit.DB import BoundingBoxIntersectsFilter, Outline
 from Autodesk.Revit.DB.Architecture import Room, RoomFilter
 
 clr.AddReference("System")

@@ -5,7 +5,6 @@ import sys
 
 sys.path.append(r"C:\Program Files (x86)\IronPython 2.7\Lib")
 
-import os
 import clr
 import difflib
 import System
@@ -19,15 +18,33 @@ clr.ImportExtensions(System.Linq)
 clr.AddReference("RevitAPI")
 clr.AddReference("RevitAPIUI")
 from Autodesk.Revit.DB import FilteredElementCollector
-from Autodesk.Revit.DB import InstanceBinding, TypeBinding
-from Autodesk.Revit.DB import BuiltInParameterGroup, ElementId, ExternalDefinition
-from Autodesk.Revit.DB import BuiltInCategory, Category, CategoryType, Transaction
-from Autodesk.Revit.DB import ParameterFilterUtilities, SharedParameterElement
+from Autodesk.Revit.DB import Transaction
+from Autodesk.Revit.DB import SharedParameterElement
+
+########################################################################################################################
+
+clr.AddReference('RevitServices')
+from RevitServices.Persistence import DocumentManager
+from RevitServices.Transactions import TransactionManager
+
+clr.AddReference("RevitNodes")
+import Revit
+
+clr.ImportExtensions(Revit.Elements)
+clr.ImportExtensions(Revit.GeometryConversion)
+TransactionManager.Instance.ForceCloseTransaction()
+########################################################################################################################
+doc = DocumentManager.Instance.CurrentDBDocument
+app = DocumentManager.Instance.CurrentUIApplication.Application
+uiapp = DocumentManager.Instance.CurrentUIApplication
+uidoc = uiapp.ActiveUIDocument
+
+sharedParamName = IN[0]
 
 
 def get_external_definition(doc, parameter_name):
     defile = doc.Application.OpenSharedParameterFile()
-    if defile and defile.Groups:
+    if defile and defile.Groups.Size > 0:
         for group in defile.Groups:
             if group.Definitions.Contains(group.Definitions.Item[parameter_name]):
                 definition = group.Definitions.Item[parameter_name]
@@ -49,14 +66,16 @@ def remove_parameter(doc, definition):
         return message
 
 
-def remove_similar_shared_parameters(doc, parameter_name):
-    message, tolerance = '', 0.85
+def remove_similar_shared_parameters(doc, sharedParamName):
+    message, tolerance = '', 0.95
+    definition = get_external_definition(doc, sharedParamName)
     parameters = FilteredElementCollector(doc).OfClass(SharedParameterElement).ToElements()
-    definition = get_external_definition(doc, parameter_name)
-    guid = definition.GUID if definition else None
     for param in sorted(parameters, key=lambda param: param.Name):
-        weight = difflib.SequenceMatcher(None, parameter_name, param.Name).ratio()
+        weight = difflib.SequenceMatcher(None, sharedParamName, param.Name).ratio()
         if bool(weight > tolerance):
-            if guid != param.GuidValue:
-                message += remove_parameter(doc, param.GetDefinition())
+            if definition and definition.GUID == param.GuidValue: continue
+            message += remove_parameter(doc, param.GetDefinition())
     return message
+
+
+OUT = remove_similar_shared_parameters(doc, sharedParamName)
