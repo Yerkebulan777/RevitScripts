@@ -96,6 +96,105 @@
       ],
       "Replication": "Disabled",
       "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Application.Document.Current",
+      "Id": "7b8a7132a5694d9fba4703adacabf459",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "662eba171c1d47a09ce643866b934baf",
+          "Name": "Document",
+          "Description": "Document",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение текущего документа\n\nDocument.Current: Document"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Parameter.IsShared",
+      "Id": "480e709450e846b1aeb506353b8f0750",
+      "Inputs": [
+        {
+          "Id": "f706f51bfcff41e8aff9546b267fca5f",
+          "Name": "parameter",
+          "Description": "Revit.Elements.Parameter",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d16d62f94fd54a2f855b8670ea4773db",
+          "Name": "bool",
+          "Description": "bool",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Установите флажок, если параметр является общим\n\nParameter.IsShared: bool"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "e662e4e1147146719447dbb9d6061865",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "22879142b87e41a482284301b6caaa24",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выбор между значениями true и false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "806e90cb1bf34c45bc6efc9b7e93af33",
+      "Inputs": [
+        {
+          "Id": "fca9c72c1ccd48fa801740786ace104e",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "345b7f5114c74a148dda059dae4a59b8",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
     }
   ],
   "Connectors": [
@@ -142,7 +241,7 @@
         "IsSetAsOutput": false,
         "Excluded": false,
         "X": 1395.111841924745,
-        "Y": 624.26247329235321
+        "Y": 623.49275867914241
       },
       {
         "ShowGeometry": true,
@@ -152,7 +251,7 @@
         "IsSetAsOutput": false,
         "Excluded": false,
         "X": 1672.5604949422454,
-        "Y": 622.5953225539489
+        "Y": 621.82560794073811
       },
       {
         "ShowGeometry": true,
@@ -162,7 +261,47 @@
         "IsSetAsOutput": false,
         "Excluded": false,
         "X": 1955.0797938244755,
-        "Y": 623.04679173469185
+        "Y": 622.277077121481
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Document.Current",
+        "Id": "7b8a7132a5694d9fba4703adacabf459",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1166.8582974224407,
+        "Y": 923.99804431599671
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter.IsShared",
+        "Id": "480e709450e846b1aeb506353b8f0750",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1957.1545004070517,
+        "Y": 794.18204391035965
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "e662e4e1147146719447dbb9d6061865",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1162.4308067669276,
+        "Y": 868.87157376255072
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "806e90cb1bf34c45bc6efc9b7e93af33",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1904.7995718387401,
+        "Y": 915.32240661687354
       }
     ],
     "Annotations": [
@@ -175,18 +314,18 @@
           "1c6d48c47636450988ea61584a9743bb"
         ],
         "Left": 1385.111841924745,
-        "Top": 569.5953225539489,
+        "Top": 568.82560794073811,
         "Width": 657.96795189973045,
-        "Height": 147.6671507384043,
+        "Height": 184.0,
         "FontSize": 36.0,
-        "InitialTop": 622.5953225539489,
+        "InitialTop": 621.82560794073811,
         "InitialHeight": 146.6671507384043,
         "TextblockHeight": 43.0,
         "Background": "#FFC1D676"
       }
     ],
-    "X": -1497.0789782461684,
-    "Y": -589.66396493865363,
-    "Zoom": 1.2991828176791711
+    "X": -1177.3734780103368,
+    "Y": -932.785354760181,
+    "Zoom": 1.1840476611579565
   }
 }

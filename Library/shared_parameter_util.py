@@ -35,10 +35,11 @@ def load_shared_parameter_file(doc, filepath):
 
 def get_external_definition(doc, parameter_name):
     defile = doc.Application.OpenSharedParameterFile()
-    for group in defile.Groups:
-        if group.Definitions.Contains(group.Definitions.Item[parameter_name]):
-            definition = group.Definitions.Item[parameter_name]
-            return definition
+    if defile and defile.Groups:
+        for group in defile.Groups:
+            if group.Definitions.Contains(group.Definitions.Item[parameter_name]):
+                definition = group.Definitions.Item[parameter_name]
+                return definition
 
 
 def remove_parameter(doc, definition):
@@ -58,18 +59,15 @@ def remove_parameter(doc, definition):
 
 
 def remove_similar_shared_parameters(doc, parameter_name):
-    message, filepath, tolerance = '', None, 0.85
+    message, tolerance = '', 0.85
     parameters = FilteredElementCollector(doc).OfClass(SharedParameterElement).ToElements()
-    if parameter_name.startswith("BI"): filepath = r"D:\YandexDisk\RevitExportConfig\DataBase\BI_FOP.txt"
-    if parameter_name.startswith("TMS"): filepath = r"D:\YandexDisk\RevitExportConfig\DataBase\TMS_FOP.txt"
-    if filepath and load_shared_parameter_file(doc, filepath):
-        definition = get_external_definition(doc, parameter_name)
-        guid = definition.GUID if definition else None
-        for param in sorted(parameters, key=lambda param: param.Name):
-            weight = difflib.SequenceMatcher(None, parameter_name, param.Name).ratio()
-            if bool(weight > tolerance):
-                if guid != param.GuidValue:
-                    message += remove_parameter(doc, param.GetDefinition())
+    definition = get_external_definition(doc, parameter_name)
+    guid = definition.GUID if definition else None
+    for param in sorted(parameters, key=lambda param: param.Name):
+        weight = difflib.SequenceMatcher(None, parameter_name, param.Name).ratio()
+        if bool(weight > tolerance):
+            if guid != param.GuidValue:
+                message += remove_parameter(doc, param.GetDefinition())
     return message
 
 
