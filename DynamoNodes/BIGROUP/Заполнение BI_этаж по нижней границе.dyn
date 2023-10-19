@@ -1620,9 +1620,43 @@
       ],
       "Replication": "Disabled",
       "Description": "Визуализация входного элемента узла."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "8374436d56bc4fd6b531d1fb3f75fb66",
+      "Inputs": [
+        {
+          "Id": "06876ea9a6e84bcbbcfe29b3b8e74b46",
+          "Name": "",
+          "Description": "Узел для оценки.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "20640ed6d3a04487bc2b0619214008bf",
+          "Name": "",
+          "Description": "Просмотр содержимого.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Визуализация входного элемента узла."
     }
   ],
   "Connectors": [
+    {
+      "Start": "c80e4e05b617402f9acaaaf7986539ec",
+      "End": "06876ea9a6e84bcbbcfe29b3b8e74b46",
+      "Id": "3982011598f64afbb9fde78f08a88b94"
+    },
     {
       "Start": "b36b4556953b49e1a5d11d623746eab4",
       "End": "ca9a26eedd4f48cf90a3778399281c35",
@@ -2407,6 +2441,16 @@
         "Excluded": false,
         "X": 5905.4159318588218,
         "Y": 3166.3948107063143
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "8374436d56bc4fd6b531d1fb3f75fb66",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 6918.5333113642382,
+        "Y": 2352.4835490629748
       }
     ],
     "Annotations": [
@@ -2483,8 +2527,8 @@
         "Background": "#FFC1D676"
       }
     ],
-    "X": -162.21104070863845,
-    "Y": -288.89311543261942,
-    "Zoom": 0.25468491437805724
+    "X": -151.60546309538097,
+    "Y": -240.75423494979862,
+    "Zoom": 0.2406322324072192
   }
 }

@@ -51,6 +51,7 @@ filename = filename.split("_detached")[0].split("_отсоединено")[0]
 ########################################################################################################################
 ########################################################################################################################
 
+
 def get_subdirectory(ipath, directory):
     folder = os.path.basename(os.path.dirname(ipath))
     drive, tail = os.path.splitdrive(ipath)

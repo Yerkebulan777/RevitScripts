@@ -44,8 +44,9 @@ CLOSE_BUTTON_TEXT = "Закрыть"
 SHOW_BUTTON_TEXT = "Показать"
 
 OK_BUTTON_TEXT = "OK"
-YES_BUTTON_TEXT = "Да"
 NO_BUTTON_TEXT = "Нет"
+YES_BUTTON_TEXT = "Да"
+
 SPACE_BUTTON_TEXT = " "
 
 CANCEL_LINK_BUTTON_TEXT = "Cancel Link"
@@ -95,13 +96,11 @@ def IsButtonByText(control, search_text):
 def SendButtonClick(buttons, output):
     output()
     buttons = tolist(buttons)
-    target_button = (buttons[0] if len(buttons) == 1 else None)
+    target_button = (random.choice(buttons) if len(buttons) > 0 else None)
     display = any([x for x in buttons if IsButtonByText(x, SHOW_BUTTON_TEXT)])
     choice = random.choice([False, False, True, False, False])
 
     for control in buttons:
-
-        if target_button is None: target_button = random.choice(buttons)
 
         if IsButtonByText(control, OK_BUTTON_TEXT): target_button = control
 
@@ -131,7 +130,7 @@ def SendButtonClick(buttons, output):
 
     output()
     if target_button is not None:
-        thread_util.SleepForSeconds(1)
+        thread_util.SleepForSeconds(5)
         target_button_text = ui_automation_util.GetButtonText(target_button)
         output("\tSending button click to '" + target_button_text + "' button...")
         win32_user32.SendButtonClickMessage(target_button.Hwnd)
